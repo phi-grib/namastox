@@ -25,6 +25,7 @@ import yaml
 import os
 from logger import get_logger
 from config import configure
+from manage import action_new
 
 LOG = get_logger(__name__)
 
@@ -45,7 +46,7 @@ def main():
                         help='Action type: \'config\' or \'new\' or \'update\' or \'report\'',
                         required=True)
 
-    parser.add_argument('-e', '--endpoint',
+    parser.add_argument('-r', '--raname',
                         help='Name of RA',
                         required=False)
 
@@ -88,24 +89,23 @@ def main():
 
     if args.command == 'new':
 
-        if (args.endpoint is None):
-            LOG.error('flame predict : endpoint and input file arguments are compulsory')
+        if (args.raname is None):
+            LOG.error('flame predict : raname and input file arguments are compulsory')
             return
-
-        LOG.info ('NEW')
+        success, result = action_new(args.raname)
 
     elif args.command == 'update':
         
-        if (args.endpoint is None):
-            LOG.error('flame predict : endpoint and input file arguments are compulsory')
+        if (args.raname is None):
+            LOG.error('flame predict : raname and input file arguments are compulsory')
             return
 
         LOG.info ('UPDATE')
 
     elif args.command == 'report':
         
-        if (args.endpoint is None):
-            LOG.error('flame predict : endpoint and input file arguments are compulsory')
+        if (args.raname is None):
+            LOG.error('flame predict : raname and input file arguments are compulsory')
             return
 
         LOG.info ('REPORT')

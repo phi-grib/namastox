@@ -30,7 +30,14 @@ def ra_repository_path():
     '''
     success, config = read_config()
     if success: 
-        return config['models']
+        return config['ras']
+
+
+def ra_tree_path(raname):
+    '''
+    Returns the path to the model given as argumen, containg all versions
+    '''
+    return os.path.join(ra_repository_path(), raname)
 
 def read_config():
     '''
@@ -42,7 +49,6 @@ def read_config():
     Boolean, dict
     '''
 
-    print ('read_config')
     if 'namastox_configuration' in globals():
         return True, globals()['namastox_configuration']
 
@@ -65,7 +71,7 @@ def read_config():
         else:
             return False, f'Configuration file incorrect. Run "namastox -c config -d ROOT_DIR" with a suitable ROOT_DIR setting'
 
-    items = ['ranames']
+    items = ['ras']
     for i in items:
         conf[i] = os.path.join(conf['root_repository'],i)
 
@@ -77,6 +83,7 @@ def read_config():
                 return False, f'Configuration file incorrect. Unable to convert "{conf[i]}" to a valid path.'
         
     globals()['namastox_configuration'] = conf
+
     return True, conf
 
 def set_repositories(root_path):
@@ -94,7 +101,7 @@ def set_repositories(root_path):
 
     configuration['root_repository'] = root_path
 
-    items = ['ranames']
+    items = ['ras']
     for i in items:
         ipath = os.path.join(root_path, i)
         try:

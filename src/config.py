@@ -62,7 +62,7 @@ def configure(path: None, silent: False):
 
         # If NAMASTOX has been already configured, just show values in screen and return values
         if config['config_status'] == True:
-            for i in ['models', 'spaces', 'predictions', 'profiles']:
+            for i in ['ras']:
                 print (f'{i}: {config[i]}')
             return True, config
 
