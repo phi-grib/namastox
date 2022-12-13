@@ -24,6 +24,7 @@ import argparse
 import yaml
 import os
 from logger import get_logger
+from config import configure
 
 LOG = get_logger(__name__)
 
@@ -56,11 +57,18 @@ def main():
                         help='output YAML file',
                         required=False)
 
-    parser.add_argument('-p', '-pdf',
+    parser.add_argument('-p', '--pdf',
                         help='report in PDF format',
                         required=False)
+    
+    parser.add_argument('-d', '--directory',
+                        help='configuration dir',
+                        required=False)
+    
+    parser.add_argument('-a', '--action',
+                        help='action',
+                        required=False)
 
- 
     args = parser.parse_args()
 
     if args.infile is not None:
@@ -72,6 +80,11 @@ def main():
     # configure flame
     # if args.command != 'config':
     #     utils.config_test()
+
+    if args.command == 'config':
+        success, results = configure(args.directory, (args.action == 'silent'))
+        if not success:
+            LOG.error(f'{results}, configuration unchanged')
 
     if args.command == 'new':
 
