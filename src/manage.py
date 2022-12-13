@@ -138,3 +138,44 @@ def action_list(raname):
             LOG.info(f'\t{raname} : {x}')
 
     return True, f'raname {raname} has {num_versions} published versions'
+
+def action_publish(raname):
+    '''
+    clone the development "dev" version as a new raname version,
+     assigning a sequential version number
+    '''
+
+    if not raname:
+        return False, 'Empty ra name'
+
+    base_path = ra_tree_path(raname)
+
+    if not os.path.isdir(base_path):
+        #LOG.error(f'raname {raname} not found')
+        return False, f'raname {raname} not found'
+
+    # gets version number
+    v = [int(x[-6:]) for x in os.listdir(base_path) if x.startswith("ver")]
+
+    if not v:
+        max_version = 0
+    else:
+        max_version = max(v)
+
+    new_path = os.path.join(base_path,f'ver{max_version+1:06}')
+
+    if os.path.isdir(new_path):
+        #LOG.error(f'Versin {v} of raname {raname} not found')
+        return False, f'Version {max_version+1} of ra {raname} already exists'
+
+    src_path = os.path.join (base_path,'dev')
+
+    try:
+        shutil.copytree(src_path, new_path)
+    except:
+        return False, f'Unable to copy contents of dev version for ra {raname}'
+
+    LOG.info(f'New ra version created from {src_path} to {new_path}')
+    return True, f'New ra version created from {src_path} to {new_path}'
+
+

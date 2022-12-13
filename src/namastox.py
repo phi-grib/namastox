@@ -25,7 +25,7 @@ import yaml
 import os
 from logger import get_logger
 from config import configure
-from manage import action_new, action_kill, action_list
+from manage import action_new, action_kill, action_list, action_publish
 
 LOG = get_logger(__name__)
 
@@ -33,7 +33,15 @@ def main():
 
     LOG.debug('-------------NEW RUN-------------\n')
 
-# -c --config
+# TODO
+# create template ra.yaml
+# output empty template on new
+# implement update:
+#  - parse input to create new ra object
+#  - process ra using expert logic
+#  - output new ra object
+
+
 # -n --new -e NAME -o template.yaml
 # -u --update -e NAME -i template.yaml 
 # -r --report -e NAME -o template.yaml -p result.pdf
@@ -42,8 +50,9 @@ def main():
 
     parser.add_argument('-c', '--command',
                         action='store',
-                        choices=['config', 'new', 'kill', 'list', 'update', 'report'],
-                        help='Action type: \'config\' or \'new\' or \'kill\' or \'list\' or \'update\' or \'report\'',
+                        choices=['config', 'new', 'kill', 'list', 'publish', 'update', 'report'],
+                        help='Action type: \'config\' or \'new\' or \'kill\' or \'list\' or \'publish\''
+                        '\'update\' or \'report\'',
                         required=True)
 
     parser.add_argument('-r', '--raname',
@@ -88,40 +97,39 @@ def main():
             LOG.error(f'{results}, configuration unchanged')
 
     elif args.command == 'new':
-
         if (args.raname is None):
             LOG.error('namastox new : raname argument is compulsory')
             return
         success, result = action_new(args.raname)
 
     elif args.command == 'list':
-
         success, result = action_list(args.raname)   
 
     elif args.command == 'kill':
-
         if (args.raname is None):
             LOG.error('namastox kill : raname argument is compulsory')
             return
         success, result = action_kill(args.raname)   
 
+    elif args.command == 'publish':
+        if (args.raname is None):
+            LOG.error('namastox publish : raname argument is compulsory')
+            return
+        success, result = action_publish(args.raname)  
+
     elif args.command == 'update':
-        
         if (args.raname is None):
             LOG.error('flame predict : raname and input file arguments are compulsory')
             return
 
-        LOG.info ('UPDATE')
+        LOG.info ('UPDATE >>>>>>>>')
 
     elif args.command == 'report':
-        
         if (args.raname is None):
             LOG.error('flame predict : raname and input file arguments are compulsory')
             return
 
-        LOG.info ('REPORT')
-
-        
+        LOG.info ('REPORT >>>>>>>>>')
 
 if __name__ == '__main__':
     main()

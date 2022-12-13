@@ -25,6 +25,7 @@ import numpy as np
 import json
 import yaml
 import os
+import hashlib
 from utils import ra_path
 
 class NAM:
@@ -49,17 +50,16 @@ class ra:
     '''
     def __init__(self):
         ''' constructor '''
-        # self.ID = {}
-        # self.results = {}
-        # self.NAMS = []
-        # self.substances = []
-        # self.endpoints = []
-        # self.error = None
-        # self.warning = None
+        self.ID = {}
+        self.results = {}
+        self.NAMS = []
+        self.substances = []
+        self.endpoints = []
+        self.error = None
+        self.warning = None
 
     def loadYaml(self, raname, version):       
         ''' load the ra object from a YAML file
-
         '''
         # obtain the path and the default name of the raname parameters
         ra_file_path = ra_path(raname, version)
@@ -112,7 +112,6 @@ class ra:
                 else:
                     self.setVal(key,val)
 
-
     def delta(self, raname, version, param):
         ''' load a set of parameters from the configuration file present 
             at the raname directory
@@ -164,22 +163,43 @@ class ra:
     def setVal(self, key, value):
         # for existing keys, replace the contents of 'value'
         if key in self:
-            self['key'] = value
+            self[key] = value
         # for new keys, create a new element with 'value' key
         else:
             self[key] = value
         
-    def setInnerVal (self, ext_key, key, val):
+    def setInnerVal (self, ext_key, key, value):
         # for existing keys, replace the contents of 'value'
         if not key in self:
             return
-        
-            self['key'] = value
+        inner = self[key]
+        if key in inner:
+            inner[key] = value
         # for new keys, create a new element with 'value' key
         else:
-            self[key] = value
+            inner[key] = value
 
+    def getVal(self, key):
+        if key in self:
+            return self[key]
+        else:
+            return None
 
+    def idataHash (self):
+        ''' Create a md5 hash for a number of keys describing parameters
+            relevant for idata
 
+            This hash is compared between runs, to check wether idata must
+            recompute or not the MD 
+        '''
 
+        # update with any new idata relevant parameter 
+        keylist = ['endpoint','version']
 
+        idata_params = []
+        for i in keylist:
+            idata_params.append(self.getVal(i))
+        
+        # use picke as a buffered object, neccesary to generate the hexdigest
+        p = pickle.dumps(idata_params)
+        return hashlib.md5(p).hexdigest()
