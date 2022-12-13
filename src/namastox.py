@@ -26,6 +26,7 @@ import os
 from logger import get_logger
 from config import configure
 from manage import action_new, action_kill, action_list, action_publish
+from update import action_update
 
 LOG = get_logger(__name__)
 
@@ -36,10 +37,7 @@ def main():
 # TODO
 # create template ra.yaml
 # output empty template on new
-# implement update:
-#  - parse input to create new ra object
-#  - process ra using expert logic
-#  - output new ra object
+
 
 
 # -n --new -e NAME -o template.yaml
@@ -57,6 +55,10 @@ def main():
 
     parser.add_argument('-r', '--raname',
                         help='Name of RA',
+                        required=False)
+
+    parser.add_argument('-v', '--version',
+                        help='RA version',
                         required=False)
 
     parser.add_argument('-i', '--infile',
@@ -119,10 +121,11 @@ def main():
 
     elif args.command == 'update':
         if (args.raname is None):
-            LOG.error('flame predict : raname and input file arguments are compulsory')
+            LOG.error('namastox update : raname and input file arguments are compulsory')
             return
 
         LOG.info ('UPDATE >>>>>>>>')
+        action_update (args.raname, args.infile, args.outfile)
 
     elif args.command == 'report':
         if (args.raname is None):

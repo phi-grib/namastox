@@ -162,17 +162,17 @@ class ra:
 
     def setVal(self, key, value):
         # for existing keys, replace the contents of 'value'
-        if key in self:
+        if key in self.__dict__:
             self[key] = value
         # for new keys, create a new element with 'value' key
         else:
-            self[key] = value
+            self.__dict__[key] = value
         
     def setInnerVal (self, ext_key, key, value):
         # for existing keys, replace the contents of 'value'
         if not key in self:
             return
-        inner = self[key]
+        inner = self.__dict__[key]
         if key in inner:
             inner[key] = value
         # for new keys, create a new element with 'value' key
@@ -180,8 +180,8 @@ class ra:
             inner[key] = value
 
     def getVal(self, key):
-        if key in self:
-            return self[key]
+        if key in self.__dict__:
+            return self.__dict__[key]
         else:
             return None
 
