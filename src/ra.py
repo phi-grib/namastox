@@ -25,6 +25,7 @@ import numpy as np
 import json
 import yaml
 import os
+from utils import ra_path
 
 class NAM:
     def __init__(self, name, description=None):
@@ -48,20 +49,20 @@ class ra:
     '''
     def __init__(self):
         ''' constructor '''
-        self.ID = {}
-        self.results = {}
-        self.NAMS = []
-        self.substances = []
-        self.endpoints = []
-        self.error = None
-        self.warning = None
+        # self.ID = {}
+        # self.results = {}
+        # self.NAMS = []
+        # self.substances = []
+        # self.endpoints = []
+        # self.error = None
+        # self.warning = None
 
     def loadYaml(self, raname, version):       
         ''' load the ra object from a YAML file
 
         '''
         # obtain the path and the default name of the raname parameters
-        ra_file_path = utils.ra_path(raname, version)
+        ra_file_path = ra_path(raname, version)
         
         if not os.path.isdir (ra_file_path):
             return False, f'RA "{raname}", version "{version}" not found'
@@ -131,7 +132,7 @@ class ra:
 
         newp = json.load(pfile)
         self.applyDelta(newp)
-        ra_file_path = utils.raname_path(raname, version)
+        ra_file_path = ra_path(raname, version)
         ra_file_name = os.path.join (ra_file_path,'ra.yaml')
         try:
             with open(ra_file_name, 'w') as pfile:
@@ -159,4 +160,26 @@ class ra:
         temp_json['substances']=self.substances
         temp_json['endpoints']=self.endpoints
         return json.dumps(temp_json, allow_nan=True)
+
+    def setVal(self, key, value):
+        # for existing keys, replace the contents of 'value'
+        if key in self:
+            self['key'] = value
+        # for new keys, create a new element with 'value' key
+        else:
+            self[key] = value
+        
+    def setInnerVal (self, ext_key, key, val):
+        # for existing keys, replace the contents of 'value'
+        if not key in self:
+            return
+        
+            self['key'] = value
+        # for new keys, create a new element with 'value' key
+        else:
+            self[key] = value
+
+
+
+
 

@@ -55,7 +55,7 @@ def get_log_file() -> Path:
     The path of the log file is given by
     appdirs.user_log_dir
     """
-    # log_filename_path = appdirs.user_log_dir(appname='NAMASTOX')
+    # log_filename_path = appdirs.user_log_dir(appname='namastox')
     log_filename_path = './'
     log_filename_path = Path(log_filename_path)
     

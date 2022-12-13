@@ -25,7 +25,7 @@ import yaml
 import os
 from logger import get_logger
 from config import configure
-from manage import action_new
+from manage import action_new, action_kill, action_list
 
 LOG = get_logger(__name__)
 
@@ -42,8 +42,8 @@ def main():
 
     parser.add_argument('-c', '--command',
                         action='store',
-                        choices=['config', 'new', 'update', 'report'],
-                        help='Action type: \'config\' or \'new\' or \'update\' or \'report\'',
+                        choices=['config', 'new', 'kill', 'list', 'update', 'report'],
+                        help='Action type: \'config\' or \'new\' or \'kill\' or \'list\' or \'update\' or \'report\'',
                         required=True)
 
     parser.add_argument('-r', '--raname',
@@ -87,12 +87,23 @@ def main():
         if not success:
             LOG.error(f'{results}, configuration unchanged')
 
-    if args.command == 'new':
+    elif args.command == 'new':
 
         if (args.raname is None):
-            LOG.error('flame predict : raname and input file arguments are compulsory')
+            LOG.error('namastox new : raname argument is compulsory')
             return
         success, result = action_new(args.raname)
+
+    elif args.command == 'list':
+
+        success, result = action_list(args.raname)   
+
+    elif args.command == 'kill':
+
+        if (args.raname is None):
+            LOG.error('namastox kill : raname argument is compulsory')
+            return
+        success, result = action_kill(args.raname)   
 
     elif args.command == 'update':
         

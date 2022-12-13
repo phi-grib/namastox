@@ -23,26 +23,40 @@
 import os
 import yaml
 
+def path_expand (path, version):
+    ''' 
+    Expands the path as required for the version provided as argument 
+    '''
+    if version == 0:
+        return os.path.join(path, 'dev')
+    else:
+        return os.path.join(path, 'ver%0.6d' % (version))
+
 def ra_repository_path():
     '''
-    Returns the path to the root of the model repository,
-    containing all models and versions
+    Returns the path to the root of the raname repository,
+    containing all ranames and versions
     '''
     success, config = read_config()
     if success: 
         return config['ras']
 
-
 def ra_tree_path(raname):
     '''
-    Returns the path to the model given as argumen, containg all versions
+    Returns the path to the raname given as argumen, containg all versions
     '''
     return os.path.join(ra_repository_path(), raname)
+
+def ra_path(raname, version):
+    '''
+    Returns the path to the raname and version given as arguments
+    '''
+    return path_expand (ra_tree_path(raname), version)
 
 def read_config():
     '''
     Reads configuration file "config.yaml" and checks
-    sanity of model repository path.
+    sanity of raname repository path.
 
     Returns:
     --------
@@ -88,8 +102,8 @@ def read_config():
 
 def set_repositories(root_path):
     """
-    Set the model repository path.
-    This is the dir where flame is going to create and load models.
+    Set the raname repository path.
+    This is the dir where flame is going to create and load ranames.
     Returns:
     --------
     None
