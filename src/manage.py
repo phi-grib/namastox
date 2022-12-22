@@ -24,11 +24,12 @@ import os
 import shutil
 import pickle
 from logger import get_logger
+from ra import Ra
 from utils import ra_tree_path, ra_repository_path
 
 LOG = get_logger(__name__)
 
-def action_new(raname):
+def action_new(raname, outfile=None):
     '''
     Create a new ra tree, using the given name.
     This creates the development version "dev",
@@ -73,6 +74,19 @@ def action_new(raname):
             return False, f'Unable to copy {cname} file'
 
     LOG.debug(f'copied ra templates from {src_path} to {ndev}')
+
+    ra = Ra()
+    ra.loadYaml(raname, 0)
+    yaml = ra.dumpYAML()
+    if outfile is None:
+        for iline in yaml:
+            print (iline)
+    else:
+        with open(outfile) as f:
+            f.write(yaml) 
+
+    # Dump yaml
+
 
     LOG.info(f'New ra {raname} created')
     return True, 'new ra '+raname+' created'

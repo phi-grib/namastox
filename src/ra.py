@@ -45,7 +45,7 @@ class endpoint:
         self.name = name
         self.decription = description
 
-class ra:
+class Ra:
     ''' Class storing all the risk assessment information
     '''
     def __init__(self):
@@ -75,7 +75,7 @@ class ra:
 
         try:
             with open(ra_file_name, 'r') as pfile:
-                self.p = yaml.safe_load(pfile)
+                self.__dict__ = yaml.safe_load(pfile)
         except Exception as e:
             return False, e
 
@@ -159,6 +159,27 @@ class ra:
         temp_json['substances']=self.substances
         temp_json['endpoints']=self.endpoints
         return json.dumps(temp_json, allow_nan=True)
+
+    def dumpYAML (self):
+        yaml_out = []
+
+        order = ['ID','results','NAMS', 'substances', 'endpoints']
+
+        for key in order:
+            if key in self.__dict__:
+                value = self.__dict__[key]
+                if isinstance(value,dict):
+                    yaml_out.append(f'{key:27} :')
+                    for ikey in value:
+                        yaml_out.append (f'   {ikey:27} : {str(value[ikey]):30} # DOCUMENT')
+                elif isinstance(value,list):
+                    for ivalue in value:
+                        for ikey in ivalue:
+                            yaml_out.append (f'      {ikey:27} : {str(ivalue[ikey]):30} # DOCUMENT')
+                else:
+                    yaml_out.append (f'{key:27} : {str(value):30} # DOCUMENT')
+
+        return (yaml_out)
 
     def setVal(self, key, value):
         # for existing keys, replace the contents of 'value'

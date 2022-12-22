@@ -102,7 +102,7 @@ def main():
         if (args.raname is None):
             LOG.error('namastox new : raname argument is compulsory')
             return
-        success, result = action_new(args.raname)
+        success, result = action_new(args.raname, args.outfile)
 
     elif args.command == 'list':
         success, result = action_list(args.raname)   
