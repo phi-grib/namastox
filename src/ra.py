@@ -129,7 +129,7 @@ class Ra:
 
     def dumpUpdate (self):
         # add the keys which should be shown to the user uppon the risk assessment creation
-        order = ['substances', 'endpoints', 'results']
+        order = ['substances', 'endpoints', 'NAMS', 'results']
         return self.dump(order)
 
     def dump (self, elements):
@@ -153,8 +153,9 @@ class Ra:
                             for ikey in idict:
                                 yaml_out.append (f'- {ikey:} : ')
                                 iidict = idict[ikey]
-                                for iikey in iidict:
-                                    yaml_out.append (f'   {iikey} : {str(iidict[iikey])}')
+                                if iidict is not None:
+                                    for iikey in iidict:
+                                        yaml_out.append (f'   {iikey} : {str(iidict[iikey])}')
 
                 # dictionary 
                 elif isinstance(value,dict):
@@ -176,6 +177,24 @@ class Ra:
         # for new keys, create a new element with 'value' key
         else:
             self.dict[key] = value
+    
+    #TODO: 
+    # 1. simplify, 
+    # 2. do not add if there are empty items in the list
+    # 3. allow other fields, not only "name"
+    def appVal(self, key, key_in, val):
+        if key in self.dict:
+            if isinstance(self.dict[key],list):
+                target_list = self.dict[key]
+                for item in target_list:
+                    if key_in in item:
+                        if item[key_in] is not None:
+                            if 'name' in item[key_in]:
+                                if item[key_in]['name'] == val:
+                                    return
+                new_dict = {}
+                new_dict[key_in] = {'name': val}
+                self.dict[key].append(new_dict)
         
     def setInnerVal (self, ext_key, key, value):
         # for existing keys, replace the contents of 'value'
@@ -193,6 +212,29 @@ class Ra:
             return self.dict[key]
         else:
             return None
+
+    def appyExpert (self):
+        expname = os.path.join(self.getVal('rapath'),'expert.json')
+        with open(expname, 'r') as f:
+            ruleset = json.load(f)
+        
+        for rule in ruleset['rule']:
+
+            sukey = rule['subject_key']
+            sukey_in = rule['subject_key_in']
+            suval = rule['subject_val']
+            verb = rule['verb']
+            odkey = rule['od_key']
+            odkey_in = rule['od_key_in']
+            odval = rule['od_val']
+
+            if sukey in self.dict:
+                for i in self.dict[sukey]:
+                    element = i[sukey_in]
+                    if element['name'] ==suval:
+                        if verb == 'add':
+                            self.appVal(odkey, odkey_in, odval)
+
 
     def setHash (self):
         ''' Create a md5 hash for a number of keys describing parameters

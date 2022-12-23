@@ -32,14 +32,7 @@ LOG = get_logger(__name__)
 
 # TODO: this should be a class!!!
 
-def process_ra (ra):
 
-    # load expert
-
-    # apply expert rules on ra
-
-
-    return ra
 
 def action_update(raname, ifile, ofile=None):
     '''
@@ -58,13 +51,11 @@ def action_update(raname, ifile, ofile=None):
     
     with open(ifile,'r') as inputf:
         delta_dict = yaml.safe_load(inputf)
-    # print (delta_dict)
 
     ra.applyDelta(delta_dict)
 
-
     # process ra using expert logic
-    ra = process_ra(ra)
+    ra.appyExpert()
 
     # dump new version
     results = ra.dumpUpdate()

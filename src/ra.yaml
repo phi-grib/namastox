@@ -5,17 +5,9 @@ results:
   notes: null
 NAMS:
   - NAM:
-      name: null
-      description: null
-      result: null
 substances:
   - substance:
-      name: null
-      SMILES: null
-      CASRN: null
 endpoints:
   - endpoint:
-      name: null
-      description: null
 error: null
 warning: null
