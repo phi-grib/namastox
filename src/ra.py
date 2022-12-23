@@ -44,7 +44,6 @@ class endpoint:
     def __init__(self, name, description=None):
         self.name = name
         self.decription = description
-
 class Ra:
     ''' Class storing all the risk assessment information
     '''
@@ -57,7 +56,10 @@ class Ra:
             'substances':[],
             'endpoints':[],
             'error': None,
-            'warning': None
+            'warning': None,
+            'raname':'',
+            'version': 0,
+            'rapath':''
             }
 
     def loadYaml(self, raname, version):       
@@ -80,12 +82,6 @@ class Ra:
                 self.dict = yaml.safe_load(pfile)
         except Exception as e:
             return False, e
-
-        # add keys for the raname and a MD5 hash
-        self.setVal('raname',raname)
-        self.setVal('version',version)
-        self.setVal('rapath',ra_file_path)
-        self.setVal('md5',self.idataHash())
 
         return True, 'OK'
 
@@ -114,10 +110,13 @@ class Ra:
                 else:
                     self.setVal(key,val)
 
-    def load (self):
+    def load (self):        
         print ('load')
 
     def save (self):
+        rafile = os.path.join (self.getVal('rapath'),'ra.yaml')
+        with open(rafile,'w') as f:
+            f.write(yaml.dump(self.dict))
         print ('save')
 
     def getJSON (self):
@@ -195,7 +194,7 @@ class Ra:
         else:
             return None
 
-    def idataHash (self):
+    def setHash (self):
         ''' Create a md5 hash for a number of keys describing parameters
             relevant for idata
 
@@ -212,4 +211,4 @@ class Ra:
         
         # use picke as a buffered object, neccesary to generate the hexdigest
         p = pickle.dumps(idata_params)
-        return hashlib.md5(p).hexdigest()
+        self.dict['md5'] = hashlib.md5(p).hexdigest()

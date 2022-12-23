@@ -25,7 +25,7 @@ import shutil
 import pickle
 from logger import get_logger
 from ra import Ra
-from utils import ra_tree_path, ra_repository_path
+from utils import ra_tree_path, ra_repository_path, ra_path
 
 LOG = get_logger(__name__)
 
@@ -75,11 +75,22 @@ def action_new(raname, outfile=None):
 
     LOG.debug(f'copied risk assessment templates from {src_path} to {ndev}')
 
+    # Instantiate Ra
     ra = Ra()
     success, results = ra.loadYaml(raname, 0)
     if not success:
         return False, results
 
+    # Include RA information 
+    ra.setVal('raname',raname)
+    ra.setVal('version',0)
+    ra.setVal('rapath',ra_path(raname, 0))
+    ra.setHash()
+
+    # Save
+    ra.save()
+
+    # Show template
     yaml = ra.dumpStart()
     if outfile is None:
         for iline in yaml:
