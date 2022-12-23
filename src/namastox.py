@@ -133,6 +133,9 @@ def main():
             return
 
         LOG.info ('REPORT >>>>>>>>>')
+    
+    if result is not None:
+        LOG.info (result)
 
 if __name__ == '__main__':
     main()

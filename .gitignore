@@ -1,4 +1,4 @@
-src/namastox.log
-src/__pycache__/*
-ras/*
+src/__pycache__/
+ras/
 *.pyc
+*.log

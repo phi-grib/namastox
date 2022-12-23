@@ -50,13 +50,15 @@ class Ra:
     '''
     def __init__(self):
         ''' constructor '''
-        self.ID = {}
-        self.results = {}
-        self.NAMS = []
-        self.substances = []
-        self.endpoints = []
-        self.error = None
-        self.warning = None
+        self.dict = {
+            'ID':{}, 
+            'results':{},
+            'NAMS':[],
+            'substances':[],
+            'endpoints':[],
+            'error': None,
+            'warning': None
+            }
 
     def loadYaml(self, raname, version):       
         ''' load the ra object from a YAML file
@@ -75,7 +77,7 @@ class Ra:
 
         try:
             with open(ra_file_name, 'r') as pfile:
-                self.__dict__ = yaml.safe_load(pfile)
+                self.dict = yaml.safe_load(pfile)
         except Exception as e:
             return False, e
 
@@ -160,40 +162,65 @@ class Ra:
         temp_json['endpoints']=self.endpoints
         return json.dumps(temp_json, allow_nan=True)
 
-    def dumpYAML (self):
+    def dumpStartTemp (self):
+
         yaml_out = []
 
-        order = ['ID','results','NAMS', 'substances', 'endpoints']
+
+        order = ['substances', 'endpoints']
+
+        # substances:
+        # - substance:
+        #     name: null
+        #     SMILES: null
+        #     CASRN: null
+        # endpoints:
+        # - endpoint:
+        #     name: null
+        #     description: null
 
         for key in order:
-            if key in self.__dict__:
-                value = self.__dict__[key]
-                if isinstance(value,dict):
-                    yaml_out.append(f'{key:27} :')
-                    for ikey in value:
-                        yaml_out.append (f'   {ikey:27} : {str(value[ikey]):30} # DOCUMENT')
-                elif isinstance(value,list):
-                    for ivalue in value:
-                        for ikey in ivalue:
-                            yaml_out.append (f'      {ikey:27} : {str(ivalue[ikey]):30} # DOCUMENT')
+            if key in self.dict:
+                value = self.dict[key]
+                # value can be a list or a single variable
+
+                if isinstance(value,list):
+                    yaml_out.append(f'{key}:')
+                    for iitem in value:
+                        if not isinstance(iitem, dict):
+                            yaml_out.append (f'- {iitem}')
+                        else:
+                            idict = iitem
+                            for ikey in idict:
+                                yaml_out.append (f'- {ikey:} : ')
+                                iidict = idict[ikey]
+                                for iikey in iidict:
+                                    yaml_out.append (f'   {iikey} : {str(iidict[iikey])}')
+                elif isinstance(value,dict):
+                    idict = value
+                    for ikey in idict:
+                        yaml_out.append (f'- {ikey:} : ')
+                        iidict = idict[ikey]
+                        for iikey in iidict:
+                            yaml_out.append (f'   {iikey} : {str(iidict[iikey])}')
                 else:
-                    yaml_out.append (f'{key:27} : {str(value):30} # DOCUMENT')
+                    yaml_out.append(f'{key} : {str(value[ikey])}')
 
         return (yaml_out)
 
     def setVal(self, key, value):
         # for existing keys, replace the contents of 'value'
-        if key in self.__dict__:
+        if key in self.dict:
             self[key] = value
         # for new keys, create a new element with 'value' key
         else:
-            self.__dict__[key] = value
+            self.dict[key] = value
         
     def setInnerVal (self, ext_key, key, value):
         # for existing keys, replace the contents of 'value'
         if not key in self:
             return
-        inner = self.__dict__[key]
+        inner = self.dict[key]
         if key in inner:
             inner[key] = value
         # for new keys, create a new element with 'value' key
@@ -201,8 +228,8 @@ class Ra:
             inner[key] = value
 
     def getVal(self, key):
-        if key in self.__dict__:
-            return self.__dict__[key]
+        if key in self.dict:
+            return self.dict[key]
         else:
             return None
 

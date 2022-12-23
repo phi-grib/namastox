@@ -31,13 +31,13 @@ LOG = get_logger(__name__)
 
 def action_new(raname, outfile=None):
     '''
-    Create a new ra tree, using the given name.
+    Create a new risk assessment tree, using the given name.
     This creates the development version "dev",
     copying inside default child classes
     '''
 
     if not raname:
-        return False, 'empty ra name'
+        return False, 'empty risk assessment name'
 
     # importlib does not allow using 'test' and issues a misterious error when we
     # try to use this name. This is a simple workaround to prevent creating ranames 
@@ -48,17 +48,17 @@ def action_new(raname, outfile=None):
     # raname directory with /dev (default) level
     ndir = ra_tree_path(raname)
     if os.path.isdir(ndir):
-        return False, f'Endpoint {raname} already exists'
+        return False, f'Risk assessment {raname} already exists'
     try:
         os.mkdir(ndir)
-        LOG.info(f'{ndir} created')
+        LOG.debug(f'{ndir} created')
     except:
         return False, f'Unable to create path for {raname} endpoint'
 
     ndev = os.path.join (ndir, 'dev')
     try:
         os.mkdir(ndev)
-        LOG.info(f'{ndev} created')
+        LOG.debug(f'{ndev} created')
     except:
         return False, f'Unable to create path for {raname} endpoint'
 
@@ -73,24 +73,20 @@ def action_new(raname, outfile=None):
         except:
             return False, f'Unable to copy {cname} file'
 
-    LOG.debug(f'copied ra templates from {src_path} to {ndev}')
+    LOG.debug(f'copied risk assessment templates from {src_path} to {ndev}')
 
     ra = Ra()
     ra.loadYaml(raname, 0)
-    yaml = ra.dumpYAML()
+    yaml = ra.dumpStartTemp()
     if outfile is None:
         for iline in yaml:
             print (iline)
     else:
-        with open(outfile) as f:
-            f.write(yaml) 
+        with open(outfile,'w') as f:
+            for iline in yaml:
+                f.write (iline+'\n')
 
-    # Dump yaml
-
-
-    LOG.info(f'New ra {raname} created')
-    return True, 'new ra '+raname+' created'
-
+    return True, f'New risk assessment {raname} created'
 
 def action_kill(raname):
     '''
@@ -98,22 +94,19 @@ def action_kill(raname):
     '''
 
     if not raname:
-        return False, 'Empty ra name'
+        return False, 'Empty risk assessment name'
 
     ndir = ra_tree_path(raname)
 
     if not os.path.isdir(ndir):
-        return False, f'Ra {raname} not found'
+        return False, f'Risk assessment {raname} not found'
 
     try:
         shutil.rmtree(ndir, ignore_errors=True)
     except:
-        return False, f'Failed to remove ra {raname}'
+        return False, f'Failed to remove risk assessment {raname}'
 
-    LOG.info(f'ra {raname} removed')
-    #print(f'raname {raname} removed')
-    return True, f'ra {raname} removed'
-
+    return True, f'Risk assessment {raname} removed'
 
 def action_list(raname):
     '''
@@ -125,10 +118,10 @@ def action_list(raname):
     if not raname:
         rdir = ra_repository_path()
         if os.path.isdir(rdir) is False:
-            return False, 'the ranames repository path does not exist. Please run "flame -c config".'
+            return False, 'The risk assessment name repository path does not exist. Please run "namastox -c config".'
 
         num_ranames = 0
-        LOG.info('ra found in repository:')
+        LOG.info('Risk assessment(s) found in repository:')
         for x in os.listdir(rdir):
             xpath = os.path.join(rdir,x) 
             # discard if the item is not a directory
@@ -139,8 +132,8 @@ def action_list(raname):
                 continue
             num_ranames += 1
             LOG.info('\t'+x)
-        LOG.debug(f'Retrieved list of ranames from {rdir}')
-        return True, f'{num_ranames} ranames found'
+        LOG.debug(f'Retrieved list of risk assessments from {rdir}')
+        return True, f'{num_ranames} risk assessment(s) found'
         # if a raname name is provided, list versions
 
     base_path = ra_tree_path(raname)
@@ -151,7 +144,7 @@ def action_list(raname):
             num_versions += 1
             LOG.info(f'\t{raname} : {x}')
 
-    return True, f'raname {raname} has {num_versions} published versions'
+    return True, f'Risk assessment {raname} has {num_versions} published versions'
 
 def action_publish(raname):
     '''
@@ -160,13 +153,13 @@ def action_publish(raname):
     '''
 
     if not raname:
-        return False, 'Empty ra name'
+        return False, 'Empty risk assessment name'
 
     base_path = ra_tree_path(raname)
 
     if not os.path.isdir(base_path):
         #LOG.error(f'raname {raname} not found')
-        return False, f'raname {raname} not found'
+        return False, f'Risk assessment {raname} not found'
 
     # gets version number
     v = [int(x[-6:]) for x in os.listdir(base_path) if x.startswith("ver")]
@@ -180,16 +173,15 @@ def action_publish(raname):
 
     if os.path.isdir(new_path):
         #LOG.error(f'Versin {v} of raname {raname} not found')
-        return False, f'Version {max_version+1} of ra {raname} already exists'
+        return False, f'Version {max_version+1} of risk assessment {raname} already exists'
 
     src_path = os.path.join (base_path,'dev')
 
     try:
         shutil.copytree(src_path, new_path)
     except:
-        return False, f'Unable to copy contents of dev version for ra {raname}'
+        return False, f'Unable to copy contents of dev version for risk assessment {raname}'
 
-    LOG.info(f'New ra version created from {src_path} to {new_path}')
-    return True, f'New ra version created from {src_path} to {new_path}'
+    return True, f'New risk assessment version created from {src_path} to {new_path}'
 
 
