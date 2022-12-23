@@ -21,27 +21,63 @@
 # along with NAMASTOX. If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import yaml
 import shutil
 import pickle
 from logger import get_logger
 from utils import ra_tree_path, ra_repository_path
-import ra
+from ra import Ra
 
 LOG = get_logger(__name__)
 
 # TODO: this should be a class!!!
 
-def action_update(raname, ifile, ofile):
+def process_ra (ra):
+
+    # load expert
+
+    # apply expert rules on ra
+
+
+    return ra
+
+def action_update(raname, ifile, ofile=None):
     '''
         ***
     '''
-    ira = ra.ra( )
-    succes, results = ira.loadYaml(raname, 0)
-    print (ira.getJSON())
 
-    # parse input to create new ra object
+    # instantiate a ra object
+    ra = Ra()
+    succes, results = ra.loadYaml(raname,0)
+    if not succes:
+        return False, results
+
+    # read delta and use it to change existing delra
+    if not os.path.isfile(ifile):
+        return False, f'{ifile} not found'
+    
+    with open(ifile,'r') as inputf:
+        delta_dict = yaml.safe_load(inputf)
+    # print (delta_dict)
+
+    ra.applyDelta(delta_dict)
 
 
     # process ra using expert logic
+    ra = process_ra(ra)
 
-    # output new ra object
+    # dump new version
+    results = ra.dumpUpdate()
+
+    if ofile is None:
+        for iline in results:
+            print (iline)
+    else:
+        with open(ofile,'w') as outputf:
+            for iline in results:
+                outputf.write (iline+'\n')
+    
+    # save new version and replace the previous one
+    ra.save()
+
+    return True, results

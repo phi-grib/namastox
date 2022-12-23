@@ -76,8 +76,11 @@ def action_new(raname, outfile=None):
     LOG.debug(f'copied risk assessment templates from {src_path} to {ndev}')
 
     ra = Ra()
-    ra.loadYaml(raname, 0)
-    yaml = ra.dumpStartTemp()
+    success, results = ra.loadYaml(raname, 0)
+    if not success:
+        return False, results
+
+    yaml = ra.dumpStart()
     if outfile is None:
         for iline in yaml:
             print (iline)

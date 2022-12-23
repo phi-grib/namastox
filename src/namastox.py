@@ -34,6 +34,8 @@ def main():
 
     LOG.debug('-------------NEW RUN-------------\n')
 
+    result = None
+    
 # TODO
 # create template ra.yaml
 # output empty template on new
@@ -120,12 +122,10 @@ def main():
         success, result = action_publish(args.raname)  
 
     elif args.command == 'update':
-        if (args.raname is None):
+        if (args.raname is None or args.infile is None):
             LOG.error('namastox update : raname and input file arguments are compulsory')
             return
-
-        LOG.info ('UPDATE >>>>>>>>')
-        action_update (args.raname, args.infile, args.outfile)
+        success, results = action_update (args.raname, args.infile, args.outfile)
 
     elif args.command == 'report':
         if (args.raname is None):
