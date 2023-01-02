@@ -8,9 +8,17 @@ Software tool for supporting the implementation of New Assessment Methods (NAMs)
 *** conda environment ***
 
 
-## CLI Commands
+## NAMASTOX commands
 
-*** create a table with CLI commands
+| Command | Description |
+| --- | --- |
+| -c/ --command | Action to be performed. Acceptable values are *new*, *kill*, *update*  |
+| -r/ --risk | Name of the risk assessment (RA)
+| -a/ --action | Use 'silent' to configure the program using default RA repositories    |
+| -i/ --infile | Name of the input file used by the command. |
+| -o/ --outfile | Name of the output file used by the command. |
+| -h/ --help | Shows a help message on the screen |
+
 
 ## Quickstart
 
