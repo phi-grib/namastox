@@ -1,16 +1,52 @@
 {
     "rule": [
-        {"subject_key" : "endpoints",
-        "subject_val" : "CMR",
-        "verb" : "add",
-        "od_key" : "NAMS",
-        "od_val" : "micronucleous" 
+        {"subject": [
+            { "dic" : "endpoints",
+              "key" : "name",
+              "val" : "CMR"}
+        ],
+        "predicate" : {
+            "action":"add"
         },
-        {"subject_key" : "endpoints",
-        "subject_val" : "CMR",
-        "verb" : "add",
-        "od_key" : "NAMS",
-        "od_val" : "AMES test" 
+        "object": [
+           {"dic" : "NAMS",
+            "key" : "name",
+            "val" : "micronucleous" 
+            }
+        ]
+        },
+        {"subject": [
+            { "dic" : "endpoints",
+              "key" : "name",
+              "val" : "CMR"}
+        ],
+        "predicate" : {
+            "action":"add"
+        },
+        "object": [
+            {"dic" : "NAMS",
+             "key" : "name",
+             "val" : "AMES test"},
+            {"dic" : "NAMS",
+             "key" : "description",
+             "val" : "test AMES "}
+            ] 
+        },
+            {"subject": [
+                { "dic" : "substances",
+                  "key" : "SMILES"}
+            ],
+            "predicate" : {
+                "action":"compute",
+                "engine":"self",
+                "call":"logP" 
+            
+            },
+            "object": [
+               {"dic" : "results",
+                "key" : "logp"
+                }
+            ]
         }
     ]
 }

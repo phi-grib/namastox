@@ -28,22 +28,6 @@ import os
 import hashlib
 from utils import ra_path
 
-class NAM:
-    def __init__(self, name, description=None):
-        self.name = name
-        self.decription = description
-
-class substance:
-    def __init__(self, name, ID, CASRN=None, SMILES=None):
-        self.name = name
-        self.ID = ID
-        self.CASRN=CASRN
-        self.SMILES=SMILES
-
-class endpoint:
-    def __init__(self, name, description=None):
-        self.name = name
-        self.decription = description
 class Ra:
     ''' Class storing all the risk assessment information
     '''
@@ -177,26 +161,7 @@ class Ra:
         # for new keys, create a new element with 'value' key
         else:
             self.dict[key] = value
-    
-    #TODO: 
-    # 1. simplify, DONE
-    # 2. do not add if there are empty items in the list
-    # 3. allow other fields, not only "name"
-    def addVal(self, key, val):
-        if key in self.dict:
-            if isinstance(self.dict[key],list):
-                target_list = self.dict[key]
-                for item in target_list:
-                    if 'name' in item:
-                        if item['name'] == val:
-                            return
-                new_dict = {'name': val}
-                self.dict[key].append(new_dict)
-            elif self.dict[key] is None:
-                new_dict = {'name': val}
-                self.dict[key] = [new_dict]
-
-        
+           
     def setInnerVal (self, ext_key, key, value):
         # for existing keys, replace the contents of 'value'
         if not key in self:
@@ -214,25 +179,117 @@ class Ra:
         else:
             return None
 
+    #################################################
+    # expert section
+    #################################################
+    def extractAction (self, rule):
+        if 'predicate' in rule:
+            if 'action' in rule['predicate']:
+                return rule['predicate']['action']
+        return None
+
+    def validateRule (self, rule):
+        # rule should be a dictionary and contain keys 'subject' and 'object' with a list 
+        if not isinstance(rule, dict):
+            return False, 'rule is not a dictionary'
+        if not 'subject' in rule:
+            return False, 'no subject key in the rule'
+        if not isinstance(rule['subject'], list):
+            return False, 'subject key in rule is not of type list'
+        if not 'object' in rule:
+            return False, 'no object key in the rule'
+        if not isinstance(rule['object'], list):
+            return False, 'object key in the rule is not of type list'
+        return True, 'OK'
+
+    def compute (self, rule):
+        # rule should be a dictionary and contain keys 'subject' and 'object' with a list 
+        success, result = self.validateRule(rule)
+        if not success:
+            return success, result
+
+        print ('COMPUTE actions are not fully implemented yet')
+
+        return True, 'OK'
+
+    def addVal(self, rule):
+        # for any item in the subject
+        #   if it is coincident with existing keys, add all the elements in the object
+        success, result = self.validateRule(rule)
+        if not success:
+            return success, result
+
+        found = False
+        for isub in rule['subject']:
+            idic = isub['dic']
+            ikey = isub['key']
+            ival = isub['val']
+            if idic in self.dict:
+                if isinstance(self.dict[idic],list):
+                    target_list = self.dict[idic]
+                    for item in target_list:
+                        if ikey in item:
+                            if item[ikey] == ival:
+                                found = True
+                                break
+            if found:
+                break
+
+        if found:
+            for iobj in rule['object']:
+
+                ofound = False
+                idic = iobj['dic']
+                ikey = iobj['key']
+                ival = iobj['val']
+            
+                if idic in self.dict:
+                    if isinstance(self.dict[idic],list):
+                        target_list = self.dict[idic]
+                        for item in target_list:
+                            if ikey in item:
+                                if item[ikey] == ival:
+                                    ofound = True
+                                    break
+                        if not ofound:
+                            new_dict = {ikey: ival}
+                            self.dict[idic].append(new_dict)
+
+                    elif self.dict[idic] is None:
+                        new_dict = {ikey: ival}
+                        self.dict[idic] = [new_dict]
+        
+        return True, 'OK'
+
+
     def appyExpert (self):
         expname = os.path.join(self.getVal('rapath'),'expert.json')
+        if not os.path.isfile(expname):
+            return False, 'expert.json file not found'
+
         with open(expname, 'r') as f:
             ruleset = json.load(f)
         
         for rule in ruleset['rule']:
 
-            sukey = rule['subject_key']
-            suval = rule['subject_val']
-            verb = rule['verb']
-            odkey = rule['od_key']
-            odval = rule['od_val']
+            action = self.extractAction(rule)
+            if action == 'add':
+                success, result = self.addVal(rule)
+            
+            elif action == 'request':
+                print ('REQUEST actions are not implemented yet')
 
-            if sukey in self.dict:
-                for element in self.dict[sukey]:
-                    if element['name'] == suval:
-                        if verb == 'add':
-                            self.addVal(odkey, odval)
+            elif action == 'compute':
+                success, result = self.compute(rule)
+            
+            elif action is None:
+                return False, 'no valid action found'
+        
+        return True, 'OK'
 
+    #################################################
+    # utilities section
+    #################################################
 
     def setHash (self):
         ''' Create a md5 hash for a number of keys describing parameters
