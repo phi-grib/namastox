@@ -46,8 +46,8 @@ class Ra:
             'rapath':''
             }
 
-    def loadYaml(self, raname, version):       
-        ''' load the ra object from a YAML file
+    def load(self, raname, version):       
+        ''' load the Ra object from a YAML file
         '''
         # obtain the path and the default name of the raname parameters
         ra_file_path = ra_path(raname, version)
@@ -69,7 +69,18 @@ class Ra:
 
         return True, 'OK'
 
+    def save (self):
+        ''' saves the Ra object to a YAML file
+        '''
+        rafile = os.path.join (self.getVal('rapath'),'ra.yaml')
+        with open(rafile,'w') as f:
+            f.write(yaml.dump(self.dict))
+
     def applyDelta (self, delta_dict):
+        ''' uses the keys of the delta_dict parameter to update the contents of self.dict
+            - for lists, the content is not appended, but replaced
+            - for dictionaries, the content is merged 
+        '''
         # update interna dict with keys in the input file (delta)
         black_list = ['raname', 'version', 'rapath', 'md5']
         for key in delta_dict:
@@ -77,8 +88,7 @@ class Ra:
 
                 val = delta_dict[key]
 
-                # YAML define null values as 'None, which are interpreted 
-                # as strings
+                # YAML define null values as 'None, which are interpreted as strings
                 if val == 'None':
                     val = None
 
@@ -90,71 +100,21 @@ class Ra:
                             inner_val = None
 
                         self.setInnerVal(key, inner_key, inner_val)
-                        #print ('@delta: adding',key, inner_key, inner_val)
                 else:
                     self.setVal(key,val)
 
-    def load (self):        
-        print ('load')
-
-    def save (self):
-        rafile = os.path.join (self.getVal('rapath'),'ra.yaml')
-        with open(rafile,'w') as f:
-            f.write(yaml.dump(self.dict))
-        print ('save')
-
-    def getJSON (self):
-        return json.dumps(self.dict, allow_nan=True)
-
-    def dumpStart (self):
-        # add the keys which should be shown to the user uppon the risk assessment creation
-        order = ['substances', 'endpoints']
-        return self.dump(order)
-
-    def dumpUpdate (self):
-        # add the keys which should be shown to the user uppon the risk assessment creation
-        order = ['substances', 'endpoints', 'NAMS', 'results']
-        return self.dump(order)
-
-    def dump (self, elements):
-        yaml_out = []
-        for key in elements:
-
-            if key in self.dict:
-                value = self.dict[key]
-
-                # value can be a list or a single variable
-                if isinstance(value,list):
-                    yaml_out.append(f'{key}:')
-                    for iitem in value:
-
-                        # list item is a value
-                        if not isinstance(iitem, dict):
-                            yaml_out.append (f'- {iitem}')
-                        
-                        # list item is a dictionary
-                        else:
-                            idict = iitem
-                            for i,ikey in enumerate(idict):
-                                if i==0:
-                                    yaml_out.append (f'- {ikey:} : {str(idict[ikey])}')
-                                else:
-                                    yaml_out.append (f'  {ikey:} : {str(idict[ikey])}')
-
-                # dictionary 
-                elif isinstance(value,dict):
-                    yaml_out.append(f'{key}:')
-                    idict = value
-                    for ikey in idict:
-                        yaml_out.append (f'  {ikey} : {str(idict[ikey])}')
-                
-                # item
-                else:
-                    yaml_out.append(f'{key} : {str(self.dict[key])}')
-
-        return (yaml_out)
+    def getVal(self, key):
+        ''' returns self.dict value for a given key
+        '''
+        if key in self.dict:
+            return self.dict[key]
+        else:
+            return None
 
     def setVal(self, key, value):
+        ''' sets self.dict value for a given key, either replacing existing 
+            values or creating the key, if it doesn't exist previously
+        '''
         # for existing keys, replace the contents of 'value'
         if key in self.dict:
             self.dict[key] = value
@@ -162,33 +122,32 @@ class Ra:
         else:
             self.dict[key] = value
            
-    def setInnerVal (self, ext_key, key, value):
-        # for existing keys, replace the contents of 'value'
-        if not key in self:
+    def setInnerVal (self, key, inner_key, inner_val):
+        ''' sets self.dict for a givenn second level key, either replacing existing 
+            values or creating the key, if it doesn't exist previously
+        '''
+        if not key in self.dict:
             return
         inner = self.dict[key]
-        if key in inner:
-            inner[key] = value
-        # for new keys, create a new element with 'value' key
-        else:
-            inner[key] = value
+        if isinstance(inner, dict):
+            inner[inner_key] = inner_val
 
-    def getVal(self, key):
-        if key in self.dict:
-            return self.dict[key]
-        else:
-            return None
 
     #################################################
     # expert section
     #################################################
+
     def extractAction (self, rule):
+        ''' Returns the ACTION present in the rule
+        '''
         if 'predicate' in rule:
             if 'action' in rule['predicate']:
                 return rule['predicate']['action']
         return None
 
     def validateRule (self, rule):
+        ''' Make sure the rule is sythactically correct
+        '''
         # rule should be a dictionary and contain keys 'subject' and 'object' with a list 
         if not isinstance(rule, dict):
             return False, 'rule is not a dictionary'
@@ -202,7 +161,11 @@ class Ra:
             return False, 'object key in the rule is not of type list'
         return True, 'OK'
 
+
     def compute (self, rule):
+        ''' ACTION COMPUTE: we will use information from RA and the rule to generate (compute) additional data
+            the rule can define if the computation will be run locally or we will call an external service
+        '''
         # rule should be a dictionary and contain keys 'subject' and 'object' with a list 
         success, result = self.validateRule(rule)
         if not success:
@@ -212,7 +175,10 @@ class Ra:
 
         return True, 'OK'
 
-    def addVal(self, rule):
+    def include (self, rule):
+        ''' ACTION INCLUDE: we will use the rule to include new data in RA, if the elements described in the subject are found
+            Subject elements can be a list and the conditions will be combined using OR: any element triggers the inclussion
+        '''
         # for any item in the subject
         #   if it is coincident with existing keys, add all the elements in the object
         success, result = self.validateRule(rule)
@@ -261,8 +227,10 @@ class Ra:
         
         return True, 'OK'
 
+    def applyExpert (self):
+        ''' TODO: we must log all the results of the expert 
+        '''
 
-    def appyExpert (self):
         expname = os.path.join(self.getVal('rapath'),'expert.json')
         if not os.path.isfile(expname):
             return False, 'expert.json file not found'
@@ -274,7 +242,7 @@ class Ra:
 
             action = self.extractAction(rule)
             if action == 'add':
-                success, result = self.addVal(rule)
+                success, result = self.include(rule)
             
             elif action == 'request':
                 print ('REQUEST actions are not implemented yet')
@@ -285,7 +253,52 @@ class Ra:
             elif action is None:
                 return False, 'no valid action found'
         
-        return True, 'OK'
+        return success, result
+
+    #################################################
+    # output section
+    #################################################
+
+    def dumpJSON (self):
+        return json.dumps(self.dict, allow_nan=True)
+
+    def dumpYAML (self, elements):
+        yaml_out = []
+        for key in elements:
+
+            if key in self.dict:
+                value = self.dict[key]
+
+                # value can be a list or a single variable
+                if isinstance(value,list):
+                    yaml_out.append(f'{key}:')
+                    for iitem in value:
+
+                        # list item is a value
+                        if not isinstance(iitem, dict):
+                            yaml_out.append (f'- {iitem}')
+                        
+                        # list item is a dictionary
+                        else:
+                            idict = iitem
+                            for i,ikey in enumerate(idict):
+                                if i==0:
+                                    yaml_out.append (f'- {ikey:} : {str(idict[ikey])}')
+                                else:
+                                    yaml_out.append (f'  {ikey:} : {str(idict[ikey])}')
+
+                # dictionary 
+                elif isinstance(value,dict):
+                    yaml_out.append(f'{key}:')
+                    idict = value
+                    for ikey in idict:
+                        yaml_out.append (f'  {ikey} : {str(idict[ikey])}')
+                
+                # item
+                else:
+                    yaml_out.append(f'{key} : {str(self.dict[key])}')
+
+        return (yaml_out)
 
     #################################################
     # utilities section
@@ -293,10 +306,8 @@ class Ra:
 
     def setHash (self):
         ''' Create a md5 hash for a number of keys describing parameters
-            relevant for idata
-
-            This hash is compared between runs, to check wether idata must
-            recompute or not the MD 
+            relevant for RA
+            TODO: not clear which data should be used and what exactly is this useful for
         '''
 
         # update with any new idata relevant parameter 

@@ -77,7 +77,7 @@ def action_new(raname, outfile=None):
 
     # Instantiate Ra
     ra = Ra()
-    success, results = ra.loadYaml(raname, 0)
+    success, results = ra.load(raname, 0)
     if not success:
         return False, results
 
@@ -91,7 +91,8 @@ def action_new(raname, outfile=None):
     ra.save()
 
     # Show template
-    yaml = ra.dumpStart()
+    yaml = ra.dumpYAML(['substances', 'endpoints'])
+    
     if outfile is None:
         for iline in yaml:
             print (iline)

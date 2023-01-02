@@ -32,8 +32,6 @@ LOG = get_logger(__name__)
 
 # TODO: this should be a class!!!
 
-
-
 def action_update(raname, ifile, ofile=None):
     '''
         ***
@@ -41,7 +39,7 @@ def action_update(raname, ifile, ofile=None):
 
     # instantiate a ra object
     ra = Ra()
-    succes, results = ra.loadYaml(raname,0)
+    succes, results = ra.load(raname,0)
     if not succes:
         return False, results
 
@@ -55,10 +53,10 @@ def action_update(raname, ifile, ofile=None):
     ra.applyDelta(delta_dict)
 
     # process ra using expert logic
-    ra.appyExpert()
+    ra.applyExpert()
 
     # dump new version
-    results = ra.dumpUpdate()
+    results = ra.dumpYAML(['substances', 'endpoints', 'NAMS', 'results'])
 
     if ofile is None:
         for iline in results:
