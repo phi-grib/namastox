@@ -135,6 +135,7 @@ class Ra:
     def dump (self, elements):
         yaml_out = []
         for key in elements:
+
             if key in self.dict:
                 value = self.dict[key]
 
@@ -150,19 +151,18 @@ class Ra:
                         # list item is a dictionary
                         else:
                             idict = iitem
-                            for ikey in idict:
-                                yaml_out.append (f'- {ikey:} : ')
-                                iidict = idict[ikey]
-                                if iidict is not None:
-                                    for iikey in iidict:
-                                        yaml_out.append (f'   {iikey} : {str(iidict[iikey])}')
+                            for i,ikey in enumerate(idict):
+                                if i==0:
+                                    yaml_out.append (f'- {ikey:} : {str(idict[ikey])}')
+                                else:
+                                    yaml_out.append (f'  {ikey:} : {str(idict[ikey])}')
 
                 # dictionary 
                 elif isinstance(value,dict):
                     yaml_out.append(f'{key}:')
                     idict = value
                     for ikey in idict:
-                        yaml_out.append (f'   {ikey} : {str(idict[ikey])}')
+                        yaml_out.append (f'  {ikey} : {str(idict[ikey])}')
                 
                 # item
                 else:
@@ -179,22 +179,23 @@ class Ra:
             self.dict[key] = value
     
     #TODO: 
-    # 1. simplify, 
+    # 1. simplify, DONE
     # 2. do not add if there are empty items in the list
     # 3. allow other fields, not only "name"
-    def appVal(self, key, key_in, val):
+    def addVal(self, key, val):
         if key in self.dict:
             if isinstance(self.dict[key],list):
                 target_list = self.dict[key]
                 for item in target_list:
-                    if key_in in item:
-                        if item[key_in] is not None:
-                            if 'name' in item[key_in]:
-                                if item[key_in]['name'] == val:
-                                    return
-                new_dict = {}
-                new_dict[key_in] = {'name': val}
+                    if 'name' in item:
+                        if item['name'] == val:
+                            return
+                new_dict = {'name': val}
                 self.dict[key].append(new_dict)
+            elif self.dict[key] is None:
+                new_dict = {'name': val}
+                self.dict[key] = [new_dict]
+
         
     def setInnerVal (self, ext_key, key, value):
         # for existing keys, replace the contents of 'value'
@@ -221,19 +222,16 @@ class Ra:
         for rule in ruleset['rule']:
 
             sukey = rule['subject_key']
-            sukey_in = rule['subject_key_in']
             suval = rule['subject_val']
             verb = rule['verb']
             odkey = rule['od_key']
-            odkey_in = rule['od_key_in']
             odval = rule['od_val']
 
             if sukey in self.dict:
-                for i in self.dict[sukey]:
-                    element = i[sukey_in]
-                    if element['name'] ==suval:
+                for element in self.dict[sukey]:
+                    if element['name'] == suval:
                         if verb == 'add':
-                            self.appVal(odkey, odkey_in, odval)
+                            self.addVal(odkey, odval)
 
 
     def setHash (self):

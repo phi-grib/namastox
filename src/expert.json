@@ -1,19 +1,15 @@
 {
     "rule": [
         {"subject_key" : "endpoints",
-        "subject_key_in" : "endpoint",
         "subject_val" : "CMR",
         "verb" : "add",
         "od_key" : "NAMS",
-        "od_key_in" : "NAM",
         "od_val" : "micronucleous" 
         },
         {"subject_key" : "endpoints",
-        "subject_key_in" : "endpoint",
         "subject_val" : "CMR",
         "verb" : "add",
         "od_key" : "NAMS",
-        "od_key_in" : "NAM",
         "od_val" : "AMES test" 
         }
     ]
