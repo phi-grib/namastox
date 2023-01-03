@@ -1,5 +1,5 @@
 {
-    "rule": [
+    "rules": [
         {"subject": [
             { "dic" : "endpoints",
               "key" : "name",
@@ -32,21 +32,35 @@
              "val" : "test AMES "}
             ] 
         },
-            {"subject": [
-                { "dic" : "substances",
-                  "key" : "SMILES"}
-            ],
-            "predicate" : {
-                "action":"compute",
-                "engine":"self",
-                "call":"logP" 
-            
-            },
-            "object": [
-               {"dic" : "results",
-                "key" : "logp"
-                }
-            ]
+        {"subject": [
+            { "dic" : "substances",
+                "key" : "SMILES"}
+        ],
+        "predicate" : {
+            "action":"compute",
+            "engine":"self",
+            "call":"logP" 
+        
+        },
+        "object": [
+            {"dic" : "results",
+            "key" : "logp"
+            }
+        ]
+        },
+        {"subject": [
+            { "dic" : "endpoints",
+              "key" : "name",
+              "val" : "CMR"}
+        ],
+        "predicate" : {
+            "action":"add"        
+        },
+        "object": [
+            {"dic" : "exposures",
+            "key" : "name",
+            "val" : "oral exposure" }
+        ]
         }
     ]
 }

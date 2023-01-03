@@ -5,3 +5,15 @@ substances:
 endpoints: 
    - name : CMR
      description : None
+regulatory_framework:
+  organism: ECHA
+  context: REACH
+  area: cosmetic 
+administration_route: oral
+species: human
+notes: 
+  - text: This risk assessment is part of the RISKHUNT3R case
+          study 3
+    author: Manuel Pastor
+    e-mail: manuel.pastor@upf.edu
+    date: 3/1/2023

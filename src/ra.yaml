@@ -1,10 +1,12 @@
 ID: 
-  name: prueba
 results:
-  interpretation: 'una interpretacion'
-  notes: null
 NAMS:
+species:
 substances:
 endpoints:
-error: null
-warning: null
+regulatory_framework:
+administration_route:
+exposures:
+notes:
+error:
+warning:
