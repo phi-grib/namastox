@@ -108,6 +108,8 @@ class Expert:
 
         rdic = ra.dict
 
+        # check if any of the keys/values of the subject is present 
+        # TODO: call a method in RA
         found = False
         sdic = rule[0]   
         sub_name = sdic['dict'] # for example sub_name = 'endpoints'
@@ -126,6 +128,8 @@ class Expert:
                     if found:
                         break
 
+        # add all the key/values. if the dictionary is a list, append, if it empty or a dictionary, replace
+        # TODO: use an ad-hoc method in RA
         if found:
             odic = rule[2]
             obj_name = odic['dict']
@@ -134,7 +138,8 @@ class Expert:
             if obj_name in rdic:
                 rdic_obj = rdic[obj_name]
                 if isinstance(rdic_obj,list):
-                    ra.dict[obj_name].append(odic)
+                    if odic not in ra.dict[obj_name]:
+                        ra.dict[obj_name].append(odic)
                 else:
                     ra.dict[obj_name]=[odic]
         
