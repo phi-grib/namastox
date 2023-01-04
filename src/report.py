@@ -36,6 +36,21 @@ def action_report(raname, pfile=None):
         return False, results
 
     # show exec summary
+    LOG.info (f'Risk assessment {raname}, ID {ra.getVal("ID")}')
+
+    substances = ra.getVal("substances")
+    for isubs in substances:
+        LOG.info (f'substance {isubs["name"]}') 
+        LOG.info (f'CASRN {isubs["CASRN"]}') 
+        LOG.info (f'SMILES {isubs["SMILES"]}')
+
+    endpoints = ra.getVal("endpoints")
+    for iendp in endpoints:
+        LOG.info (f'endpoint {iendp["name"]}') 
+        LOG.info (f'{iendp["description"]}') 
+
+    LOG.info (f'Administration route {ra.getVal("administration_route")}')
+
     
     # show completed NAMS/exposures
     
