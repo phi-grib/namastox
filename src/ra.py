@@ -25,6 +25,7 @@ import numpy as np
 import json
 import yaml
 import os
+import time
 import hashlib
 from utils import ra_path
 
@@ -74,6 +75,11 @@ class Ra:
         '''
         rafile = os.path.join (self.getVal('rapath'),'ra.yaml')
         with open(rafile,'w') as f:
+            f.write(yaml.dump(self.dict))
+
+        time_label = time.strftime("_%d%b%Y_%H%M%S", time.localtime()) 
+        rahist = os.path.join (self.getVal('rapath'),'hist',f'ra{time_label}.yaml')
+        with open(rahist,'w') as f:
             f.write(yaml.dump(self.dict))
 
     def applyDelta (self, delta_dict):

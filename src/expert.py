@@ -20,10 +20,12 @@
 # You should have received a copy of the GNU General Public License
 # along with NAMASTOX. If not, see <http://www.gnu.org/licenses/>.
 
-import json
 import yaml
 import os
 from utils import ra_path
+from logger import get_logger
+
+LOG = get_logger(__name__)
 
 class Expert:
     ''' Class storing all the risk assessment information
@@ -92,7 +94,7 @@ class Expert:
         if not success:
             return success, result
 
-        print ('COMPUTE actions are not fully implemented yet')
+        LOG.info ('COMPUTE actions are not fully implemented yet')
 
         return True, 'OK'
 
@@ -156,7 +158,7 @@ class Expert:
                 success, result = self.include(rule, ra)
             
             elif action == 'request':
-                print ('REQUEST actions are not implemented yet')
+                LOG.info ('REQUEST actions are not implemented yet')
 
             elif action == 'compute':
                 success, result = self.compute(rule, ra)

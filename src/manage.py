@@ -51,7 +51,9 @@ def action_new(raname, outfile=None):
         return False, f'Risk assessment {raname} already exists'
     try:
         os.mkdir(ndir)
-        LOG.debug(f'{ndir} created')
+        os.mkdir(os.path.join(ndir,'hist'))
+        os.mkdir(os.path.join(ndir,'repo'))
+        LOG.debug(f'{ndir}, {ndir}/hist and {ndir}/repo created')
     except:
         return False, f'Unable to create path for {raname} endpoint'
 
@@ -94,7 +96,7 @@ def action_new(raname, outfile=None):
     
     if outfile is None:
         for iline in yaml:
-            print (iline)
+            LOG.info(iline)
     else:
         with open(outfile,'w') as f:
             for iline in yaml:
