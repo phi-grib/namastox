@@ -22,20 +22,16 @@
 
 import os
 import yaml
-import shutil
-import pickle
 from logger import get_logger
-from utils import ra_path, ra_repository_path
 from ra import Ra
 from expert import Expert
 
 LOG = get_logger(__name__)
 
-# TODO: this should be a class!!!
-
 def action_update(raname, ifile, ofile=None):
-    '''
-        ***
+    ''' use the input file to update RA. The new version is submitted to the expert to 
+        further change RA. The final version of RA is stored in the repository and copied
+        in the historic archive 
     '''
 
     # instantiate a ra object
@@ -68,7 +64,7 @@ def action_update(raname, ifile, ofile=None):
 
     if ofile is None:
         for iline in results:
-            print (iline)
+            LOG.info (iline)
     else:
         with open(ofile,'w') as outputf:
             for iline in results:
@@ -77,4 +73,4 @@ def action_update(raname, ifile, ofile=None):
     # save new version and replace the previous one
     ra.save()
 
-    return True, results
+    return True, f'{raname} updated'

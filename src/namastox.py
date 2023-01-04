@@ -20,13 +20,13 @@
 # You should have received a copy of the GNU General Public License
 # along with NAMASTOX. If not, see <http://www.gnu.org/licenses/>.
 
-import argparse
-import yaml
 import os
+import argparse
 from logger import get_logger
 from config import configure
 from manage import action_new, action_kill, action_list
 from update import action_update
+from report import action_report
 
 LOG = get_logger(__name__)
 
@@ -35,17 +35,6 @@ def main():
     LOG.debug('-------------NEW RUN-------------\n')
 
     result = None
-    
-# TODO
-# create template ra.yaml
-# output empty template on new
-
-
-
-# -n --new -e NAME -o template.yaml
-# -u --update -e NAME -i template.yaml 
-# -r --report -e NAME -o template.yaml -p result.pdf
-
     parser = argparse.ArgumentParser(description='NAMASTOX')
 
     parser.add_argument('-c', '--command',
@@ -101,50 +90,35 @@ def main():
             LOG.error(f'{results}, configuration unchanged')
 
     elif args.command == 'new':
-        if (args.raname is None):
-            LOG.error('namastox new : raname argument is compulsory')
+        if (args.raname is None or args.outfile is None ):
+            LOG.error('namastox new : raname and output file arguments are compulsory')
             return
-        if (args.outfile is None):
-            LOG.error('namastox new : outfile argument is compulsory')
-            return
-        success, result = action_new(args.raname, args.outfile)
+        success, results = action_new(args.raname, args.outfile)
 
     elif args.command == 'list':
-        success, result = action_list()   
+        success, results = action_list()   
 
     elif args.command == 'kill':
         if (args.raname is None):
             LOG.error('namastox kill : raname argument is compulsory')
             return
-        success, result = action_kill(args.raname)   
-
-    # elif args.command == 'publish':
-    #     if (args.raname is None):
-    #         LOG.error('namastox publish : raname argument is compulsory')
-    #         return
-    #     success, result = action_publish(args.raname)  
+        success, results = action_kill(args.raname)   
 
     elif args.command == 'update':
-        if (args.raname is None or args.infile is None):
-            LOG.error('namastox update : raname and input file arguments are compulsory')
-            return
-        if (args.infile is None):
-            LOG.error('namastox update : infile argument is compulsory')
-            return
-        if (args.outfile is None):
-            LOG.error('namastox update : outfile argument is compulsory')
+        if (args.raname is None or args.infile is None or args.outfile is None ):
+            LOG.error('namastox update : raname, input file and output file arguments are compulsory')
             return
         success, results = action_update (args.raname, args.infile, args.outfile)
 
     elif args.command == 'report':
-        if (args.raname is None):
-            LOG.error('flame predict : raname and input file arguments are compulsory')
+        if (args.raname is None or args.pdf is None):
+            LOG.error('namastox report : raname and PDF file arguments are compulsory')
             return
 
-        LOG.info ('REPORT >>>>>>>>>')
+        success, results = action_report (args.raname, args.pdf)
     
-    if result is not None:
-        LOG.info (result)
+    if results is not None:
+        LOG.info (results)
 
 if __name__ == '__main__':
     main()

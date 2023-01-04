@@ -94,7 +94,7 @@ class Expert:
         if not success:
             return success, result
 
-        LOG.info ('COMPUTE actions are not fully implemented yet')
+        LOG.warn ('COMPUTE actions are not fully implemented yet')
 
         return True, 'OK'
 
