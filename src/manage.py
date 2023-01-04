@@ -25,7 +25,7 @@ import shutil
 import pickle
 from logger import get_logger
 from ra import Ra
-from utils import ra_tree_path, ra_repository_path, ra_path
+from utils import ra_repository_path, ra_path, id_generator
 
 LOG = get_logger(__name__)
 
@@ -46,7 +46,7 @@ def action_new(raname, outfile=None):
         return False, 'the name "test" is disallowed, please use any other name'
 
     # raname directory with /dev (default) level
-    ndir = ra_tree_path(raname)
+    ndir = ra_path(raname)
     if os.path.isdir(ndir):
         return False, f'Risk assessment {raname} already exists'
     try:
@@ -55,12 +55,12 @@ def action_new(raname, outfile=None):
     except:
         return False, f'Unable to create path for {raname} endpoint'
 
-    ndev = os.path.join (ndir, 'dev')
-    try:
-        os.mkdir(ndev)
-        LOG.debug(f'{ndev} created')
-    except:
-        return False, f'Unable to create path for {raname} endpoint'
+    # ndev = os.path.join (ndir, 'dev')
+    # try:
+    #     os.mkdir(ndev)
+    #     LOG.debug(f'{ndev} created')
+    # except:
+    #     return False, f'Unable to create path for {raname} endpoint'
 
     # Copy templates
     wkd = os.path.dirname(os.path.abspath(__file__))
@@ -69,29 +69,28 @@ def action_new(raname, outfile=None):
     for cname in template_names:
         src_path = os.path.join (wkd, cname)
         try:
-            shutil.copy(src_path, ndev)
+            shutil.copy(src_path, ndir)
         except:
             return False, f'Unable to copy {cname} file'
 
-    LOG.debug(f'copied risk assessment templates from {src_path} to {ndev}')
+    LOG.debug(f'copied risk assessment templates from {src_path} to {ndir}')
 
     # Instantiate Ra
     ra = Ra()
-    success, results = ra.load(raname, 0)
+    success, results = ra.load(raname)
     if not success:
         return False, results
 
     # Include RA information 
     ra.setVal('raname',raname)
-    ra.setVal('version',0)
-    ra.setVal('rapath',ra_path(raname, 0))
-    ra.setHash()
+    ra.setVal('rapath',ra_path(raname))
+    ra.setVal('ID', id_generator() )
 
     # Save
     ra.save()
 
     # Show template
-    yaml = ra.dumpYAML(['substances', 'endpoints'])
+    yaml = ra.dumpYAML()
     
     if outfile is None:
         for iline in yaml:
@@ -111,7 +110,7 @@ def action_kill(raname):
     if not raname:
         return False, 'Empty risk assessment name'
 
-    ndir = ra_tree_path(raname)
+    ndir = ra_path(raname)
 
     if not os.path.isdir(ndir):
         return False, f'Risk assessment {raname} not found'
@@ -123,43 +122,32 @@ def action_kill(raname):
 
     return True, f'Risk assessment {raname} removed'
 
-def action_list(raname):
+def action_list():
     '''
     In no argument is provided lists all ranames present at the repository 
      otherwyse lists all versions for the raname provided as argument
     '''
 
     # if no raname name is provided, just list the raname names
-    if not raname:
-        rdir = ra_repository_path()
-        if os.path.isdir(rdir) is False:
-            return False, 'The risk assessment name repository path does not exist. Please run "namastox -c config".'
+    rdir = ra_repository_path()
+    if os.path.isdir(rdir) is False:
+        return False, 'The risk assessment name repository path does not exist. Please run "namastox -c config".'
 
-        num_ranames = 0
-        LOG.info('Risk assessment(s) found in repository:')
-        for x in os.listdir(rdir):
-            xpath = os.path.join(rdir,x) 
-            # discard if the item is not a directory
-            if not os.path.isdir(xpath):
-                continue
-            # discard if the directory does not contain a 'dev' directory inside
-            if not os.path.isdir(os.path.join(xpath,'dev')):
-                continue
-            num_ranames += 1
-            LOG.info('\t'+x)
-        LOG.debug(f'Retrieved list of risk assessments from {rdir}')
-        return True, f'{num_ranames} risk assessment(s) found'
-        # if a raname name is provided, list versions
+    num_ranames = 0
+    LOG.info('Risk assessment(s) found in repository:')
+    for x in os.listdir(rdir):
+        xpath = os.path.join(rdir,x) 
+        # discard if the item is not a directory
+        if not os.path.isdir(xpath):
+            continue
 
-    base_path = ra_tree_path(raname)
+        num_ranames += 1
+        LOG.info('\t'+x)
 
-    num_versions = 0
-    for x in os.listdir(base_path):
-        if x.startswith("ver"):
-            num_versions += 1
-            LOG.info(f'\t{raname} : {x}')
+    LOG.debug(f'Retrieved list of risk assessments from {rdir}')
+    return True, f'{num_ranames} risk assessment(s) found'
 
-    return True, f'Risk assessment {raname} has {num_versions} published versions'
+
 
 # def action_publish(raname):
 #     '''

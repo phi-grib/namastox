@@ -22,15 +22,17 @@
 
 import os
 import yaml
+import string
+import random 
 
-def path_expand (path, version):
-    ''' 
-    Expands the path as required for the version provided as argument 
-    '''
-    if version == 0:
-        return os.path.join(path, 'dev')
-    else:
-        return os.path.join(path, 'ver%0.6d' % (version))
+# def path_expand (path, version):
+#     ''' 
+#     Expands the path as required for the version provided as argument 
+#     '''
+#     if version == 0:
+#         return os.path.join(path, 'dev')
+#     else:
+#         return os.path.join(path, 'ver%0.6d' % (version))
 
 def ra_repository_path():
     '''
@@ -41,17 +43,17 @@ def ra_repository_path():
     if success: 
         return config['ras']
 
-def ra_tree_path(raname):
+def ra_path(raname):
     '''
     Returns the path to the raname given as argumen, containg all versions
     '''
     return os.path.join(ra_repository_path(), raname)
 
-def ra_path(raname, version):
-    '''
-    Returns the path to the raname and version given as arguments
-    '''
-    return path_expand (ra_tree_path(raname), version)
+# def ra_path(raname, version):
+#     '''
+#     Returns the path to the raname and version given as arguments
+#     '''
+#     return path_expand (ra_tree_path(raname), version)
 
 def read_config():
     '''
@@ -143,3 +145,9 @@ def write_config(config: dict) -> None:
     with open(os.path.join(source_dir,'config.yaml'), 'w') as f:
         yaml.dump(config, f, default_flow_style=False)
 
+
+def id_generator(size=10, chars=string.ascii_uppercase + string.digits):
+    '''
+    Return a random ID (used for temp files) with uppercase letters and numbers
+    '''
+    return ''.join(random.choice(chars) for _ in range(size))

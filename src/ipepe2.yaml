@@ -1,9 +1,0 @@
-substances:
-   - name : ibuprofen
-     SMILES : c1ccccc1
-     CASRN : 5782-2233-2
-   - name : paracetamol
-     SMILES : c1ccc2OO
-     CASRN : 989-23232-89
-results:
-  logP: 0.87

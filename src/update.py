@@ -25,7 +25,7 @@ import yaml
 import shutil
 import pickle
 from logger import get_logger
-from utils import ra_tree_path, ra_repository_path
+from utils import ra_path, ra_repository_path
 from ra import Ra
 from expert import Expert
 
@@ -40,7 +40,7 @@ def action_update(raname, ifile, ofile=None):
 
     # instantiate a ra object
     ra = Ra()
-    succes, results = ra.load(raname,0)
+    succes, results = ra.load(raname)
     if not succes:
         return False, results
 
@@ -54,7 +54,7 @@ def action_update(raname, ifile, ofile=None):
     ra.applyDelta(delta_dict)
 
     # process ra using expert logic
-    expert = Expert (raname, 0)
+    expert = Expert (raname)
     success, result = expert.load()
     if not success:
         return False, result
@@ -64,7 +64,7 @@ def action_update(raname, ifile, ofile=None):
         return False, result
 
     # dump new version
-    results = ra.dumpYAML(['substances', 'endpoints', 'NAMS', 'exposures', 'results'])
+    results = ra.dumpYAML()
 
     if ofile is None:
         for iline in results:

@@ -28,10 +28,10 @@ from utils import ra_path
 class Expert:
     ''' Class storing all the risk assessment information
     '''
-    def __init__(self, raname, version):
+    def __init__(self, raname):
         ''' constructor '''
         self.rules = []
-        self.rapath = ra_path(raname, version)
+        self.rapath = ra_path(raname)
 
     def load(self):       
         ''' load the Expert object from a JSON file

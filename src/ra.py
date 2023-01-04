@@ -46,14 +46,14 @@ class Ra:
             'rapath':''
             }
 
-    def load(self, raname, version):       
+    def load(self, raname):       
         ''' load the Ra object from a YAML file
         '''
         # obtain the path and the default name of the raname parameters
-        ra_file_path = ra_path(raname, version)
+        ra_file_path = ra_path(raname)
         
         if not os.path.isdir (ra_file_path):
-            return False, f'Risk assessment "{raname}", version "{version}" not found'
+            return False, f'Risk assessment "{raname}" not found'
 
         ra_file_name = os.path.join (ra_file_path,'ra.yaml')
 
@@ -82,7 +82,7 @@ class Ra:
             - for dictionaries, the content is merged 
         '''
         # update interna dict with keys in the input file (delta)
-        black_list = ['raname', 'version', 'rapath', 'md5']
+        black_list = ['raname', 'rapath', 'md5']
         for key in delta_dict:
             if key not in black_list:
 
@@ -137,141 +137,171 @@ class Ra:
     # expert section
     #################################################
 
-    def extractAction (self, rule):
-        ''' Returns the ACTION present in the rule
-        '''
-        if 'predicate' in rule:
-            if 'action' in rule['predicate']:
-                return rule['predicate']['action']
-        return None
+    # def extractAction (self, rule):
+    #     ''' Returns the ACTION present in the rule
+    #     '''
+    #     if 'predicate' in rule:
+    #         if 'action' in rule['predicate']:
+    #             return rule['predicate']['action']
+    #     return None
 
-    def validateRule (self, rule):
-        ''' Make sure the rule is sythactically correct
-        '''
-        # rule should be a dictionary and contain keys 'subject' and 'object' with a list 
-        if not isinstance(rule, dict):
-            return False, 'rule is not a dictionary'
-        if not 'subject' in rule:
-            return False, 'no subject key in the rule'
-        if not isinstance(rule['subject'], list):
-            return False, 'subject key in rule is not of type list'
-        if not 'object' in rule:
-            return False, 'no object key in the rule'
-        if not isinstance(rule['object'], list):
-            return False, 'object key in the rule is not of type list'
-        return True, 'OK'
+    # def validateRule (self, rule):
+    #     ''' Make sure the rule is sythactically correct
+    #     '''
+    #     # rule should be a dictionary and contain keys 'subject' and 'object' with a list 
+    #     if not isinstance(rule, dict):
+    #         return False, 'rule is not a dictionary'
+    #     if not 'subject' in rule:
+    #         return False, 'no subject key in the rule'
+    #     if not isinstance(rule['subject'], list):
+    #         return False, 'subject key in rule is not of type list'
+    #     if not 'object' in rule:
+    #         return False, 'no object key in the rule'
+    #     if not isinstance(rule['object'], list):
+    #         return False, 'object key in the rule is not of type list'
+    #     return True, 'OK'
 
 
-    def compute (self, rule):
-        ''' ACTION COMPUTE: we will use information from RA and the rule to generate (compute) additional data
-            the rule can define if the computation will be run locally or we will call an external service
-        '''
-        # rule should be a dictionary and contain keys 'subject' and 'object' with a list 
-        success, result = self.validateRule(rule)
-        if not success:
-            return success, result
+    # def compute (self, rule):
+    #     ''' ACTION COMPUTE: we will use information from RA and the rule to generate (compute) additional data
+    #         the rule can define if the computation will be run locally or we will call an external service
+    #     '''
+    #     # rule should be a dictionary and contain keys 'subject' and 'object' with a list 
+    #     success, result = self.validateRule(rule)
+    #     if not success:
+    #         return success, result
 
-        print ('COMPUTE actions are not fully implemented yet')
+    #     print ('COMPUTE actions are not fully implemented yet')
 
-        return True, 'OK'
+    #     return True, 'OK'
 
-    def include (self, rule):
-        ''' ACTION INCLUDE: we will use the rule to include new data in RA, if the elements described in the subject are found
-            Subject elements can be a list and the conditions will be combined using OR: any element triggers the inclussion
-        '''
-        # for any item in the subject
-        #   if it is coincident with existing keys, add all the elements in the object
-        success, result = self.validateRule(rule)
-        if not success:
-            return success, result
+    # def include (self, rule):
+    #     ''' ACTION INCLUDE: we will use the rule to include new data in RA, if the elements described in the subject are found
+    #         Subject elements can be a list and the conditions will be combined using OR: any element triggers the inclussion
+    #     '''
+    #     # for any item in the subject
+    #     #   if it is coincident with existing keys, add all the elements in the object
+    #     success, result = self.validateRule(rule)
+    #     if not success:
+    #         return success, result
 
-        found = False
-        for isub in rule['subject']:
-            idic = isub['dic']
-            ikey = isub['key']
-            ival = isub['val']
-            if idic in self.dict:
-                if isinstance(self.dict[idic],list):
-                    target_list = self.dict[idic]
-                    for item in target_list:
-                        if ikey in item:
-                            if item[ikey] == ival:
-                                found = True
-                                break
-            if found:
-                break
+    #     found = False
+    #     for isub in rule['subject']:
+    #         idic = isub['dic']
+    #         ikey = isub['key']
+    #         ival = isub['val']
+    #         if idic in self.dict:
+    #             if isinstance(self.dict[idic],list):
+    #                 target_list = self.dict[idic]
+    #                 for item in target_list:
+    #                     if ikey in item:
+    #                         if item[ikey] == ival:
+    #                             found = True
+    #                             break
+    #         if found:
+    #             break
 
-        if found:
-            for iobj in rule['object']:
+    #     if found:
+    #         for iobj in rule['object']:
 
-                ofound = False
-                idic = iobj['dic']
-                ikey = iobj['key']
-                ival = iobj['val']
+    #             ofound = False
+    #             idic = iobj['dic']
+    #             ikey = iobj['key']
+    #             ival = iobj['val']
             
-                if idic in self.dict:
-                    if isinstance(self.dict[idic],list):
-                        target_list = self.dict[idic]
-                        for item in target_list:
-                            if ikey in item:
-                                if item[ikey] == ival:
-                                    ofound = True
-                                    break
-                        if not ofound:
-                            new_dict = {ikey: ival}
-                            self.dict[idic].append(new_dict)
+    #             if idic in self.dict:
+    #                 if isinstance(self.dict[idic],list):
+    #                     target_list = self.dict[idic]
+    #                     for item in target_list:
+    #                         if ikey in item:
+    #                             if item[ikey] == ival:
+    #                                 ofound = True
+    #                                 break
+    #                     if not ofound:
+    #                         new_dict = {ikey: ival}
+    #                         self.dict[idic].append(new_dict)
 
-                    elif self.dict[idic] is None:
-                        new_dict = {ikey: ival}
-                        self.dict[idic] = [new_dict]
+    #                 elif self.dict[idic] is None:
+    #                     new_dict = {ikey: ival}
+    #                     self.dict[idic] = [new_dict]
         
-        return True, 'OK'
+    #     return True, 'OK'
 
-    def applyExpert (self):
-        ''' TODO: we must log all the results of the expert 
-        '''
+    # def applyExpert (self):
+    #     ''' TODO: we must log all the results of the expert 
+    #     '''
 
-        expname = os.path.join(self.getVal('rapath'),'expert.json')
-        if not os.path.isfile(expname):
-            return False, 'expert.json file not found'
+    #     expname = os.path.join(self.getVal('rapath'),'expert.json')
+    #     if not os.path.isfile(expname):
+    #         return False, 'expert.json file not found'
 
-        with open(expname, 'r') as f:
-            ruleset = json.load(f)
+    #     with open(expname, 'r') as f:
+    #         ruleset = json.load(f)
         
-        for rule in ruleset['rule']:
+    #     for rule in ruleset['rule']:
 
-            action = self.extractAction(rule)
-            if action == 'add':
-                success, result = self.include(rule)
+    #         action = self.extractAction(rule)
+    #         if action == 'add':
+    #             success, result = self.include(rule)
             
-            elif action == 'request':
-                print ('REQUEST actions are not implemented yet')
+    #         elif action == 'request':
+    #             print ('REQUEST actions are not implemented yet')
 
-            elif action == 'compute':
-                success, result = self.compute(rule)
+    #         elif action == 'compute':
+    #             success, result = self.compute(rule)
             
-            elif action is None:
-                return False, 'no valid action found'
+    #         elif action is None:
+    #             return False, 'no valid action found'
         
-        return success, result
+    #     return success, result
 
     #################################################
     # output section
     #################################################
 
     def dumpJSON (self):
+        ''' return a JSON version of self.dict
+        '''
         return json.dumps(self.dict, allow_nan=True)
 
-    def dumpYAML (self, elements):
+    def dumpYAML (self):
+        ''' return a human-readable version of self.dir, with a stable order and comments
+            for being used as a template in update
+        '''
+        # open ra.yaml and use the key order and the comments 
+        work_dir = os.path.dirname(os.path.abspath(__file__))
+        ra_template_name = os.path.join(work_dir,'ra.yaml')
+        template=[]
+        with open (ra_template_name,'r') as f:
+            for line in f:
+                template.append(line.strip())
+
+        # list of non-editable items
+        blacklist = ['ID', 'error', 'warning', 'raname', 'rapath']
+
         yaml_out = []
-        for key in elements:
+        for iline in template:
+
+            if iline.startswith('#'):
+                yaml_out.append(iline)
+                continue
+
+            # lines have the format 'substances:         # list of input substances' 
+            # use the first part as key, the second as comment
+            line = iline.split(':')
+            key = line[0]
+            if len(line)>1:
+                comment = line[-1]
+
+            # do not dump elements which the end-user should not edit
+            if key in blacklist : continue
 
             if key in self.dict:
                 value = self.dict[key]
 
                 # value can be a list or a single variable
                 if isinstance(value,list):
-                    yaml_out.append(f'{key}:')
+                    yaml_out.append(f'{key}: {comment}')
                     for iitem in value:
 
                         # list item is a value
@@ -289,14 +319,14 @@ class Ra:
 
                 # dictionary 
                 elif isinstance(value,dict):
-                    yaml_out.append(f'{key}:')
+                    yaml_out.append(f'{key}: {comment}')
                     idict = value
                     for ikey in idict:
                         yaml_out.append (f'  {ikey} : {str(idict[ikey])}')
                 
                 # item
                 else:
-                    yaml_out.append(f'{key} : {str(self.dict[key])}')
+                    yaml_out.append(f'{key} : {str(self.dict[key])} {comment}')
 
         return (yaml_out)
 
@@ -311,7 +341,7 @@ class Ra:
         '''
 
         # update with any new idata relevant parameter 
-        keylist = ['endpoint','version']
+        keylist = ['endpoint']
 
         idata_params = []
         for i in keylist:

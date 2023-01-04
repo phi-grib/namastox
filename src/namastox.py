@@ -25,7 +25,7 @@ import yaml
 import os
 from logger import get_logger
 from config import configure
-from manage import action_new, action_kill, action_list, action_publish
+from manage import action_new, action_kill, action_list
 from update import action_update
 
 LOG = get_logger(__name__)
@@ -104,10 +104,13 @@ def main():
         if (args.raname is None):
             LOG.error('namastox new : raname argument is compulsory')
             return
+        if (args.outfile is None):
+            LOG.error('namastox new : outfile argument is compulsory')
+            return
         success, result = action_new(args.raname, args.outfile)
 
     elif args.command == 'list':
-        success, result = action_list(args.raname)   
+        success, result = action_list()   
 
     elif args.command == 'kill':
         if (args.raname is None):
@@ -124,6 +127,12 @@ def main():
     elif args.command == 'update':
         if (args.raname is None or args.infile is None):
             LOG.error('namastox update : raname and input file arguments are compulsory')
+            return
+        if (args.infile is None):
+            LOG.error('namastox update : infile argument is compulsory')
+            return
+        if (args.outfile is None):
+            LOG.error('namastox update : outfile argument is compulsory')
             return
         success, results = action_update (args.raname, args.infile, args.outfile)
 
