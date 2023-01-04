@@ -50,8 +50,8 @@ def main():
 
     parser.add_argument('-c', '--command',
                         action='store',
-                        choices=['config', 'new', 'kill', 'list', 'publish', 'update', 'report'],
-                        help='Action type: \'config\' or \'new\' or \'kill\' or \'list\' or \'publish\''
+                        choices=['config', 'new', 'kill', 'list', 'update', 'report'],
+                        help='Action type: \'config\' or \'new\' or \'kill\' or \'list\' '
                         '\'update\' or \'report\'',
                         required=True)
 
@@ -115,11 +115,11 @@ def main():
             return
         success, result = action_kill(args.raname)   
 
-    elif args.command == 'publish':
-        if (args.raname is None):
-            LOG.error('namastox publish : raname argument is compulsory')
-            return
-        success, result = action_publish(args.raname)  
+    # elif args.command == 'publish':
+    #     if (args.raname is None):
+    #         LOG.error('namastox publish : raname argument is compulsory')
+    #         return
+    #     success, result = action_publish(args.raname)  
 
     elif args.command == 'update':
         if (args.raname is None or args.infile is None):

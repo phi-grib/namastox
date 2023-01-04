@@ -161,42 +161,42 @@ def action_list(raname):
 
     return True, f'Risk assessment {raname} has {num_versions} published versions'
 
-def action_publish(raname):
-    '''
-    clone the development "dev" version as a new raname version,
-     assigning a sequential version number
-    '''
+# def action_publish(raname):
+#     '''
+#     clone the development "dev" version as a new raname version,
+#      assigning a sequential version number
+#     '''
 
-    if not raname:
-        return False, 'Empty risk assessment name'
+#     if not raname:
+#         return False, 'Empty risk assessment name'
 
-    base_path = ra_tree_path(raname)
+#     base_path = ra_tree_path(raname)
 
-    if not os.path.isdir(base_path):
-        #LOG.error(f'raname {raname} not found')
-        return False, f'Risk assessment {raname} not found'
+#     if not os.path.isdir(base_path):
+#         #LOG.error(f'raname {raname} not found')
+#         return False, f'Risk assessment {raname} not found'
 
-    # gets version number
-    v = [int(x[-6:]) for x in os.listdir(base_path) if x.startswith("ver")]
+#     # gets version number
+#     v = [int(x[-6:]) for x in os.listdir(base_path) if x.startswith("ver")]
 
-    if not v:
-        max_version = 0
-    else:
-        max_version = max(v)
+#     if not v:
+#         max_version = 0
+#     else:
+#         max_version = max(v)
 
-    new_path = os.path.join(base_path,f'ver{max_version+1:06}')
+#     new_path = os.path.join(base_path,f'ver{max_version+1:06}')
 
-    if os.path.isdir(new_path):
-        #LOG.error(f'Versin {v} of raname {raname} not found')
-        return False, f'Version {max_version+1} of risk assessment {raname} already exists'
+#     if os.path.isdir(new_path):
+#         #LOG.error(f'Versin {v} of raname {raname} not found')
+#         return False, f'Version {max_version+1} of risk assessment {raname} already exists'
 
-    src_path = os.path.join (base_path,'dev')
+#     src_path = os.path.join (base_path,'dev')
 
-    try:
-        shutil.copytree(src_path, new_path)
-    except:
-        return False, f'Unable to copy contents of dev version for risk assessment {raname}'
+#     try:
+#         shutil.copytree(src_path, new_path)
+#     except:
+#         return False, f'Unable to copy contents of dev version for risk assessment {raname}'
 
-    return True, f'New risk assessment version created from {src_path} to {new_path}'
+#     return True, f'New risk assessment version created from {src_path} to {new_path}'
 
 
