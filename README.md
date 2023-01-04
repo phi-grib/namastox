@@ -12,7 +12,7 @@ Software tool for supporting the implementation of New Assessment Methods (NAMs)
 
 | Command | Description |
 | --- | --- |
-| -c/ --command | Action to be performed. Acceptable values are *new*, *kill*, *list*, *publish*, *update*, *report*  |
+| -c/ --command | Action to be performed. Acceptable values are *new*, *kill*, *list*, *update*, *report*  |
 | -r/ --raname | Name of the risk assessment 
 | -v/ --version | Version of the risk assessment 
 | -a/ --action | Use 'silent' to configure the program using default RA repositories    |
@@ -46,10 +46,6 @@ Idem but generating an output yaml file wich can be used to add new information
 Remove completely a risk assessment
 
 ``python namastox.py -c kill -r myproject ``
-
-Publish a risk assessment, creating a new version
-
-``python namastox.py -c publish -r myproject ``
 
 List all the risk assessments present in the current repository
 
