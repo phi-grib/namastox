@@ -27,6 +27,23 @@ from logger import get_logger
 
 LOG = get_logger(__name__)
 
+###########################################################
+## TODO:
+## implement a simplified rule lenguaje
+# 
+# Translate this:
+# 
+#  - - dict : endpoint                 
+#      name : CMR
+#    - action : add
+#    - dict : NAMS 
+#      name : AMES
+#      description : AMES description
+#
+# To something like:
+#   if (endpoint>>name>>CMR) add ((NAMS>>(name>>AMES)(description>>AMES description))
+#
+
 class Expert:
     ''' Class storing all the risk assessment information
     '''
