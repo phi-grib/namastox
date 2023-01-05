@@ -44,10 +44,9 @@ def action_report(raname, pfile=None):
         LOG.info (f'CASRN {isubs["CASRN"]}') 
         LOG.info (f'SMILES {isubs["SMILES"]}')
 
-    endpoints = ra.getVal("endpoints")
-    for iendp in endpoints:
-        LOG.info (f'endpoint {iendp["name"]}') 
-        LOG.info (f'{iendp["description"]}') 
+    endpoint = ra.getVal("endpoint")
+    LOG.info (f'endpoint {endpoint["name"]}') 
+    LOG.info (f'{endpoint["description"]}') 
 
     LOG.info (f'Administration route {ra.getVal("administration_route")}')
 

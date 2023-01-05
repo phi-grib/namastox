@@ -39,7 +39,7 @@ class Ra:
             'results':{},
             'NAMS':[],
             'substances':[],
-            'endpoints':[],
+            'endpoint': {},
             'error': None,
             'warning': None,
             'raname':'',
@@ -134,9 +134,11 @@ class Ra:
         '''
         if not key in self.dict:
             return
-        inner = self.dict[key]
-        if isinstance(inner, dict):
-            inner[inner_key] = inner_val
+        if isinstance(self.dict[key], dict):
+            self.dict[key][inner_key] = inner_val
+        elif self.dict[key] == None:
+            self.dict[key] = {inner_key:inner_val}
+
 
 
     #################################################

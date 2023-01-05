@@ -129,6 +129,17 @@ class Expert:
                             break
                     if found:
                         break
+            else:
+                for skey in sdic:
+                    if rdic_sub == None:
+                        continue
+                    if skey in rdic_sub:
+                        if rdic_sub[skey]==sdic[skey]:
+                            found = True
+                            break
+                    if found:
+                        break
+
 
         # add all the key/values. if the dictionary is a list, append, if it empty or a dictionary, replace
         # TODO: use an ad-hoc method in RA
