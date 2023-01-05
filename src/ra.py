@@ -94,7 +94,7 @@ class Ra:
 
                 val = delta_dict[key]
 
-                # YAML define null values as 'None, which are interpreted as strings
+                # yaml define null values as 'None', which are interpreted as strings
                 if val == 'None':
                     val = None
 
@@ -138,8 +138,6 @@ class Ra:
             self.dict[key][inner_key] = inner_val
         elif self.dict[key] == None:
             self.dict[key] = {inner_key:inner_val}
-
-
 
     #################################################
     # expert section

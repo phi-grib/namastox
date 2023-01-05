@@ -108,21 +108,34 @@ class Expert:
         if not success:
             return success, result
 
-        rdic = ra.dict
+        ra_dict = ra.dict
 
         # check if any of the keys/values of the subject is present 
         # TODO: call a method in RA
         found = False
-        sdic = rule[0]   
-        sub_name = sdic['dict'] # for example sub_name = 'endpoints'
-        sdic.pop('dict')
-        if sub_name in rdic:
-            rdic_sub = rdic[sub_name]
-            if isinstance(rdic_sub,list):
-                for irdic in rdic_sub: 
-                    for skey in sdic:
-                        if skey in irdic:
-                            if irdic[skey]==sdic[skey]:
+        
+        # the first item of the rule is the 'subject'
+        subject_dict = rule[0]   
+
+        # 'dict' is the name of the ra dictionary we will use for comparison (e.g., 'endpoint')
+        # once we know this name, remove from the rule dictionary
+        subject_dict_dict = subject_dict['dict'] 
+        subject_dict.pop('dict')
+        
+        # call a method in Ra which checks the presence of the subject item
+        # for skey in subject_dict:
+        #     found = ra.find(subject_dict_dict, skey, subject_dict[skey] )
+
+        if subject_dict_dict in ra_dict:
+            
+            ra_dict_sub = ra_dict[subject_dict_dict]
+             
+
+            if isinstance(ra_dict_sub,list):
+                for ira_dict in ra_dict_sub: 
+                    for skey in subject_dict:
+                        if skey in ira_dict:
+                            if ira_dict[skey]==subject_dict[skey]:
                                 found = True
                                 break
                         if found:
@@ -130,31 +143,41 @@ class Expert:
                     if found:
                         break
             else:
-                for skey in sdic:
-                    if rdic_sub == None:
+                for skey in subject_dict:
+                    if ra_dict_sub == None:
                         continue
-                    if skey in rdic_sub:
-                        if rdic_sub[skey]==sdic[skey]:
+                    if skey in ra_dict_sub:
+                        if ra_dict_sub[skey]==subject_dict[skey]:
                             found = True
                             break
                     if found:
                         break
 
+        #############################################
+
 
         # add all the key/values. if the dictionary is a list, append, if it empty or a dictionary, replace
         # TODO: use an ad-hoc method in RA
+
+
         if found:
             odic = rule[2]
             obj_name = odic['dict']
             odic.pop('dict')
             odic['status']='pending'
-            if obj_name in rdic:
-                rdic_obj = rdic[obj_name]
-                if isinstance(rdic_obj,list):
+            
+            # call a method in Ra for this task
+            # ra.append(subject_dict_dict, odic)
+
+            if obj_name in ra_dict:
+                ra_dict_obj = ra_dict[obj_name]
+                if isinstance(ra_dict_obj,list):
                     if odic not in ra.dict[obj_name]:
                         ra.dict[obj_name].append(odic)
                 else:
                     ra.dict[obj_name]=[odic]
+
+            #########################################
         
         return True, 'OK'
 
