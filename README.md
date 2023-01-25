@@ -111,6 +111,7 @@ Command interface synthax
 | -i/ --infile | Name of the input file used by the command. |
 | -o/ --outfile | Name of the output file used by the command. |
 | -p/ --pdf | Name of the report in PDF format |
+| -w/ --word | Name of the report in Word format |
 | -h/ --help | Shows a help message on the screen |
 
 Command examples and description
@@ -140,9 +141,9 @@ Update a risk assessment, using a delta.yaml file containing new data. The file 
 
 ``namastox -c update -r myproject -i delta.yaml -o myproyect.yaml``
 
-*** report ***
+Generate a report with the current status of the risk assessment (in PDF format):
 
-
+``namastox -c report -r myproject -p report.pdf``
 
 Remove completely a risk assessment
 
