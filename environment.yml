@@ -1,0 +1,18 @@
+name: namastox
+channels:
+  - default
+  - rdkit
+  - conda-forge 
+dependencies:
+  - pip
+  - python=3.10
+  - numpy
+  - setuptools
+  - requests
+  - rdkit
+  - pyyaml
+  - pytest
+  - psycopg2
+  - python-docx
+  - openpyxl
+  - appdirs

@@ -20,8 +20,8 @@
 # You should have received a copy of the GNU General Public License
 # along with NAMASTOX. If not, see <http://www.gnu.org/licenses/>.
 
-from logger import get_logger
-from ra import Ra
+from src.logger import get_logger
+from src.ra import Ra
 
 LOG = get_logger(__name__)
 

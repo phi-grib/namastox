@@ -27,7 +27,7 @@ import yaml
 import os
 import time
 import hashlib
-from utils import ra_path
+from src.utils import ra_path
 
 class Ra:
     ''' Class storing all the risk assessment information

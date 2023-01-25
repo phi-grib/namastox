@@ -22,10 +22,9 @@
 
 import os
 import shutil
-import pickle
-from logger import get_logger
-from ra import Ra
-from utils import ra_repository_path, ra_path, id_generator
+from src.logger import get_logger
+from src.ra import Ra
+from src.utils import ra_repository_path, ra_path, id_generator
 
 LOG = get_logger(__name__)
 

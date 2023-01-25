@@ -23,7 +23,7 @@
 
 import appdirs
 import os
-from utils import read_config, set_repositories
+from src.utils import read_config, set_repositories
 
 def configure(path: None, silent: False):
     """Configures model repository.

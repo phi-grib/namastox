@@ -22,11 +22,12 @@
 
 import os
 import argparse
-from logger import get_logger
-from config import configure
-from manage import action_new, action_kill, action_list
-from update import action_update
-from report import action_report
+from src.logger import get_logger
+from src import __version__
+from src.config import configure
+from src.manage import action_new, action_kill, action_list
+from src.update import action_update
+from src.report import action_report
 
 LOG = get_logger(__name__)
 

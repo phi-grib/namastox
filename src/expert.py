@@ -22,8 +22,8 @@
 
 import yaml
 import os
-from utils import ra_path
-from logger import get_logger
+from src.utils import ra_path
+from src.logger import get_logger
 
 LOG = get_logger(__name__)
 
