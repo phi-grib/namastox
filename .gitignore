@@ -2,3 +2,5 @@ src/__pycache__/
 ras/
 *.pyc
 *.log
+dist/*
+namastox.egg-info/*
