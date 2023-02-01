@@ -22,7 +22,10 @@
 
 import yaml
 import os
+import sys
+import pickle
 import pandas as pd
+import numpy as np
 from src.utils import ra_path
 from src.node import Node
 from src.logger import get_logger
@@ -42,43 +45,57 @@ class Workflow:
         if not success:
             success = self.import_table()
 
+        if not success:
+            LOG.error('CRITICAL: unable to load a correct workflow definition')
+            sys.exit(-1)
+
 
     def import_table (self):
         table_path = os.path.join (self.rapath,'workflow.csv')
-        table_dataframe = pd.read_csv(table_path, sep='\t')
+        table_dataframe = pd.read_csv(table_path, sep='\t').replace(np.nan, None)
         table_dict = table_dataframe.to_dict('list')
-        print (table_dict)
+        # print (table_dict)
 
+        index_labels = ['ID', 'Name', 'Type']
+        for i in index_labels:
+            if not i in table_dict:
+                return False
+            
         node_ids = table_dict['ID']
         node_names = table_dict['Name']
         node_types = table_dict['Type']
         for i in range(table_dataframe.shape[0]):
+            
             node_task = {}
+            for key in table_dict:
+                if key not in index_labels:
+                    node_task[key]=table_dict[key][i]      
+
             self.nodes.append(Node(node_ids[i], node_names[i], node_types[i], node_task))
 
-        # save pickl
+        self.save()
 
         return True
          
     def load(self):       
         ''' load the Expert object from a pickle
         '''
-        table_path = os.path.join (self.rapath,'workflow.pkl')
-        if not os.path.isfile(table_path):
+        pickl_path = os.path.join (self.rapath,'workflow.pkl')
+        if not os.path.isfile(pickl_path):
             return self.import_table()
         
-        # with open(table_path,'rb') as f:
-
-
+        with open(pickl_path,'rb') as f:
+            self.nodes = pickle.load(f)
        
         return True
 
     def save (self):
-        ''' saves the Expert object to a JSON file
+        ''' saves the Expert object to a pickl
         '''
-        expname = os.path.join (self.rapath,'expert.yaml')
-        with open(expname,'w') as f:
-            f.write(yaml.dump({"rules":self.rules}))
+        pickl_path = os.path.join (self.rapath,'workflow.pkl')
+        with open(pickl_path,'wb') as f:
+            pickle.dump(self.nodes, f, protocol=pickle.HIGHEST_PROTOCOL)
+
 
 
 

@@ -33,7 +33,8 @@ class Node:
         self.id = node_id
         self.type = node_type
         self.task = node_task # task should be is a dictionary
-        print ('>>>', self.id, self.name)
+
+        print ('>>>', self.id, self.name, self.type)
 
     def getVal(self, field):
         if field in self.__dict__:
