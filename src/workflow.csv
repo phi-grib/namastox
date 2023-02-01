@@ -1,0 +1,23 @@
+num	ID	Name	Type	area	needs	requires	result type	result	input for	tool	links	summary	next	YES	NO	MAYBE
+1	BB001_01	Problem Formulation	TASK	general		input text	text	problem formulation		expert		text	2			
+2	BB002_01	Relevant existing data	TASK	general		input text	text	existing data		expert		text	3			
+3	DP01EF_01	Is the information sufficient	LOGICAL	general		bool	bool	justification		expert		bool		4	5	
+4		Risk assessment report	END	general			report	report								
+5	DP02EF_01	Is exposure scenario well defined	LOGICAL	general		bool	bool	justification		expert		bool		6	9,12,13, 19	
+6	BB003_01	Definition of maximum exposure (Emax)	TASK	general		input text	text	max exposure		expert		value				
+7	DP03EF_01	Is the TTC applicable	LOGICAL	general		bool	bool	justification		expert		bool		4	9,12,13, 19	8
+8	BB004_01	Consider wheter TTC may be applicable	TASK	general		input text	text	TTC applicability		expert		text	broken			
+9	BB005_01	Identify use scenario	TASK	exposure		input text	text	use scenario		expert		text	10			
+10	BB006_01	Estimate external exposure	TASK	exposure		input text	text	external exposure		expert		value 	11,18			
+11	BB007_01	Prioritise parameters using expert jugments	TASK	exposure		input text	text	ranked parameters		expert		text	12			
+12	BB008_01	Generate in vitro data for highly sensitive/uncertain parameters	TASK	exposure		in vitro	text	PK parameters	14	NAMs	NAM database	done	14			
+13	BB009_01	Generate in silico parameters	TASK	exposure		in silico	text	PK parameters	14	in silico	internal	done	14			
+14	BB010_01	Run PBPK model	TASK	exposure	12,13	in silico	text	PK results	17	in silico	NAM database	done	15,17			
+15	BB011_01	Perform uncertainty and variability analysis	TASK	exposure		in silico	text	PK variability		in silico	internal	text	16			
+16	BB012_01	Perform sensitivity analysis	TASK	exposure		in silico	text	?		in silico	?	text	18			
+17	BB013_01	Generate estimates of highest test concentration	TASK	exposure		in silico	text	highest test conc		in silico	?	value	20			
+18	DP05EF_01	Is the information sufficient?	LOGICAL	risk				justification				bool		4	**	
+19	BB014_01	Generate in silico predictions of hazard	TASK	hazard		in silico	text	hazard list		in silico	internal	text	20			
+20	BB015_01	Generate HT in vitro data	TASK	hazard		in vitro	text	hazard list		NAMs	NAM database	text	21			
+21	BB016_01	Integration of results	TASK	risk		input text	text	risk report		expert		text				
+22	DP04EF_01	Is a toxicological alert identified?	LOGICAL	hazard		bool	bool	justification		expert		bool		18	**	

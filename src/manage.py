@@ -65,7 +65,7 @@ def action_new(raname, outfile=None):
 
     # Copy templates
     wkd = os.path.dirname(os.path.abspath(__file__))
-    template_names = ['ra.yaml', 'expert.yaml']
+    template_names = ['ra.yaml', 'expert.yaml', 'workflow.csv']
 
     for cname in template_names:
         src_path = os.path.join (wkd, cname)

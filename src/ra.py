@@ -28,12 +28,15 @@ import os
 import time
 import hashlib
 from src.utils import ra_path
+from src.workflow import Workflow
 
 class Ra:
     ''' Class storing all the risk assessment information
     '''
     def __init__(self):
         ''' constructor '''
+        # REDESIGN
+        # ACTIVE_NODE(S)
         self.dict = {
             'ID':{}, 
             'results':{},
@@ -46,6 +49,7 @@ class Ra:
             'version': 0,
             'rapath':''
             }
+        
 
     def load(self, raname):       
         ''' load the Ra object from a YAML file
@@ -67,6 +71,10 @@ class Ra:
                 self.dict = yaml.safe_load(pfile)
         except Exception as e:
             return False, e
+
+        self.workflow = Workflow(raname)
+
+        self.workflow.import_table()
 
         return True, 'OK'
 

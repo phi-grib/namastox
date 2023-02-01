@@ -1,0 +1,22 @@
+regulatory_framework : None          # regulatory framework [none|ECHA|REACH]
+administration_route : None          # [oral|topic]
+substances : None          # list of input substances {}
+#  - name : example
+#    SMILES : c1ccccc1
+#    CASRN : 123-456-78
+endpoint : None           # toxicity endpoint {}
+#  name : CMR
+#  description : None
+exposures : None          # list of exposure determination {}
+#  - substance : example
+#    AUC : 123
+#    units : nM
+#    link : exposure_study_for_examample.xlxs
+species : None      # [none|human|rat]
+NAMS : None          # list of NAMs {}
+results : None       # list of results {}
+notes : None         # list of notes {}
+# - text: example risk assessment
+#   author: Manuel Pastor
+#   e-mail: manuel.pastor@upf.edu
+#   date: 3/1/2023
