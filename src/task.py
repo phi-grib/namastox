@@ -78,12 +78,11 @@ class Task:
             - link to NAM method database
             - empty result template
         '''
-        description_text = yaml.dump(self.description)
-        return description_text
+        return yaml.dump({'task description':self.description, 'result':self.result})
     
     def getTemplate(self):
         '''generates a YAML for entering the results'''
-
+        return yaml.dump ({'result':self.result})
     
     def valResult(self, task_result):
         ''' makes sure that the task_result dict meets the task requirements

@@ -30,6 +30,7 @@ import hashlib
 from src.utils import ra_path
 from src.workflow import Workflow
 
+
 class Ra:
     ''' Class storing all the risk assessment information
     '''
@@ -137,6 +138,37 @@ class Ra:
                 else:
                     self.setVal(key,val)
 
+    def update(self, result):
+        ''' validate result and if it matchs the requirements of an active node progress in the workflow'''
+
+        # validate result
+        step = self.ra['step']
+        if step == 0:
+            if not 'general' in result:
+                return
+            self.general = result['general']
+            # TODO: load first workflow as the active node
+        else:
+            if not 'result' in result:
+                return
+            self.results.append(result['result'])
+
+        # advance workflow: step+1, active workflow+1
+
+        self.ra['step']=step+1
+        active = self.ra['active_nodes']
+        # identify the node for which this result has been obtained
+
+        # retreive node
+        
+        # if logical find new active node (method in workflow?)
+
+        # if task find new active node  (method in workflow?)
+ 
+
+
+        # print (')))))))))))))))))))))))))))))))))))))))',result)
+
     def getVal(self, key):
         ''' returns self.dict value for a given key
         '''
@@ -178,20 +210,27 @@ class Ra:
         return json.dumps(self.dict, allow_nan=True)
 
     def dumpYAML (self):
-        ''' return a human-readable version of self.dir, with a stable order and comments
-            for being used as a template in update
+        ''' dumps a template of the results for the following active nodes
         '''
         current_step = self.ra['step']
         results = f'# template for step {current_step}\n'
         if current_step == 0:
             results+= yaml.dump({'general':self.general})
-            # print (results)
         else:
+            # TODO: makr the template with the node id, so we know which is the node we
+            # need to update
             results = ''
             for iid in self.ra['active_nodes']:
-                results+= self.workflow.getTemplate(iid)
+                inode = self.workflow.getNode(iid)
+                results+= f'# node {inode.getVal("name")}\n'
+                itask = inode.getTask()
+                results+= itask.getTemplate()
 
+        # print (results)
+        
         return results
+
+
     #################################################
     # utilities section
     #################################################

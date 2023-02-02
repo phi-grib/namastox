@@ -34,8 +34,8 @@ def action_update(raname, ifile, ofile=None):
     '''
 
     # instantiate a ra object
-    ra = Ra()
-    succes, results = ra.load(raname)
+    ra = Ra(raname)
+    succes, results = ra.load()
     if not succes:
         return False, results
 
@@ -46,7 +46,7 @@ def action_update(raname, ifile, ofile=None):
     with open(ifile,'r') as inputf:
         delta_dict = yaml.safe_load(inputf)
 
-    ra.applyDelta(delta_dict)
+    ra.update(delta_dict)
 
     # dump new version
     results = ra.dumpYAML()
@@ -56,8 +56,7 @@ def action_update(raname, ifile, ofile=None):
             LOG.info (iline)
     else:
         with open(ofile,'w') as outputf:
-            for iline in results:
-                outputf.write (iline+'\n')
+            outputf.write (results)
     
     # save new version and replace the previous one
     ra.save()

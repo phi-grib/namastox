@@ -1,0 +1,10 @@
+# template for step 0
+general:
+  administration_route: oral
+  endpoint: CMR
+  regulatory_framework: ECHA
+  species: human
+  substances: 
+    CASRN: 123-45-67
+    SMILES: c1cccc1
+    name: bencene

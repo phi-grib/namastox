@@ -20,7 +20,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NAMASTOX. If not, see <http://www.gnu.org/licenses/>.
 
-import yaml
+# import yaml
 import os
 import sys
 import pickle
@@ -29,6 +29,8 @@ import numpy as np
 from src.utils import ra_path
 from src.node import Node
 from src.logger import get_logger
+from src.node import Node
+from src.task import Task
 
 LOG = get_logger(__name__)
 
@@ -101,11 +103,16 @@ class Workflow:
         with open(pickl_path,'wb') as f:
             pickle.dump(self.nodes, f, protocol=pickle.HIGHEST_PROTOCOL)
 
-    def getTemplate (self,iid):
+    def getNode (self, iid):
         for inode in self.nodes:
             if inode.getVal('id') == iid:
-                itask = inode.getTask()
-                return itask.getTemplate()
+                return inode
+
+    # def getTemplate (self,iid):
+    #     for inode in self.nodes:
+    #         if inode.getVal('id') == iid:
+    #             itask = inode.getTask()
+    #             return itask.getTemplate()
 
 
 
