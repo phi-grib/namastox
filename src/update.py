@@ -24,7 +24,6 @@ import os
 import yaml
 from src.logger import get_logger
 from src.ra import Ra
-from src.expert import Expert
 
 LOG = get_logger(__name__)
 
@@ -48,16 +47,6 @@ def action_update(raname, ifile, ofile=None):
         delta_dict = yaml.safe_load(inputf)
 
     ra.applyDelta(delta_dict)
-
-    # process ra using expert logic
-    expert = Expert (raname)
-    success, result = expert.load()
-    if not success:
-        return False, result
-
-    success, result = expert.applyExpert(ra)
-    if not success:
-        return False, result
 
     # dump new version
     results = ra.dumpYAML()
