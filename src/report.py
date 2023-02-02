@@ -30,8 +30,8 @@ def action_report(raname, pfile=None):
     '''
 
     # instantiate a ra object
-    ra = Ra()
-    succes, results = ra.load(raname)
+    ra = Ra(raname)
+    succes, results = ra.load()
     if not succes:
         return False, results
 
@@ -39,23 +39,18 @@ def action_report(raname, pfile=None):
     LOG.info (f'Risk assessment {raname}, ID {ra.getVal("ID")}')
 
     substances = ra.getVal("substances")
-    for isubs in substances:
-        LOG.info (f'substance {isubs["name"]}') 
-        LOG.info (f'CASRN {isubs["CASRN"]}') 
-        LOG.info (f'SMILES {isubs["SMILES"]}')
+    if type(substances) == list:
+        for isubs in substances:
+            for key in isubs:
+                LOG.info (f'substance {isubs[key]}') 
 
     endpoint = ra.getVal("endpoint")
-    LOG.info (f'endpoint {endpoint["name"]}') 
-    LOG.info (f'{endpoint["description"]}') 
+    if type(endpoint) == dict:
+        for iend in endpoint:
+            LOG.info (f'endpoint {endpoint[iend]}') 
 
     LOG.info (f'Administration route {ra.getVal("administration_route")}')
 
-    
-    # show completed NAMS/exposures
-    
-    # show pending tasks
-
-    # dump to the PDF output
 
 
     return True, results

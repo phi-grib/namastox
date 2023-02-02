@@ -42,7 +42,6 @@ LOG = get_logger(__name__)
 class Task:
     ''' Class representing a task associade to a workflow node
     '''
-    
 
     def __init__(self, task_dict:dict=None):
         ''' constructor '''
@@ -70,7 +69,7 @@ class Task:
         self.other = {}
         self.setTask(task_dict)
 
-        print ('+++', self.description, self.result)
+        # print ('+++', self.description, self.result)
 
     def getDescription(self):
         ''' generates a yaml with information for the end-user, describing what should be done

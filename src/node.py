@@ -37,7 +37,7 @@ class Node:
         if node_task != None:
             self.setTask(node_task)
 
-        print ('>>>', self.id, self.name, self.type)
+        # print ('>>>', self.id, self.name, self.type)
 
     def getVal(self, field):
         if field in self.__dict__:
