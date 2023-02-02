@@ -21,18 +21,21 @@
 # along with NAMASTOX. If not, see <http://www.gnu.org/licenses/>.
 
 from src.logger import get_logger
+from src.task import Task
 
 LOG = get_logger(__name__)
 
 class Node:
     ''' Class representing a workflow node
     '''
-    def __init__(self, node_name, node_id, node_type, node_task:dict):
+    def __init__(self, node_name, node_id, node_type, node_task=None):
         ''' constructor '''
         self.name = node_name
         self.id = node_id
         self.type = node_type
-        self.task = node_task # task should be is a dictionary
+        self.task = None        
+        if node_task != None:
+            self.setTask(node_task)
 
         print ('>>>', self.id, self.name, self.type)
 
@@ -41,7 +44,13 @@ class Node:
             return self.__dict__[field]
         return None
     
-    def getTask(self, field):
+    def setTask(self, node_task):
+        self.task = Task(node_task)
+
+    def getTask(self):
+        return self.task()
+        
+    def getTaskVal(self, field):
         if field in self.task:
             return self.task[field]
         return None

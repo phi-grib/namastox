@@ -65,10 +65,10 @@ def action_new(raname, outfile=None):
 
     # Copy templates
     wkd = os.path.dirname(os.path.abspath(__file__))
-    template_names = ['ra.yaml', 'expert.yaml', 'workflow.csv']
+    template_names = ['ra.yaml', 'workflow.csv']
 
     for cname in template_names:
-        src_path = os.path.join (wkd, cname)
+        src_path = os.path.join (wkd, 'default', cname)
         try:
             shutil.copy(src_path, ndir)
         except:
