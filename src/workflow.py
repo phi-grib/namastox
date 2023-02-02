@@ -36,8 +36,13 @@ LOG = get_logger(__name__)
 class Workflow:
     ''' Class storing all the risk assessment information
     '''
-    def __init__(self, raname):
+    def __init__(self, raname, workflow=None):
         ''' constructor '''
+        if workflow is not None:
+            self.workflow = workflow
+        else:
+            self.workflow = 'workflow.csv'
+
         self.nodes = []
         self.rapath = ra_path(raname)
 
@@ -51,19 +56,19 @@ class Workflow:
 
 
     def import_table (self):
-        table_path = os.path.join (self.rapath,'workflow.csv')
+        table_path = os.path.join (self.rapath,self.workflow)
         table_dataframe = pd.read_csv(table_path, sep='\t').replace(np.nan, None)
         table_dict = table_dataframe.to_dict('list')
         # print (table_dict)
 
-        index_labels = ['ID', 'Name', 'Type']
+        index_labels = ['id', 'name', 'cathegory']
         for i in index_labels:
             if not i in table_dict:
                 return False
             
-        node_ids = table_dict['ID']
-        node_names = table_dict['Name']
-        node_types = table_dict['Type']
+        node_ids = table_dict['id']
+        node_names = table_dict['name']
+        node_types = table_dict['cathegory']
         for i in range(table_dataframe.shape[0]):
             
             node_task = {}
@@ -95,6 +100,12 @@ class Workflow:
         pickl_path = os.path.join (self.rapath,'workflow.pkl')
         with open(pickl_path,'wb') as f:
             pickle.dump(self.nodes, f, protocol=pickle.HIGHEST_PROTOCOL)
+
+    def getTemplate (self,iid):
+        for inode in self.nodes:
+            if inode.getVal('id') == iid:
+                itask = inode.getTask()
+                return itask.getTemplate()
 
 
 

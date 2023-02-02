@@ -1,0 +1,7 @@
+# template for step 0
+general:
+  administration_route: null
+  endpoint: null
+  regulatory_framework: null
+  species: null
+  substances: null

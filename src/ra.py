@@ -21,7 +21,7 @@
 # along with NAMASTOX. If not, see <http://www.gnu.org/licenses/>.
 
 import pickle
-import numpy as np
+import shutil
 import json
 import yaml
 import os
@@ -33,47 +33,60 @@ from src.workflow import Workflow
 class Ra:
     ''' Class storing all the risk assessment information
     '''
-    def __init__(self):
+    def __init__(self, raname):
         ''' constructor '''
-        # REDESIGN
-        # ACTIVE_NODE(S)
-        self.dict = {
-            'ID':{}, 
-            'results':{},
-            'NAMS':[],
-            'substances':[],
-            'endpoint': {},
-            'error': None,
-            'warning': None,
-            'raname':'',
-            'version': 0,
-            'rapath':''
-            }
-        
 
-    def load(self, raname):       
+        # internal data
+        self.raname = raname
+        self.rapath = ra_path(raname)
+        self.workflow = None  
+        
+        # default, these are loaded from a YAML file
+        self.ra = {
+            'ID': None,
+            'workflow_name': None,
+            'step': 0,
+            'active_nodes': []
+        }
+        self.general = {
+            'endpoint': {},
+            'administration_route': None,
+            'species': None,
+            'regulatory_frameworks': None,
+            'substances': []
+        }
+        self.results = []
+        self.notes = []
+        self.assessment = None
+
+        
+    def load(self):       
         ''' load the Ra object from a YAML file
         '''
         # obtain the path and the default name of the raname parameters
-        ra_file_path = ra_path(raname)
-        
-        if not os.path.isdir (ra_file_path):
-            return False, f'Risk assessment "{raname}" not found'
-
-        ra_file_name = os.path.join (ra_file_path,'ra.yaml')
+        if not os.path.isdir (self.rapath):
+            return False, f'Risk assessment "{self.rapath}" not found'
 
         # load the main class dictionary (p) from this yaml file
+        ra_file_name = os.path.join (self.rapath,'ra.yaml')
         if not os.path.isfile(ra_file_name):
             return False, f'Risk assessment definition {ra_file_name} file not found'
 
+        yaml_dict = {}
         try:
             with open(ra_file_name, 'r') as pfile:
-                self.dict = yaml.safe_load(pfile)
+                yaml_dict = yaml.safe_load(pfile)
         except Exception as e:
             return False, e
 
-        self.workflow = Workflow(raname)
+        #TODO: validate yaml_dict
+        self.ra = yaml_dict['ra']
+        self.general = yaml_dict['general']
+        self.results = yaml_dict['results']
+        self.notes = yaml_dict['notes']
+        self.assessment = yaml_dict['assessment']
 
+        self.workflow = Workflow(self.raname, self.ra['workflow_name'])
         self.workflow.import_table()
 
         return True, 'OK'
@@ -81,14 +94,21 @@ class Ra:
     def save (self):
         ''' saves the Ra object to a YAML file
         '''
-        rafile = os.path.join (self.getVal('rapath'),'ra.yaml')
+        rafile = os.path.join (self.rapath,'ra.yaml')
+        dict_temp = {
+            'ra': self.ra,
+            'general': self.general, 
+            'results': self.results,
+            'notes': self.notes,
+            'assessment': self.assessment
+        }
         with open(rafile,'w') as f:
-            f.write(yaml.dump(self.dict))
+            f.write(yaml.dump(dict_temp))
 
         time_label = time.strftime("_%d%b%Y_%H%M%S", time.localtime()) 
-        rahist = os.path.join (self.getVal('rapath'),'hist',f'ra{time_label}.yaml')
-        with open(rahist,'w') as f:
-            f.write(yaml.dump(self.dict))
+        rahist = os.path.join (self.rapath,'hist',f'ra{time_label}.yaml')
+        shutil.copyfile(rafile, rahist)
+
 
     def applyDelta (self, delta_dict):
         ''' uses the keys of the delta_dict parameter to update the contents of self.dict
@@ -120,8 +140,8 @@ class Ra:
     def getVal(self, key):
         ''' returns self.dict value for a given key
         '''
-        if key in self.dict:
-            return self.dict[key]
+        if key in self.ra:
+            return self.ra[key]
         else:
             return None
 
@@ -130,145 +150,24 @@ class Ra:
             values or creating the key, if it doesn't exist previously
         '''
         # for existing keys, replace the contents of 'value'
-        if key in self.dict:
-            self.dict[key] = value
+        if key in self.ra:
+            self.ra[key] = value
         # for new keys, create a new element with 'value' key
         else:
-            self.dict[key] = value
+            self.ra[key] = value
            
-    def setInnerVal (self, key, inner_key, inner_val):
-        ''' sets self.dict for a givenn second level key, either replacing existing 
-            values or creating the key, if it doesn't exist previously
-        '''
-        if not key in self.dict:
-            return
-        if isinstance(self.dict[key], dict):
-            self.dict[key][inner_key] = inner_val
-        elif self.dict[key] == None:
-            self.dict[key] = {inner_key:inner_val}
-
-    #################################################
-    # expert section
-    #################################################
-
-    # def extractAction (self, rule):
-    #     ''' Returns the ACTION present in the rule
+    # def setInnerVal (self, key, inner_key, inner_val):
+    #     ''' sets self.dict for a givenn second level key, either replacing existing 
+    #         values or creating the key, if it doesn't exist previously
     #     '''
-    #     if 'predicate' in rule:
-    #         if 'action' in rule['predicate']:
-    #             return rule['predicate']['action']
-    #     return None
+    #     if not key in self.dict:
+    #         return
+    #     if isinstance(self.dict[key], dict):
+    #         self.dict[key][inner_key] = inner_val
+    #     elif self.dict[key] == None:
+    #         self.dict[key] = {inner_key:inner_val}
 
-    # def validateRule (self, rule):
-    #     ''' Make sure the rule is sythactically correct
-    #     '''
-    #     # rule should be a dictionary and contain keys 'subject' and 'object' with a list 
-    #     if not isinstance(rule, dict):
-    #         return False, 'rule is not a dictionary'
-    #     if not 'subject' in rule:
-    #         return False, 'no subject key in the rule'
-    #     if not isinstance(rule['subject'], list):
-    #         return False, 'subject key in rule is not of type list'
-    #     if not 'object' in rule:
-    #         return False, 'no object key in the rule'
-    #     if not isinstance(rule['object'], list):
-    #         return False, 'object key in the rule is not of type list'
-    #     return True, 'OK'
-
-
-    # def compute (self, rule):
-    #     ''' ACTION COMPUTE: we will use information from RA and the rule to generate (compute) additional data
-    #         the rule can define if the computation will be run locally or we will call an external service
-    #     '''
-    #     # rule should be a dictionary and contain keys 'subject' and 'object' with a list 
-    #     success, result = self.validateRule(rule)
-    #     if not success:
-    #         return success, result
-
-    #     print ('COMPUTE actions are not fully implemented yet')
-
-    #     return True, 'OK'
-
-    # def include (self, rule):
-    #     ''' ACTION INCLUDE: we will use the rule to include new data in RA, if the elements described in the subject are found
-    #         Subject elements can be a list and the conditions will be combined using OR: any element triggers the inclussion
-    #     '''
-    #     # for any item in the subject
-    #     #   if it is coincident with existing keys, add all the elements in the object
-    #     success, result = self.validateRule(rule)
-    #     if not success:
-    #         return success, result
-
-    #     found = False
-    #     for isub in rule['subject']:
-    #         idic = isub['dic']
-    #         ikey = isub['key']
-    #         ival = isub['val']
-    #         if idic in self.dict:
-    #             if isinstance(self.dict[idic],list):
-    #                 target_list = self.dict[idic]
-    #                 for item in target_list:
-    #                     if ikey in item:
-    #                         if item[ikey] == ival:
-    #                             found = True
-    #                             break
-    #         if found:
-    #             break
-
-    #     if found:
-    #         for iobj in rule['object']:
-
-    #             ofound = False
-    #             idic = iobj['dic']
-    #             ikey = iobj['key']
-    #             ival = iobj['val']
-            
-    #             if idic in self.dict:
-    #                 if isinstance(self.dict[idic],list):
-    #                     target_list = self.dict[idic]
-    #                     for item in target_list:
-    #                         if ikey in item:
-    #                             if item[ikey] == ival:
-    #                                 ofound = True
-    #                                 break
-    #                     if not ofound:
-    #                         new_dict = {ikey: ival}
-    #                         self.dict[idic].append(new_dict)
-
-    #                 elif self.dict[idic] is None:
-    #                     new_dict = {ikey: ival}
-    #                     self.dict[idic] = [new_dict]
-        
-    #     return True, 'OK'
-
-    # def applyExpert (self):
-    #     ''' TODO: we must log all the results of the expert 
-    #     '''
-
-    #     expname = os.path.join(self.getVal('rapath'),'expert.json')
-    #     if not os.path.isfile(expname):
-    #         return False, 'expert.json file not found'
-
-    #     with open(expname, 'r') as f:
-    #         ruleset = json.load(f)
-        
-    #     for rule in ruleset['rule']:
-
-    #         action = self.extractAction(rule)
-    #         if action == 'add':
-    #             success, result = self.include(rule)
-            
-    #         elif action == 'request':
-    #             print ('REQUEST actions are not implemented yet')
-
-    #         elif action == 'compute':
-    #             success, result = self.compute(rule)
-            
-    #         elif action is None:
-    #             return False, 'no valid action found'
-        
-    #     return success, result
-
+ 
     #################################################
     # output section
     #################################################
@@ -282,68 +181,17 @@ class Ra:
         ''' return a human-readable version of self.dir, with a stable order and comments
             for being used as a template in update
         '''
-        # open ra.yaml and use the key order and the comments 
-        work_dir = os.path.dirname(os.path.abspath(__file__))
-        ra_template_name = os.path.join(work_dir,'ra.yaml')
-        template=[]
-        with open (ra_template_name,'r') as f:
-            for line in f:
-                template.append(line.strip())
+        current_step = self.ra['step']
+        results = f'# template for step {current_step}\n'
+        if current_step == 0:
+            results+= yaml.dump({'general':self.general})
+            # print (results)
+        else:
+            results = ''
+            for iid in self.ra['active_nodes']:
+                results+= self.workflow.getTemplate(iid)
 
-        # list of non-editable items
-        blacklist = ['ID', 'error', 'warning', 'raname', 'rapath']
-
-        yaml_out = []
-        for iline in template:
-
-            if iline.startswith('#'):
-                yaml_out.append(iline)
-                continue
-
-            # lines have the format 'substances:         # list of input substances' 
-            # use the first part as key, the second as comment
-            line = iline.split(':')
-            key = line[0]
-            if len(line)>1:
-                comment = line[-1]
-
-            # do not dump elements which the end-user should not edit
-            if key in blacklist : continue
-
-            if key in self.dict:
-                value = self.dict[key]
-
-                # value can be a list or a single variable
-                if isinstance(value,list):
-                    yaml_out.append(f'{key}: {comment}')
-                    for iitem in value:
-
-                        # list item is a value
-                        if not isinstance(iitem, dict):
-                            yaml_out.append (f'- {iitem}')
-                        
-                        # list item is a dictionary
-                        else:
-                            idict = iitem
-                            for i,ikey in enumerate(idict):
-                                if i==0:
-                                    yaml_out.append (f'- {ikey:} : {str(idict[ikey])}')
-                                else:
-                                    yaml_out.append (f'  {ikey:} : {str(idict[ikey])}')
-
-                # dictionary 
-                elif isinstance(value,dict):
-                    yaml_out.append(f'{key}: {comment}')
-                    idict = value
-                    for ikey in idict:
-                        yaml_out.append (f'  {ikey} : {str(idict[ikey])}')
-                
-                # item
-                else:
-                    yaml_out.append(f'{key} : {str(self.dict[key])} {comment}')
-
-        return (yaml_out)
-
+        return results
     #################################################
     # utilities section
     #################################################

@@ -77,14 +77,14 @@ def action_new(raname, outfile=None):
     LOG.debug(f'copied risk assessment templates from {src_path} to {ndir}')
 
     # Instantiate Ra
-    ra = Ra()
-    success, results = ra.load(raname)
+    ra = Ra(raname)
+    success, results = ra.load()
     if not success:
         return False, results
 
     # Include RA information 
-    ra.setVal('raname',raname)
-    ra.setVal('rapath',ra_path(raname))
+    # ra.setVal('raname',raname)
+    # ra.setVal('rapath',ra_path(raname))
     ra.setVal('ID', id_generator() )
 
     # Save
@@ -98,8 +98,9 @@ def action_new(raname, outfile=None):
             LOG.info(iline)
     else:
         with open(outfile,'w') as f:
-            for iline in yaml:
-                f.write (iline+'\n')
+            f.write(yaml)
+            # for iline in yaml:
+                # f.write (iline+'\n')
 
     return True, f'New risk assessment {raname} created'
 

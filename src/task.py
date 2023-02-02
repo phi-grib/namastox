@@ -21,42 +21,101 @@
 # along with NAMASTOX. If not, see <http://www.gnu.org/licenses/>.
 
 from src.logger import get_logger
+import yaml
 
 LOG = get_logger(__name__)
 
+# Description
 #    cathegory: [NAM|exposure|expert|decision]
+#    description:
+#    link_method:
+
+# Result template
 #    substance : example
 #    summary: 
 #    value: 
 #    unit:
 #    uncertainty:
-#    link : exposure_study_for_example.xlxs
+#    link_result : exposure_study_for_example.xlxs
+
 
 class Task:
     ''' Class representing a task associade to a workflow node
     '''
+    
+
     def __init__(self, task_dict:dict=None):
         ''' constructor '''
 
-        # task_dict must contain information about 
-        # 1. the task that the end-user must carry out 
-        # 2. the result that is expected
+        self.description = {
+            'cathegory': 'TASK',
+            'area': None,
+            'description': None, 
+            'method_type': 'expert', # expert, NAM, in silico, 
+            'method_link': None 
+        }
 
-        self.cathegory = None
-        self.description = None
-        self.method_link = None
+        self.result = {
+            'substance': None,
+            'resul_description': 'text', # text, bool
+            'resul_type': None, # text, bool
+            'summary': None,
+            'summary_type': 'text',  # text, bool, value, 'done'
+            'value': None, 
+            'unit': None,
+            'uncertainty': None,
+            'decision': False,
+            'result_link': None
+        }
+        self.other = {}
+        self.setTask(task_dict)
 
-        self.result = None
-
+        print ('+++', self.description, self.result)
 
     def getDescription(self):
-        ''''generates a yaml with information for the end-user, describing what should be done
+        ''' generates a yaml with information for the end-user, describing what should be done
             - type of task
             - description
             - link to NAM method database
             - empty result template
         '''
-        return 'I am the result'
+        description_text = yaml.dump(self.description)
+        return description_text
     
-    def valResult(self):
+    def getTemplate(self):
+        '''generates a YAML for entering the results'''
+
+    
+    def valResult(self, task_result):
+        ''' makes sure that the task_result dict meets the task requirements
+        '''
+
+        if type(task_result) is not dict:
+            return False
+
+        compulsory_keys = ['substance', 'summary']
+
+        if self.description['cathegory'] == 'LOGICAL':
+            compulsory_keys.append ('decision')
+        elif self.description['cathegory'] == 'TASK':
+            compulsory_keys.append ('value')
+            compulsory_keys.append ('unit')
+
+        for ikey in compulsory_keys:
+            if ikey not in task_result:
+                return False
+
         return True
+
+    def setTask(self, task_dict):
+        for ikey in self.description:
+            if ikey in task_dict:
+                self.description[ikey]=task_dict[ikey]
+
+        for ikey in self.result:
+            if ikey in task_dict:
+                self.result[ikey]=task_dict[ikey]
+
+        for ikey in task_dict:
+            if ikey not in self.result and ikey not in self.description:
+                self.other[ikey]=task_dict[ikey]
