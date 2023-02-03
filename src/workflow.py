@@ -71,22 +71,13 @@ class Workflow:
         for i in range(table_dataframe.shape[0]):
             node_content = {}
             for key in table_dict:
-                node_content[key]=table_dict[key][i]     
+                value = table_dict[key][i] 
+                if key in ['next_node', 'next_yes', 'next_no']:
+                    if type(value) == float:
+                        value = int(value)
+                node_content[key]=value   
             self.nodes.append(Node(node_content))
              
-        # node_ids = table_dict['id']
-        # node_names = table_dict['name']
-        # node_types = table_dict['cathegory']
-
-        # for i in range(table_dataframe.shape[0]):
-            
-        #     node_task = {}
-        #     for key in table_dict:
-        #         if key not in index_labels:
-        #             node_task[key]=table_dict[key][i]      
-
-        #     self.nodes.append(Node(node_ids[i], node_names[i], node_types[i], node_task))
-
         self.save()
 
         return True
@@ -121,7 +112,6 @@ class Workflow:
     def nextNodeList (self, iid):
         inode = self.getNode(iid)
         index_list = inode.nextNodeIndex()
-        print (iid, [self.nodes[x].getVal('id') for x in index_list])
         return [self.nodes[x].getVal('id') for x in index_list]
 
     def logicalNodeList (self, iid, decision):

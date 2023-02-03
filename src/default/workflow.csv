@@ -2,7 +2,7 @@ num	id	name	cathegory	area	needs	result_type	result_description	input_for	method
 1	BB001_01	Problem Formulation	TASK	general		text	problem formulation		expert		text	2			
 2	BB002_01	Relevant existing data	TASK	general		text	existing data		expert		text	3			
 3	DP01EF_01	Is the information sufficient	LOGICAL	general		bool	justification		expert		bool		4	5	
-4		Risk assessment report	END	general		text	report								
+4	EXIT	Risk assessment report	END	general		text	report								
 5	DP02EF_01	Is exposure scenario well defined	LOGICAL	general		bool	justification		expert		bool		6	9,12,13, 19	
 6	BB003_01	Definition of maximum exposure (Emax)	TASK	general		text	max exposure		expert		value				
 7	DP03EF_01	Is the TTC applicable	LOGICAL	general		bool	justification		expert		bool		4	9,12,13, 19	8

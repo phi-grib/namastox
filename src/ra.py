@@ -29,7 +29,8 @@ import time
 import hashlib
 from src.utils import ra_path
 from src.workflow import Workflow
-
+from src.logger import get_logger
+LOG = get_logger(__name__)
 
 class Ra:
     ''' Class storing all the risk assessment information
@@ -110,48 +111,54 @@ class Ra:
         shutil.copyfile(rafile, rahist)
 
 
-    def applyDelta (self, delta_dict):
-        ''' uses the keys of the delta_dict parameter to update the contents of self.dict
-            - for lists, the content is not appended, but replaced
-            - for dictionaries, the content is merged 
-        '''
-        # update interna dict with keys in the input file (delta)
-        black_list = ['raname', 'rapath', 'md5']
-        for key in delta_dict:
-            if key not in black_list:
+    # def applyDelta (self, delta_dict):
+    #     ''' uses the keys of the delta_dict parameter to update the contents of self.dict
+    #         - for lists, the content is not appended, but replaced
+    #         - for dictionaries, the content is merged 
+    #     '''
+    #     # update interna dict with keys in the input file (delta)
+    #     black_list = ['raname', 'rapath', 'md5']
+    #     for key in delta_dict:
+    #         if key not in black_list:
 
-                val = delta_dict[key]
+    #             val = delta_dict[key]
 
-                # yaml define null values as 'None', which are interpreted as strings
-                if val == 'None':
-                    val = None
+    #             # yaml define null values as 'None', which are interpreted as strings
+    #             if val == 'None':
+    #                 val = None
 
-                if isinstance(val ,dict):
-                    for inner_key in val:
-                        inner_val = val[inner_key]
+    #             if isinstance(val ,dict):
+    #                 for inner_key in val:
+    #                     inner_val = val[inner_key]
 
-                        if inner_val == 'None':
-                            inner_val = None
+    #                     if inner_val == 'None':
+    #                         inner_val = None
 
-                        self.setInnerVal(key, inner_key, inner_val)
-                else:
-                    self.setVal(key,val)
+    #                     self.setInnerVal(key, inner_key, inner_val)
+    #             else:
+    #                 self.setVal(key,val)
 
     def update(self, input):
         ''' validate result and if it matchs the requirements of an active node progress in the workflow'''
 
         # validate result
         step = self.ra['step']
+        
+
 
         # special case of the first step
         if step == 0:
             if not 'general' in input:
                 return
             self.general = input['general']
-            # TODO: load first workflow as the active node
 
+            # set firstnode as active node
             active_node = self.workflow.firstNode()
             self.ra['active_nodes_id']=[active_node.getVal('id')]
+            LOG.info(f'active node updated to: {self.ra["active_nodes_id"]}' )
+
+            # advance workflow: step+1
+            LOG.info(f'workflow advanced to step: {step+1}')
             self.ra['step']=step+1
 
             self.save()
@@ -165,21 +172,29 @@ class Ra:
         
         # identify the node for which this result has been obtained
         input_node_id = input_result['id']
+
+        # validate input, the template must be tagged for this workflow node
+        if not input_node_id in self.ra["active_nodes_id"]:
+            LOG.error(f'input for node {input_node_id} not in the active nodes list({self.ra["active_nodes_id"]}). Update aborted')
+            return
+
+        # append result
         input_node = self.workflow.getNode(input_node_id)
         self.results.append(input_result)
-
-        # advance workflow: step+1, active workflow+1
-        self.ra['step']=step+1
-
-        print ('before', self.ra['active_nodes_id'])
 
         # if logical find new active node (method in workflow?)
         if input_node.getVal('cathegory') == 'LOGICAL':
             self.ra['active_nodes_id'] = self.workflow.logicalNodeList(input_node_id, input_result['decision'])
+            LOG.info(f'active node updated to: {self.ra["active_nodes_id"]}, based on decision {input_result["decision"]}' )
         else:
             self.ra['active_nodes_id'] = self.workflow.nextNodeList(input_node_id)
+            LOG.info(f'active node updated to: {self.ra["active_nodes_id"]}' )
 
-        print ('after:', self.ra['active_nodes_id'])
+
+        # advance workflow: step+1, active workflow+1
+        self.ra['step']=step+1
+        LOG.info(f'workflow advanced to step: {step+1}')
+
         self.save()
 
         return
@@ -203,17 +218,6 @@ class Ra:
         else:
             self.ra[key] = value
            
-    # def setInnerVal (self, key, inner_key, inner_val):
-    #     ''' sets self.dict for a givenn second level key, either replacing existing 
-    #         values or creating the key, if it doesn't exist previously
-    #     '''
-    #     if not key in self.dict:
-    #         return
-    #     if isinstance(self.dict[key], dict):
-    #         self.dict[key][inner_key] = inner_val
-    #     elif self.dict[key] == None:
-    #         self.dict[key] = {inner_key:inner_val}
-
  
     #################################################
     # output section

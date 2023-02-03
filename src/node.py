@@ -55,9 +55,7 @@ class Node:
         else:
             index_str = str(self.next_no) 
 
-        print ('logicalNode:',index_str, type(index_str))
-
-        index_list = [(int(float(x))-1) for x in index_str.split(',')] 
+        index_list = [(int(x)-1) for x in index_str.split(',')] 
         return (index_list)
     
     def setTask(self, node_task):

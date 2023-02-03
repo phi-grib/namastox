@@ -39,14 +39,16 @@ def action_update(raname, ifile, ofile=None):
     if not succes:
         return False, results
 
-    # read delta and use it to change existing delra
+    # read input file
     if not os.path.isfile(ifile):
         return False, f'{ifile} not found'
     
+    # convert to a dictionary 
     with open(ifile,'r') as inputf:
-        delta_dict = yaml.safe_load(inputf)
+        input_dict = yaml.safe_load(inputf)
 
-    ra.update(delta_dict)
+    # use input dictionary to update RA
+    ra.update(input_dict)
 
     # save new version and replace the previous one
     ra.save()
@@ -54,11 +56,8 @@ def action_update(raname, ifile, ofile=None):
     # dump new version
     results = ra.dumpYAML()
 
-    if ofile is None:
-        for iline in results:
-            LOG.info (iline)
-    else:
-        with open(ofile,'w') as outputf:
-            outputf.write (results)    
+    # write template for next update
+    with open(ofile,'w') as outputf:
+        outputf.write (results)    
 
     return True, f'{raname} updated'
