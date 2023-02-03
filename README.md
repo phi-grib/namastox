@@ -105,7 +105,6 @@ Command interface synthax
 | --- | --- |
 | -c/ --command | Action to be performed. Acceptable values are *new*, *kill*, *list*, *update*, *report*  |
 | -r/ --raname | Name of the risk assessment 
-| -v/ --version | Version of the risk assessment 
 | -a/ --action | Use 'silent' to configure the program using default RA repositories    |
 | -d/ --directory | Use this parameter in action configure to define the RA repositories    |
 | -i/ --infile | Name of the input file used by the command. |
@@ -118,11 +117,11 @@ Command examples and description
 
 | Command | Example | Description |
 | --- | --- | ---|
-| new | *namastox -c new -r myproject -o myproject.yaml* | Creates a new entry in the risk assessments repository named myproject and generates a yaml file that is used as a template for updating the risk assessement |
+| new | *namastox -c new -r myproject -o template.yaml* | Creates a new entry in the risk assessments repository named myproject and generates a yaml file that is used as a template for updating the risk assessement |
 | kill | *namastox -c kill -r myproject* | Removes myproject from the risk assessment repository. **Use with extreme care**, since the program will not ask confirmation and the removal will be permanent and irreversible  |
 | list | *namastox -c list* | Lists the risk assessments present in the repository |
-| update | *namastox -c update -r myproject -i delta.yaml -o myproject.yaml* | Update the risk assessment with the new information present in the delta.yaml file. The new data is processed by the expert and the changes are reflected interanally and in the yaml output file |
-| report | *namastox -c report -r myproject -p report.pdf* | *** not implemented yet *** |
+| update | *namastox -c update -r myproject -i result.yaml -o template.yaml* | Update the risk assessment with the new information present in the result.yaml file. The new data is processed internally, progressing to the new workflow node and the new data is stored in a local repository. The output is a template for entering new information |
+| report | *namastox -c report -r myproject -w report.docx |  |
 
 
 ## Quickstart
@@ -133,17 +132,17 @@ Configure using
 
 Create a new risk assessment 
 
-``namastox -c new -r myproject -o myproject.yaml``
+``namastox -c new -r myproject -o template.yaml``
 
 This creates a yaml file which can be used as a template for add information about the substances to study or the endpoints which should be studied 
 
 Update a risk assessment, using a delta.yaml file containing new data. The file generates a new version of the yaml file
 
-``namastox -c update -r myproject -i delta.yaml -o myproyect.yaml``
+``namastox -c update -r myproject -i result.yaml -o template.yaml``
 
-Generate a report with the current status of the risk assessment (in PDF format):
+Generate a report with the current status of the risk assessment (in Word format):
 
-``namastox -c report -r myproject -p report.pdf``
+``namastox -c report -r myproject -w report.docx``
 
 Remove completely a risk assessment
 
