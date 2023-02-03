@@ -121,7 +121,7 @@ Command examples and description
 | kill | *namastox -c kill -r myproject* | Removes myproject from the risk assessment repository. **Use with extreme care**, since the program will not ask confirmation and the removal will be permanent and irreversible  |
 | list | *namastox -c list* | Lists the risk assessments present in the repository |
 | update | *namastox -c update -r myproject -i result.yaml -o template.yaml* | Update the risk assessment with the new information present in the result.yaml file. The new data is processed internally, progressing to the new workflow node and the new data is stored in a local repository. The output is a template for entering new information |
-| report | *namastox -c report -r myproject -w report.docx |  |
+| report | *namastox -c report -r myproject -w report.docx* |  |
 
 
 ## Quickstart
