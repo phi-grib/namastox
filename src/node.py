@@ -28,17 +28,20 @@ LOG = get_logger(__name__)
 class Node:
     ''' Class representing a workflow node
     '''
-    def __init__(self, node_name, node_id, node_type, node_task=None):
+    # def __init__(self, node_name, node_id, node_type, node_task=None):
+    def __init__(self, node_content):
         ''' constructor '''
-        self.name = node_name
-        self.id = node_id
-        self.type = node_type
-        self.task = None        
-        if node_task != None:
-            self.setTask(node_task)
+        self.name = node_content['name']
+        self.id = node_content['id']
+        self.cathegory = node_content['cathegory']
+        self.next = node_content['next_node']
+        self.next_yes = node_content['next_yes']
+        self.next_no = node_content['next_no']
+
+        self.setTask(node_content)
 
         # print ('>>>', self.id, self.name, self.type)
-
+    
     def getVal(self, field):
         if field in self.__dict__:
             return self.__dict__[field]
@@ -48,9 +51,7 @@ class Node:
         self.task = Task(node_task)
 
     def getTask(self):
-        return self.task()
+        task = None
+        task = self.task
+        return task
         
-    def getTaskVal(self, field):
-        if field in self.task:
-            return self.task[field]
-        return None

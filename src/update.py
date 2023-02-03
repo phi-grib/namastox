@@ -48,6 +48,9 @@ def action_update(raname, ifile, ofile=None):
 
     ra.update(delta_dict)
 
+    # save new version and replace the previous one
+    ra.save()
+
     # dump new version
     results = ra.dumpYAML()
 
@@ -56,9 +59,6 @@ def action_update(raname, ifile, ofile=None):
             LOG.info (iline)
     else:
         with open(ofile,'w') as outputf:
-            outputf.write (results)
-    
-    # save new version and replace the previous one
-    ra.save()
+            outputf.write (results)    
 
     return True, f'{raname} updated'

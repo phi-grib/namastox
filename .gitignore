@@ -4,3 +4,4 @@ ras/
 *.log
 dist/*
 namastox.egg-info/*
+config.yaml

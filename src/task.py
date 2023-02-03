@@ -55,6 +55,7 @@ class Task:
         }
 
         self.result = {
+            'id': None,
             'substance': None,
             'resul_description': 'text', # text, bool
             'resul_type': None, # text, bool

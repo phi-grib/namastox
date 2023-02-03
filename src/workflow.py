@@ -63,22 +63,29 @@ class Workflow:
         table_dict = table_dataframe.to_dict('list')
         # print (table_dict)
 
-        index_labels = ['id', 'name', 'cathegory']
+        index_labels = ['id', 'name', 'cathegory', 'next_node', 'next_yes', 'next_no']
         for i in index_labels:
             if not i in table_dict:
                 return False
-            
-        node_ids = table_dict['id']
-        node_names = table_dict['name']
-        node_types = table_dict['cathegory']
-        for i in range(table_dataframe.shape[0]):
-            
-            node_task = {}
-            for key in table_dict:
-                if key not in index_labels:
-                    node_task[key]=table_dict[key][i]      
 
-            self.nodes.append(Node(node_ids[i], node_names[i], node_types[i], node_task))
+        for i in range(table_dataframe.shape[0]):
+            node_content = {}
+            for key in table_dict:
+                node_content[key]=table_dict[key][i]     
+            self.nodes.append(Node(node_content))
+             
+        # node_ids = table_dict['id']
+        # node_names = table_dict['name']
+        # node_types = table_dict['cathegory']
+
+        # for i in range(table_dataframe.shape[0]):
+            
+        #     node_task = {}
+        #     for key in table_dict:
+        #         if key not in index_labels:
+        #             node_task[key]=table_dict[key][i]      
+
+        #     self.nodes.append(Node(node_ids[i], node_names[i], node_types[i], node_task))
 
         self.save()
 
@@ -107,6 +114,15 @@ class Workflow:
         for inode in self.nodes:
             if inode.getVal('id') == iid:
                 return inode
+            
+    def firstNode (self):
+        return self.nodes[0]
+    
+    def nextNode (self, iid):
+        inode = self.getNode(iid)
+        i = inode.getVal('next')
+        return (self.nodes[int(i)-1].getVal('id'))
+
 
     # def getTemplate (self,iid):
     #     for inode in self.nodes:

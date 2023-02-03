@@ -47,7 +47,7 @@ class Ra:
             'ID': None,
             'workflow_name': None,
             'step': 0,
-            'active_nodes': []
+            'active_nodes_id': []
         }
         self.general = {
             'endpoint': {},
@@ -59,7 +59,6 @@ class Ra:
         self.results = []
         self.notes = []
         self.assessment = None
-
         
     def load(self):       
         ''' load the Ra object from a YAML file
@@ -81,11 +80,11 @@ class Ra:
             return False, e
 
         #TODO: validate yaml_dict
-        self.ra = yaml_dict['ra']
-        self.general = yaml_dict['general']
-        self.results = yaml_dict['results']
-        self.notes = yaml_dict['notes']
-        self.assessment = yaml_dict['assessment']
+        keylist = ['ra', 'general', 'results', 'notes', 'assessment']
+        for ikey in keylist:
+            if yaml_dict[ikey]!=None:
+                # print (f'loading {ikey} : {yaml_dict[ikey]}')
+                self.__dict__[ikey]=yaml_dict[ikey]
 
         self.workflow = Workflow(self.raname, self.ra['workflow_name'])
         self.workflow.import_table()
@@ -138,36 +137,50 @@ class Ra:
                 else:
                     self.setVal(key,val)
 
-    def update(self, result):
+    def update(self, input):
         ''' validate result and if it matchs the requirements of an active node progress in the workflow'''
 
         # validate result
         step = self.ra['step']
+
+        # special case of the first step
         if step == 0:
-            if not 'general' in result:
+            if not 'general' in input:
                 return
-            self.general = result['general']
+            self.general = input['general']
             # TODO: load first workflow as the active node
-        else:
-            if not 'result' in result:
-                return
-            self.results.append(result['result'])
+
+            active_node = self.workflow.firstNode()
+            self.ra['active_nodes_id']=[active_node.getVal('id')]
+            self.ra['step']=step+1
+
+            self.save()
+
+            return
+        
+        if not 'result' in input:
+            return
+        
+        input_result = input['result']
+        
+        # identify the node for which this result has been obtained
+        input_node_id = input_result['id']
+        self.results.append(input_result)
 
         # advance workflow: step+1, active workflow+1
-
         self.ra['step']=step+1
-        active = self.ra['active_nodes']
-        # identify the node for which this result has been obtained
 
-        # retreive node
-        
         # if logical find new active node (method in workflow?)
+        next_node = self.workflow.nextNode(input_node_id)
+        print ('+++++++++++', input_node_id, next_node)
+        if self.ra['active_nodes_id'] == None:
+            self.ra['active_nodes_id']=[next_node]
+        else:    
+            self.ra['active_nodes_id'].append(next_node)
 
-        # if task find new active node  (method in workflow?)
- 
+        self.save()
 
-
-        # print (')))))))))))))))))))))))))))))))))))))))',result)
+        return
 
     def getVal(self, key):
         ''' returns self.dict value for a given key
@@ -220,9 +233,10 @@ class Ra:
             # TODO: makr the template with the node id, so we know which is the node we
             # need to update
             results = ''
-            for iid in self.ra['active_nodes']:
+            for iid in self.ra['active_nodes_id']:
                 inode = self.workflow.getNode(iid)
                 results+= f'# node {inode.getVal("name")}\n'
+
                 itask = inode.getTask()
                 results+= itask.getTemplate()
 

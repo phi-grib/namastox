@@ -2,7 +2,7 @@ ra:
   ID:     
   workflow_name: workflow.csv
   step: 0
-  active_nodes: # []
+  active_nodes_id: # []
 general:
   endpoint:                     # toxicity endpoint {}
     #  name : CMR
