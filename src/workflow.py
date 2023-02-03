@@ -30,10 +30,8 @@ from src.utils import ra_path
 from src.node import Node
 from src.logger import get_logger
 from src.node import Node
-from src.task import Task
 
 LOG = get_logger(__name__)
-
 
 class Workflow:
     ''' Class storing all the risk assessment information

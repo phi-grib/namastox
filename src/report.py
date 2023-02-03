@@ -51,6 +51,4 @@ def action_report(raname, pfile=None):
 
     LOG.info (f'Administration route {ra.getVal("administration_route")}')
 
-
-
     return True, results

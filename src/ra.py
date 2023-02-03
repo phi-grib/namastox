@@ -22,7 +22,6 @@
 
 import pickle
 import shutil
-import json
 import yaml
 import os
 import time
@@ -143,13 +142,11 @@ class Ra:
 
         # validate result
         step = self.ra['step']
-        
-
 
         # special case of the first step
         if step == 0:
             if not 'general' in input:
-                return
+                return False, 'wrong format in input file (no "general" info)'
             self.general = input['general']
 
             # set firstnode as active node
@@ -163,10 +160,10 @@ class Ra:
 
             self.save()
 
-            return
+            return True, 'OK'
         
         if not 'result' in input:
-            return
+            return False, 'wrong format in input file (no "result" info)'
         
         input_result = input['result']
         
@@ -175,8 +172,8 @@ class Ra:
 
         # validate input, the template must be tagged for this workflow node
         if not input_node_id in self.ra["active_nodes_id"]:
-            LOG.error(f'input for node {input_node_id} not in the active nodes list({self.ra["active_nodes_id"]}). Update aborted')
-            return
+            LOG.error(f'input for node {input_node_id} not in the active nodes list({self.ra["active_nodes_id"]})')
+            return False, 'incorrect input'
 
         # append result
         input_node = self.workflow.getNode(input_node_id)
@@ -197,7 +194,7 @@ class Ra:
 
         self.save()
 
-        return
+        return True, 'OK'
 
     def getVal(self, key):
         ''' returns self.dict value for a given key
@@ -223,11 +220,6 @@ class Ra:
     # output section
     #################################################
 
-    def dumpJSON (self):
-        ''' return a JSON version of self.dict
-        '''
-        return json.dumps(self.dict, allow_nan=True)
-
     def dumpYAML (self):
         ''' dumps a template of the results for the following active nodes
         '''
@@ -236,8 +228,6 @@ class Ra:
         if current_step == 0:
             results+= yaml.dump({'general':self.general})
         else:
-            # TODO: makr the template with the node id, so we know which is the node we
-            # need to update
             results = ''
             for iid in self.ra['active_nodes_id']:
                 inode = self.workflow.getNode(iid)
@@ -246,8 +236,6 @@ class Ra:
                 itask = inode.getTask()
                 results+= itask.getTemplate()
 
-        # print (results)
-        
         return results
 
 

@@ -56,13 +56,6 @@ def action_new(raname, outfile=None):
     except:
         return False, f'Unable to create path for {raname} endpoint'
 
-    # ndev = os.path.join (ndir, 'dev')
-    # try:
-    #     os.mkdir(ndev)
-    #     LOG.debug(f'{ndev} created')
-    # except:
-    #     return False, f'Unable to create path for {raname} endpoint'
-
     # Copy templates
     wkd = os.path.dirname(os.path.abspath(__file__))
     template_names = ['ra.yaml', 'workflow.csv']
@@ -83,8 +76,6 @@ def action_new(raname, outfile=None):
         return False, results
 
     # Include RA information 
-    # ra.setVal('raname',raname)
-    # ra.setVal('rapath',ra_path(raname))
     ra.setVal('ID', id_generator() )
 
     # Save
@@ -148,45 +139,3 @@ def action_list():
 
     LOG.debug(f'Retrieved list of risk assessments from {rdir}')
     return True, f'{num_ranames} risk assessment(s) found'
-
-
-
-# def action_publish(raname):
-#     '''
-#     clone the development "dev" version as a new raname version,
-#      assigning a sequential version number
-#     '''
-
-#     if not raname:
-#         return False, 'Empty risk assessment name'
-
-#     base_path = ra_tree_path(raname)
-
-#     if not os.path.isdir(base_path):
-#         #LOG.error(f'raname {raname} not found')
-#         return False, f'Risk assessment {raname} not found'
-
-#     # gets version number
-#     v = [int(x[-6:]) for x in os.listdir(base_path) if x.startswith("ver")]
-
-#     if not v:
-#         max_version = 0
-#     else:
-#         max_version = max(v)
-
-#     new_path = os.path.join(base_path,f'ver{max_version+1:06}')
-
-#     if os.path.isdir(new_path):
-#         #LOG.error(f'Versin {v} of raname {raname} not found')
-#         return False, f'Version {max_version+1} of risk assessment {raname} already exists'
-
-#     src_path = os.path.join (base_path,'dev')
-
-#     try:
-#         shutil.copytree(src_path, new_path)
-#     except:
-#         return False, f'Unable to copy contents of dev version for risk assessment {raname}'
-
-#     return True, f'New risk assessment version created from {src_path} to {new_path}'
-
-

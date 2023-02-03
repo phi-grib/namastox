@@ -48,8 +48,11 @@ def action_update(raname, ifile, ofile=None):
         input_dict = yaml.safe_load(inputf)
 
     # use input dictionary to update RA
-    ra.update(input_dict)
+    success, results = ra.update(input_dict)
 
+    if not success:
+        return False, 'update not completed'
+    
     # save new version and replace the previous one
     ra.save()
 
