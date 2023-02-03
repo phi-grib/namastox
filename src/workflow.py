@@ -118,17 +118,17 @@ class Workflow:
     def firstNode (self):
         return self.nodes[0]
     
-    def nextNode (self, iid):
+    def nextNodeList (self, iid):
         inode = self.getNode(iid)
-        i = inode.getVal('next')
-        return (self.nodes[int(i)-1].getVal('id'))
+        index_list = inode.nextNodeIndex()
+        print (iid, [self.nodes[x].getVal('id') for x in index_list])
+        return [self.nodes[x].getVal('id') for x in index_list]
 
+    def logicalNodeList (self, iid, decision):
+        inode = self.getNode(iid)
+        index_list = inode.logicalNodeIndex(decision)        
+        return [self.nodes[x].getVal('id') for x in index_list]
 
-    # def getTemplate (self,iid):
-    #     for inode in self.nodes:
-    #         if inode.getVal('id') == iid:
-    #             itask = inode.getTask()
-    #             return itask.getTemplate()
 
 
 

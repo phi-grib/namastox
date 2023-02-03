@@ -34,18 +34,31 @@ class Node:
         self.name = node_content['name']
         self.id = node_content['id']
         self.cathegory = node_content['cathegory']
-        self.next = node_content['next_node']
+        self.next_node = node_content['next_node']
         self.next_yes = node_content['next_yes']
         self.next_no = node_content['next_no']
-
         self.setTask(node_content)
-
-        # print ('>>>', self.id, self.name, self.type)
     
     def getVal(self, field):
         if field in self.__dict__:
             return self.__dict__[field]
         return None
+    
+    def nextNodeIndex(self):
+        index_str = self.next_node 
+        index_list = [(int(x)-1) for x in index_str.split(',')] 
+        return (index_list)
+
+    def logicalNodeIndex(self, decision):
+        if decision:
+            index_str = str(self.next_yes) 
+        else:
+            index_str = str(self.next_no) 
+
+        print ('logicalNode:',index_str, type(index_str))
+
+        index_list = [(int(float(x))-1) for x in index_str.split(',')] 
+        return (index_list)
     
     def setTask(self, node_task):
         self.task = Task(node_task)

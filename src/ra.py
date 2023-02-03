@@ -165,19 +165,21 @@ class Ra:
         
         # identify the node for which this result has been obtained
         input_node_id = input_result['id']
+        input_node = self.workflow.getNode(input_node_id)
         self.results.append(input_result)
 
         # advance workflow: step+1, active workflow+1
         self.ra['step']=step+1
 
-        # if logical find new active node (method in workflow?)
-        next_node = self.workflow.nextNode(input_node_id)
-        print ('+++++++++++', input_node_id, next_node)
-        if self.ra['active_nodes_id'] == None:
-            self.ra['active_nodes_id']=[next_node]
-        else:    
-            self.ra['active_nodes_id'].append(next_node)
+        print ('before', self.ra['active_nodes_id'])
 
+        # if logical find new active node (method in workflow?)
+        if input_node.getVal('cathegory') == 'LOGICAL':
+            self.ra['active_nodes_id'] = self.workflow.logicalNodeList(input_node_id, input_result['decision'])
+        else:
+            self.ra['active_nodes_id'] = self.workflow.nextNodeList(input_node_id)
+
+        print ('after:', self.ra['active_nodes_id'])
         self.save()
 
         return
