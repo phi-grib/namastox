@@ -25,20 +25,6 @@ import yaml
 
 LOG = get_logger(__name__)
 
-# Description
-#    cathegory: [NAM|exposure|expert|decision]
-#    description:
-#    link_method:
-
-# Result template
-#    substance : example
-#    summary: 
-#    value: 
-#    unit:
-#    uncertainty:
-#    link_result : exposure_study_for_example.xlxs
-
-
 class Task:
     ''' Class representing a task associade to a workflow node
     '''
@@ -70,8 +56,6 @@ class Task:
         self.other = {}
         self.setTask(task_dict)
 
-        # print ('+++', self.description, self.result)
-
     def getDescription(self):
         ''' generates a yaml with information for the end-user, describing what should be done
             - type of task
@@ -79,12 +63,44 @@ class Task:
             - link to NAM method database
             - empty result template
         '''
-        return yaml.dump({'task description':self.description, 'result':self.result})
+        return yaml.dump({'task description':self.description, 
+                          'result':self.getResult(self.description['cathegory'])})
     
+    def getTemplateDict(self):
+        '''returns the results dict for entering the results, adapted to the node cathegory
+        '''
+        return {'result':self.getResult(self.description['cathegory'])}
+
     def getTemplate(self):
         '''generates a YAML for entering the results'''
-        return yaml.dump ({'result':self.result})
-    
+        return yaml.dump(self.getTemplateDict())
+
+    def setTask(self, task_dict):
+        '''parses the input dictionary and assign contents for description and results
+           this functions is typically called when parsing the table with the workflow
+        '''
+        for ikey in self.description:
+            if ikey in task_dict:
+                self.description[ikey]=task_dict[ikey]
+
+        for ikey in self.result:
+            if ikey in task_dict:
+                self.result[ikey]=task_dict[ikey]
+
+        for ikey in task_dict:
+            if ikey not in self.result and ikey not in self.description:
+                self.other[ikey]=task_dict[ikey]
+
+    # UTILS
+    def getResult (self, cathegory):
+        temp_result = self.result.copy()
+        if cathegory == 'TASK':
+            temp_result.pop ('decision')
+        elif cathegory == 'LOGICAL':
+            temp_result.pop ('value')
+            temp_result.pop ('unit')
+        return temp_result
+
     def valResult(self, task_result):
         ''' makes sure that the task_result dict meets the task requirements
         '''
@@ -105,16 +121,3 @@ class Task:
                 return False
 
         return True
-
-    def setTask(self, task_dict):
-        for ikey in self.description:
-            if ikey in task_dict:
-                self.description[ikey]=task_dict[ikey]
-
-        for ikey in self.result:
-            if ikey in task_dict:
-                self.result[ikey]=task_dict[ikey]
-
-        for ikey in task_dict:
-            if ikey not in self.result and ikey not in self.description:
-                self.other[ikey]=task_dict[ikey]

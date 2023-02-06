@@ -21,6 +21,7 @@
 # along with NAMASTOX. If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import json
 import shutil
 from src.logger import get_logger
 from src.ra import Ra
@@ -115,7 +116,7 @@ def action_kill(raname):
 
     return True, f'Risk assessment {raname} removed'
 
-def action_list():
+def action_list(out='json'):
     '''
     In no argument is provided lists all ranames present at the repository 
      otherwyse lists all versions for the raname provided as argument
@@ -126,6 +127,7 @@ def action_list():
     if os.path.isdir(rdir) is False:
         return False, 'The risk assessment name repository path does not exist. Please run "namastox -c config".'
 
+    output = ''
     num_ranames = 0
     LOG.info('Risk assessment(s) found in repository:')
     for x in os.listdir(rdir):
@@ -136,6 +138,11 @@ def action_list():
 
         num_ranames += 1
         LOG.info('\t'+x)
+        output+=f'{x}\n'
 
     LOG.debug(f'Retrieved list of risk assessments from {rdir}')
+    
+    if out=='json':
+        return True, json.dumps(output)
+
     return True, f'{num_ranames} risk assessment(s) found'

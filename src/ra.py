@@ -171,7 +171,8 @@ class Ra:
         if not 'result' in input:
             return False, 'wrong format in input file (no "result" info)'
         
-        input_result = input['result']
+        #TODO process all the list
+        input_result = input['result'][0]
         
         # identify the node for which this result has been obtained
         input_node_id = input_result['id']
@@ -192,7 +193,6 @@ class Ra:
         else:
             self.ra['active_nodes_id'] = self.workflow.nextNodeList(input_node_id)
             LOG.info(f'active node updated to: {self.ra["active_nodes_id"]}' )
-
 
         # advance workflow: step+1, active workflow+1
         self.ra['step']=step+1
@@ -234,13 +234,17 @@ class Ra:
         if current_step == 0:
             results+= yaml.dump({'general':self.general})
         else:
-            results = ''
+            result_labels = '# input needed for the following nodes\n'
+            result_list = []
             for iid in self.ra['active_nodes_id']:
                 inode = self.workflow.getNode(iid)
-                results+= f'# node {inode.getVal("name")}\n'
+                result_labels+= f'# node {inode.getVal("name")}\n'
 
                 itask = inode.getTask()
-                results+= itask.getTemplate()
+                result_list.append(itask.getTemplateDict()['result'])
+                # iresult= itask.getTemplateDict()
+            
+            results = result_labels + yaml.dump ({'result':result_list})
 
         return results
 
