@@ -60,7 +60,7 @@ class Ra:
         self.notes = []
         self.assessment = None
         
-    def load(self):       
+    def load(self, step=None):       
         ''' load the Ra object from a YAML file
         '''
         # obtain the path and the default name of the raname parameters
@@ -109,33 +109,11 @@ class Ra:
         rahist = os.path.join (self.rapath,'hist',f'ra{time_label}.yaml')
         shutil.copyfile(rafile, rahist)
 
-
-    # def applyDelta (self, delta_dict):
-    #     ''' uses the keys of the delta_dict parameter to update the contents of self.dict
-    #         - for lists, the content is not appended, but replaced
-    #         - for dictionaries, the content is merged 
-    #     '''
-    #     # update interna dict with keys in the input file (delta)
-    #     black_list = ['raname', 'rapath', 'md5']
-    #     for key in delta_dict:
-    #         if key not in black_list:
-
-    #             val = delta_dict[key]
-
-    #             # yaml define null values as 'None', which are interpreted as strings
-    #             if val == 'None':
-    #                 val = None
-
-    #             if isinstance(val ,dict):
-    #                 for inner_key in val:
-    #                     inner_val = val[inner_key]
-
-    #                     if inner_val == 'None':
-    #                         inner_val = None
-
-    #                     self.setInnerVal(key, inner_key, inner_val)
-    #             else:
-    #                 self.setVal(key,val)
+    def getStatus(self):
+        ''' return a dictionary with RA status'''
+        temp_contents = self.__dict__.copy()
+        temp_contents.pop('workflow') # remove workflow, this is an object and can produce problems
+        return temp_contents
 
     def update(self, input):
         ''' validate result and if it matchs the requirements of an active node progress in the workflow'''
@@ -220,7 +198,7 @@ class Ra:
     # output section
     #################################################
 
-    def dumpYAML (self):
+    def getTemplate (self):
         ''' dumps a template of the results for the following active nodes
         '''
         current_step = self.ra['step']

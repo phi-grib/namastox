@@ -25,7 +25,7 @@ from src.ra import Ra
 
 LOG = get_logger(__name__)
 
-def action_report(raname, pfile=None):
+def action_report(raname, pfile=None, wfile=None):
     ''' generate a report with the current status of the RA 
     '''
 

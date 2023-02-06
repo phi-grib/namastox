@@ -27,7 +27,7 @@ from src.ra import Ra
 
 LOG = get_logger(__name__)
 
-def action_update(raname, ifile, ofile=None):
+def action_status(raname, step=None, ofile=None):
     ''' use the input file to update RA. The new version is submitted to the expert to 
         further change RA. The final version of RA is stored in the repository and copied
         in the historic archive 
@@ -35,32 +35,36 @@ def action_update(raname, ifile, ofile=None):
 
     # instantiate a ra object
     ra = Ra(raname)
-    succes, results = ra.load()
+    succes, results = ra.load(step)
     if not succes:
         return False, results
 
-    # read input file
-    if not os.path.isfile(ifile):
-        return False, f'{ifile} not found'
+    # get a dictionary with the ra.yaml contents that can
+    # be passed to the GUI or shown in screen
+    status = ra.getStatus()
+
+    # print (status)
     
-    # convert to a dictionary 
-    with open(ifile,'r') as inputf:
-        input_dict = yaml.safe_load(inputf)
+    for ikey in status:
+        ielement = status[ikey]
+        if type(ielement) == dict:
+            for jkey in ielement:
+                jelement = ielement[jkey]
+                LOG.info(f'{jkey}:{jelement}')
 
-    # use input dictionary to update RA
-    success, results = ra.update(input_dict)
+        elif type(ielement) == list:
+            for j, iitem in enumerate(ielement):
+                LOG.info(f'{ikey} {j+1}:{iitem}')
 
-    if not success:
-        return False, 'update not completed'
-    
-    # save new version and replace the previous one
-    ra.save()
+        else:
+            LOG.info(f'{ikey}:{ielement}')
 
-    # dump a template to get required data
-    results = ra.getTemplate()
+    if ofile is not None:
+        # get a template to get required data
+        template = ra.getTemplate()
 
-    # write template for next update
-    with open(ofile,'w') as outputf:
-        outputf.write (results)    
+        # write template for next update
+        with open(ofile,'w') as outputf:
+            outputf.write (template)    
 
-    return True, f'{raname} updated'
+    return True, status

@@ -27,6 +27,7 @@ from src import __version__
 from src.config import configure
 from src.manage import action_new, action_kill, action_list
 from src.update import action_update
+from src.status import action_status
 from src.report import action_report
 
 LOG = get_logger(__name__)
@@ -35,13 +36,13 @@ def main():
 
     LOG.debug('-------------NEW RUN-------------\n')
 
-    result = None
+    results = None
     parser = argparse.ArgumentParser(description='NAMASTOX')
 
     parser.add_argument('-c', '--command',
                         action='store',
-                        choices=['config', 'new', 'kill', 'list', 'update', 'report'],
-                        help='Action type: \'config\' or \'new\' or \'kill\' or \'list\' '
+                        choices=['config', 'new', 'kill', 'list', 'status', 'update', 'report'],
+                        help='Action type: \'config\' or \'new\' or \'kill\' or \'list\' or \'status\' or '
                         '\'update\' or \'report\'',
                         required=True)
 
@@ -49,6 +50,10 @@ def main():
                         help='Name of RA',
                         required=False)
 
+    parser.add_argument('-s', '--step',
+                        help='RA workflow step',
+                        required=False)
+    
     parser.add_argument('-v', '--version',
                         help='RA version',
                         required=False)
@@ -63,6 +68,10 @@ def main():
 
     parser.add_argument('-p', '--pdf',
                         help='report in PDF format',
+                        required=False)
+
+    parser.add_argument('-w', '--word',
+                        help='report in Word format',
                         required=False)
     
     parser.add_argument('-d', '--directory',
@@ -105,6 +114,12 @@ def main():
             return
         success, results = action_kill(args.raname)   
 
+    elif args.command == 'status':
+        if (args.raname is None):
+            LOG.error('namastox status : raname argument is compulsory')
+            return
+        success, results = action_status(args.raname, args.step, args.outfile)   
+
     elif args.command == 'update':
         if (args.raname is None or args.infile is None or args.outfile is None ):
             LOG.error('namastox update : raname, input file and output file arguments are compulsory')
@@ -112,13 +127,13 @@ def main():
         success, results = action_update (args.raname, args.infile, args.outfile)
 
     elif args.command == 'report':
-        if (args.raname is None or args.pdf is None):
-            LOG.error('namastox report : raname and PDF file arguments are compulsory')
+        if (args.raname is None or (args.pdf is None and args.word is None)):
+            LOG.error('namastox report : raname and PDF or Word output file arguments are compulsory')
             return
 
-        success, results = action_report (args.raname, args.pdf)
+        success, results = action_report (args.raname, args.pdf, args.word)
     
-    if results is not None:
+    if results is not None and type(results) != dict:
         LOG.info (results)
 
 if __name__ == '__main__':

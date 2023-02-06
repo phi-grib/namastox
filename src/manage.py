@@ -82,7 +82,7 @@ def action_new(raname, outfile=None):
     ra.save()
 
     # Show template
-    yaml = ra.dumpYAML()
+    yaml = ra.getTemplate()
     
     if outfile is None:
         for iline in yaml:
