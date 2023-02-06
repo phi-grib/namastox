@@ -127,7 +127,7 @@ def action_list(out='json'):
     if os.path.isdir(rdir) is False:
         return False, 'The risk assessment name repository path does not exist. Please run "namastox -c config".'
 
-    output = ''
+    output = []
     num_ranames = 0
     LOG.info('Risk assessment(s) found in repository:')
     for x in os.listdir(rdir):
@@ -138,11 +138,13 @@ def action_list(out='json'):
 
         num_ranames += 1
         LOG.info('\t'+x)
-        output+=f'{x}\n'
+        output.append(x)
 
     LOG.debug(f'Retrieved list of risk assessments from {rdir}')
     
+    # web-service
     if out=='json':
-        return True, json.dumps(output)
+        return True, output
+        # return output
 
     return True, f'{num_ranames} risk assessment(s) found'
