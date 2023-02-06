@@ -43,21 +43,11 @@ def action_status(raname, step=None, ofile=None):
     # be passed to the GUI or shown in screen
     status = ra.getStatus()
 
-    # print (status)
-    
     for ikey in status:
         ielement = status[ikey]
-        if type(ielement) == dict:
-            for jkey in ielement:
-                jelement = ielement[jkey]
-                LOG.info(f'{jkey}:{jelement}')
-
-        elif type(ielement) == list:
-            for j, iitem in enumerate(ielement):
-                LOG.info(f'{ikey} {j+1}:{iitem}')
-
-        else:
-            LOG.info(f'{ikey}:{ielement}')
+        for jkey in ielement:
+            jelement = ielement[jkey]
+            LOG.info(f'{ikey} : {jkey} : {jelement}')
 
     if ofile is not None:
         # get a template to get required data

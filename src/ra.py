@@ -59,7 +59,8 @@ class Ra:
         self.results = []
         self.notes = []
         self.assessment = None
-        
+
+
     def load(self, step=None):       
         ''' load the Ra object from a YAML file
         '''
@@ -72,20 +73,46 @@ class Ra:
         if not os.path.isfile(ra_file_name):
             return False, f'Risk assessment definition {ra_file_name} file not found'
 
+        # load status from yaml
         yaml_dict = {}
         try:
             with open(ra_file_name, 'r') as pfile:
                 yaml_dict = yaml.safe_load(pfile)
         except Exception as e:
             return False, e
+        
+        # if a defined step is requested
+        if step is not None:
+            try:
+                step = int(step)
+            except:
+                return False, 'step must be a positive int'
 
-        #TODO: validate yaml_dict
+            found = False
+            # check first if the requested step is the last one
+            if not self.checkStep(yaml_dict, step):
+                ra_hist_path = os.path.join (self.rapath,'hist')
+                for ra_hist_file in os.listdir(ra_hist_path):
+                    ra_hist_item = os.path.join(ra_hist_path, ra_hist_file)
+                    if os.path.isfile(ra_hist_item):
+                        idict = {}
+                        with open(ra_hist_item, 'r') as pfile:
+                            idict = yaml.safe_load(pfile)
+                        if self.checkStep(idict, step):
+                            yaml_dict = idict
+                            found = True
+                            break
+                                
+                if not found:
+                    return False, 'step not found'                
+
+        # validate yaml_dict
         keylist = ['ra', 'general', 'results', 'notes', 'assessment']
         for ikey in keylist:
             if yaml_dict[ikey]!=None:
-                # print (f'loading {ikey} : {yaml_dict[ikey]}')
                 self.__dict__[ikey]=yaml_dict[ikey]
 
+        # load workflow
         self.workflow = Workflow(self.raname, self.ra['workflow_name'])
         self.workflow.import_table()
 
@@ -111,9 +138,10 @@ class Ra:
 
     def getStatus(self):
         ''' return a dictionary with RA status'''
-        temp_contents = self.__dict__.copy()
-        temp_contents.pop('workflow') # remove workflow, this is an object and can produce problems
-        return temp_contents
+        # temp_contents = self.__dict__.copy()
+        # temp_contents.pop('workflow') # remove workflow, this is an object and can produce problems
+        return {'ra':self.ra, 'general':self.general}
+        # return temp_contents
 
     def update(self, input):
         ''' validate result and if it matchs the requirements of an active node progress in the workflow'''
@@ -237,3 +265,11 @@ class Ra:
         # use picke as a buffered object, neccesary to generate the hexdigest
         p = pickle.dumps(idata_params)
         self.dict['md5'] = hashlib.md5(p).hexdigest()
+
+    def checkStep (self, dict, step):
+        ''' convenience function to check if a dictionary descrives the given step'''
+        if 'ra' in dict:
+            if 'step' in dict['ra']:
+                if dict['ra']['step'] == step:
+                    return True
+        return False
