@@ -55,3 +55,9 @@ def action_results(raname, step=None, out='text'):
         return True, output
     
     return True, f'{len(output)} results found for {raname}'
+
+def action_result(raname, resultid, out='text'):
+    ''' returns the a given results this raname
+    '''
+
+    return True, f"get result {resultid} for {raname}. Not implemented"

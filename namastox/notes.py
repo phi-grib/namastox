@@ -54,3 +54,9 @@ def action_notes(raname, step=None, out='text'):
         return True, output
     
     return True, f'{len(output)} notes found for {raname}'
+
+def action_note(raname, noteid, out='text'):
+    ''' returns a given note for this raname
+    '''
+
+    return True, f"get note {noteid} for {raname}. Not implemented"

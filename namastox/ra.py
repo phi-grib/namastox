@@ -152,7 +152,6 @@ class Ra:
         ''' return a dictionary with RA status'''
         return {'general':self.general}
 
-
     def update(self, input):
         ''' validate result and if it matchs the requirements of an active node progress in the workflow'''
 
