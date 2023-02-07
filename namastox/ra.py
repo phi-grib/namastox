@@ -140,6 +140,10 @@ class Ra:
         ''' return a dictionary with RA status'''
         return {'ra':self.ra}
 
+    def getResults(self):
+        ''' return a list with RA results'''
+        return self.results
+
     def getGeneralInfo(self):
         ''' return a dictionary with RA status'''
         return {'general':self.general}

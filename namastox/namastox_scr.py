@@ -29,6 +29,7 @@ from namastox.manage import action_new, action_kill, action_list, action_steps, 
 from namastox.update import action_update
 from namastox.status import action_status
 from namastox.report import action_report
+from namastox.results import action_results
 
 LOG = get_logger(__name__)
 
@@ -41,9 +42,9 @@ def main():
 
     parser.add_argument('-c', '--command',
                         action='store',
-                        choices=['config', 'new', 'kill', 'list', 'steps', 'info',  'status', 'update', 'report'],
+                        choices=['config', 'new', 'kill', 'list', 'steps', 'info',  'status', 'update', 'results', 'report'],
                         help='Action type: \'config\' or \'new\' or \'kill\' or \'list\' or \'steps\' or \'info\' '
-                        'or \'status\' or \'update\' or \'report\'',
+                        'or \'status\' or \'update\' or \'results\' or \'report\'',
                         required=True)
 
     parser.add_argument('-r', '--raname',
@@ -137,6 +138,12 @@ def main():
             LOG.error('namastox update : raname, input file and output file arguments are compulsory')
             return
         success, results = action_update (args.raname, args.infile, args.outfile)
+
+    elif args.command == 'results':
+        if (args.raname is None ):
+            LOG.error('namastox update : raname argument is compulsory')
+            return
+        success, results = action_results (args.raname, args.step)
 
     elif args.command == 'report':
         if (args.raname is None or (args.pdf is None and args.word is None)):
