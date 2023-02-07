@@ -20,7 +20,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NAMASTOX. If not, see <http://www.gnu.org/licenses/>.
 
-from src.logger import get_logger
+from namastox.logger import get_logger
 import yaml
 
 LOG = get_logger(__name__)

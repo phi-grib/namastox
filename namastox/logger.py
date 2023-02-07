@@ -26,7 +26,6 @@ import logging
 import sys
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
-import appdirs
 
 def supress_log(logger: logging.Logger):
     """Decorator for suprerss logs during objects workflow

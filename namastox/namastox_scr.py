@@ -22,13 +22,13 @@
 
 import os
 import argparse
-from src.logger import get_logger
-from src import __version__
-from src.config import configure
-from src.manage import action_new, action_kill, action_list, action_steps, action_info
-from src.update import action_update
-from src.status import action_status
-from src.report import action_report
+from namastox.logger import get_logger
+from namastox import __version__
+from namastox.config import configure
+from namastox.manage import action_new, action_kill, action_list, action_steps, action_info
+from namastox.update import action_update
+from namastox.status import action_status
+from namastox.report import action_report
 
 LOG = get_logger(__name__)
 

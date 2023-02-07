@@ -26,9 +26,9 @@ import yaml
 import os
 import time
 import hashlib
-from src.utils import ra_path
-from src.workflow import Workflow
-from src.logger import get_logger
+from namastox.utils import ra_path
+from namastox.workflow import Workflow
+from namastox.logger import get_logger
 LOG = get_logger(__name__)
 
 class Ra:

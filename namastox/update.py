@@ -22,12 +22,12 @@
 
 import os
 import yaml
-from src.logger import get_logger
-from src.ra import Ra
+from namastox.logger import get_logger
+from namastox.ra import Ra
 
 LOG = get_logger(__name__)
 
-def action_status(raname, step=None, ofile=None, out='text'):
+def action_update(raname, ifile, ofile=None):
     ''' use the input file to update RA. The new version is submitted to the expert to 
         further change RA. The final version of RA is stored in the repository and copied
         in the historic archive 
@@ -35,39 +35,32 @@ def action_status(raname, step=None, ofile=None, out='text'):
 
     # instantiate a ra object
     ra = Ra(raname)
-    succes, results = ra.load(step)
+    succes, results = ra.load()
     if not succes:
         return False, results
 
-    # get a dictionary with the ra.yaml contents that can
-    # be passed to the GUI or shown in screen
-    status = ra.getStatus()
-
-    LOG.debug(f'Retrieved status for {raname}')
+    # read input file
+    if not os.path.isfile(ifile):
+        return False, f'{ifile} not found'
     
-    # info = ra.getGeneralInfo()
+    # convert to a dictionary 
+    with open(ifile,'r') as inputf:
+        input_dict = yaml.safe_load(inputf)
 
-    for ikey in status:
-        ielement = status[ikey]
-        for jkey in ielement:
-            jelement = ielement[jkey]
-            LOG.info(f'{ikey} : {jkey} : {jelement}')
+    # use input dictionary to update RA
+    success, results = ra.update(input_dict)
 
-    # for ikey in info:
-    #     ielement = info[ikey]
-    #     for jkey in ielement:
-    #         jelement = ielement[jkey]
-    #         LOG.info(f'{ikey} : {jkey} : {jelement}')
-
-    if ofile is not None:
-        # get a template to get required data
-        template = ra.getTemplate()
-
-        # write template for next update
-        with open(ofile,'w') as outputf:
-            outputf.write (template)    
-
-    if out=='json':
-        return True, status
+    if not success:
+        return False, 'update not completed'
     
-    return True, f'completed status for {raname}'
+    # save new version and replace the previous one
+    ra.save()
+
+    # dump a template to get required data
+    results = ra.getTemplate()
+
+    # write template for next update
+    with open(ofile,'w') as outputf:
+        outputf.write (results)    
+
+    return True, f'{raname} updated'

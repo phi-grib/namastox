@@ -20,8 +20,8 @@
 # You should have received a copy of the GNU General Public License
 # along with NAMASTOX. If not, see <http://www.gnu.org/licenses/>.
 
-from src.logger import get_logger
-from src.task import Task
+from namastox.logger import get_logger
+from namastox.task import Task
 
 LOG = get_logger(__name__)
 

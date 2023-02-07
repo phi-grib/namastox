@@ -23,9 +23,9 @@
 import os
 import yaml
 import shutil
-from src.logger import get_logger
-from src.ra import Ra
-from src.utils import ra_repository_path, ra_path, id_generator
+from namastox.logger import get_logger
+from namastox.ra import Ra
+from namastox.utils import ra_repository_path, ra_path, id_generator
 
 LOG = get_logger(__name__)
 

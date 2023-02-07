@@ -26,10 +26,10 @@ import sys
 import pickle
 import pandas as pd
 import numpy as np
-from src.utils import ra_path
-from src.node import Node
-from src.logger import get_logger
-from src.node import Node
+from namastox.utils import ra_path
+from namastox.node import Node
+from namastox.logger import get_logger
+from namastox.node import Node
 
 LOG = get_logger(__name__)
 
