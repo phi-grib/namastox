@@ -21,7 +21,7 @@
 # along with NAMASTOX. If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import json
+import yaml
 import shutil
 from src.logger import get_logger
 from src.ra import Ra
@@ -91,8 +91,6 @@ def action_new(raname, outfile=None):
     else:
         with open(outfile,'w') as f:
             f.write(yaml)
-            # for iline in yaml:
-                # f.write (iline+'\n')
 
     return True, f'New risk assessment {raname} created'
 
@@ -116,13 +114,12 @@ def action_kill(raname):
 
     return True, f'Risk assessment {raname} removed'
 
-def action_list(out='json'):
+def action_list(out='text'):
     '''
     In no argument is provided lists all ranames present at the repository 
      otherwyse lists all versions for the raname provided as argument
     '''
 
-    # if no raname name is provided, just list the raname names
     rdir = ra_repository_path()
     if os.path.isdir(rdir) is False:
         return False, 'The risk assessment name repository path does not exist. Please run "namastox -c config".'
@@ -148,3 +145,33 @@ def action_list(out='json'):
         # return output
 
     return True, f'{num_ranames} risk assessment(s) found'
+
+def action_steps(raname, out='text'):
+    '''
+    Provides a list with all steps for ranames present at the repository 
+    '''
+
+    radir = ra_path(raname)
+    rahist = os.path.join(radir,'hist')
+    if not os.path.isdir(rahist):
+        return False, f'Historic repository for risk assessment {raname} not found'
+
+    steps = []
+    for ra_hist_file in os.listdir(rahist):
+        ra_hist_item = os.path.join(rahist, ra_hist_file)
+        if os.path.isfile(ra_hist_item):
+            idict = {}
+            with open(ra_hist_item, 'r') as pfile:
+                idict = yaml.safe_load(pfile)
+                if 'ra' in idict:
+                    if 'step' in idict['ra']:
+                        steps.append(idict['ra']['step'])
+                        LOG.info(f'step: {steps[-1]}')
+    
+    LOG.debug(f'Retrieved list of steps from {rahist}')
+
+    # web-service
+    if out=='json':
+        return True, steps
+
+    return True, f'{len(steps)} steps found'

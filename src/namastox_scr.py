@@ -25,7 +25,7 @@ import argparse
 from src.logger import get_logger
 from src import __version__
 from src.config import configure
-from src.manage import action_new, action_kill, action_list
+from src.manage import action_new, action_kill, action_list, action_steps
 from src.update import action_update
 from src.status import action_status
 from src.report import action_report
@@ -41,9 +41,9 @@ def main():
 
     parser.add_argument('-c', '--command',
                         action='store',
-                        choices=['config', 'new', 'kill', 'list', 'status', 'update', 'report'],
-                        help='Action type: \'config\' or \'new\' or \'kill\' or \'list\' or \'status\' or '
-                        '\'update\' or \'report\'',
+                        choices=['config', 'new', 'kill', 'list', 'steps', 'status', 'update', 'report'],
+                        help='Action type: \'config\' or \'new\' or \'kill\' or \'list\' or \'steps\' '
+                        'or \'status\' or \'update\' or \'report\'',
                         required=True)
 
     parser.add_argument('-r', '--raname',
@@ -107,6 +107,12 @@ def main():
 
     elif args.command == 'list':
         success, results = action_list()   
+
+    elif args.command == 'steps':
+        if (args.raname is None ):
+            LOG.error('namastox steps : raname argument is compulsory')
+            return
+        success, results = action_steps(args.raname)   
 
     elif args.command == 'kill':
         if (args.raname is None):
