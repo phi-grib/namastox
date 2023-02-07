@@ -138,10 +138,12 @@ class Ra:
 
     def getStatus(self):
         ''' return a dictionary with RA status'''
-        # temp_contents = self.__dict__.copy()
-        # temp_contents.pop('workflow') # remove workflow, this is an object and can produce problems
-        return {'ra':self.ra, 'general':self.general}
-        # return temp_contents
+        return {'ra':self.ra}
+
+    def getGeneralInfo(self):
+        ''' return a dictionary with RA status'''
+        return {'general':self.general}
+
 
     def update(self, input):
         ''' validate result and if it matchs the requirements of an active node progress in the workflow'''

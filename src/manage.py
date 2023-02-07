@@ -175,3 +175,32 @@ def action_steps(raname, out='text'):
         return True, steps
 
     return True, f'{len(steps)} steps found'
+
+def action_info(raname, out='text'):
+    '''
+    Provides a list with all steps for ranames present at the repository 
+    '''
+
+    # instantiate a ra object
+    ra = Ra(raname)
+    succes, results = ra.load()
+    if not succes:
+        return False, results
+
+    # get a dictionary with the ra.yaml contents that can
+    # be passed to the GUI or shown in screen
+    info = ra.getGeneralInfo()
+
+    LOG.debug(f'Retrieved general info for {raname}')
+
+    for ikey in info:
+        ielement = info[ikey]
+        for jkey in ielement:
+            jelement = ielement[jkey]
+            LOG.info(f'{ikey} : {jkey} : {jelement}')
+
+    # web-service
+    if out=='json':
+        return True, info
+
+    return True, f'completed info for {raname}'

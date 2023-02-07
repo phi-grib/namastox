@@ -27,7 +27,7 @@ from src.ra import Ra
 
 LOG = get_logger(__name__)
 
-def action_status(raname, step=None, ofile=None):
+def action_status(raname, step=None, ofile=None, out='text'):
     ''' use the input file to update RA. The new version is submitted to the expert to 
         further change RA. The final version of RA is stored in the repository and copied
         in the historic archive 
@@ -43,11 +43,21 @@ def action_status(raname, step=None, ofile=None):
     # be passed to the GUI or shown in screen
     status = ra.getStatus()
 
+    LOG.debug(f'Retrieved status for {raname}')
+    
+    # info = ra.getGeneralInfo()
+
     for ikey in status:
         ielement = status[ikey]
         for jkey in ielement:
             jelement = ielement[jkey]
             LOG.info(f'{ikey} : {jkey} : {jelement}')
+
+    # for ikey in info:
+    #     ielement = info[ikey]
+    #     for jkey in ielement:
+    #         jelement = ielement[jkey]
+    #         LOG.info(f'{ikey} : {jkey} : {jelement}')
 
     if ofile is not None:
         # get a template to get required data
@@ -57,4 +67,7 @@ def action_status(raname, step=None, ofile=None):
         with open(ofile,'w') as outputf:
             outputf.write (template)    
 
-    return True, status
+    if out=='json':
+        return True, status
+    
+    return True, f'completed status for {raname}'
