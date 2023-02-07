@@ -1,4 +1,4 @@
-# NAMASTOX
+# Namastox
 
 Software tool for supporting the implementation of New Assessment Methods (NAMs) within a New Generation Risk Assessment (NGRA) framework.
 
