@@ -10,6 +10,7 @@ dependencies:
   - setuptools
   - requests
   - rdkit
+  - flask
   - pyyaml
   - pytest
   - psycopg2
