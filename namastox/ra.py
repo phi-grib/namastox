@@ -144,6 +144,10 @@ class Ra:
         ''' return a list with RA results'''
         return self.results
 
+    def getNotes(self):
+        ''' return a list with RA notes'''
+        return self.notes
+
     def getGeneralInfo(self):
         ''' return a dictionary with RA status'''
         return {'general':self.general}
