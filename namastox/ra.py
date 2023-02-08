@@ -180,32 +180,57 @@ class Ra:
         if not 'result' in input:
             return False, 'wrong format in input file (no "result" info)'
         
-        #TODO process all the list
-        input_result = input['result'][0]
-        
-        # identify the node for which this result has been obtained
-        input_node_id = input_result['id']
+        # the input file can contain a list of results, consider one by one
+        for input_result in input['result']:
+            
+            # identify the node for which this result has been obtained
+            input_node_id = input_result['id']
 
-        # validate input, the template must be tagged for this workflow node
-        if not input_node_id in self.ra["active_nodes_id"]:
-            LOG.error(f'input for node {input_node_id} not in the active nodes list({self.ra["active_nodes_id"]})')
-            return False, 'incorrect input'
+            # validate input, the template must be tagged for this workflow node
+            if not input_node_id in self.ra["active_nodes_id"]:
+                LOG.info(f'input for node {input_node_id} not in the active nodes list({self.ra["active_nodes_id"]})')
+                continue
+            
+            # identify workflow node for which this result is being applied
+            input_node = self.workflow.getNode(input_node_id)
+            input_node_cathegory = input_node.getVal('cathegory')
 
-        # append result
-        input_node = self.workflow.getNode(input_node_id)
-        self.results.append(input_result)
+            # if node is empty do not process and do not progress in workflow
+            if input_node_cathegory == 'LOGICAL':
+                if not 'decision' in input_result:
+                    continue
+                if type(input_result['decision']) != bool:
+                    LOG.info (f'result for node {input_node_id} empty')
+                    continue
+            elif input_node_cathegory == 'TASK':
+                if not 'value' in input_result:
+                    continue
+                if input_result['value'] is None:
+                    LOG.info (f'result for node {input_node_id} empty')
+                    continue
 
-        # if logical find new active node (method in workflow?)
-        if input_node.getVal('cathegory') == 'LOGICAL':
-            self.ra['active_nodes_id'] = self.workflow.logicalNodeList(input_node_id, input_result['decision'])
-            LOG.info(f'active node updated to: {self.ra["active_nodes_id"]}, based on decision {input_result["decision"]}' )
-        else:
-            self.ra['active_nodes_id'] = self.workflow.nextNodeList(input_node_id)
-            LOG.info(f'active node updated to: {self.ra["active_nodes_id"]}' )
+            # append result
+            self.results.append(input_result)
 
-        # advance workflow: step+1, active workflow+1
-        self.ra['step']=step+1
-        LOG.info(f'workflow advanced to step: {step+1}')
+            # replace the current node with the next for the current node only 
+            # if logical find new active node (method in workflow?)
+
+            active_nodes_list = self.ra['active_nodes_id']
+            active_nodes_list.pop(active_nodes_list.index(input_node_id))
+            if input_node_cathegory == 'LOGICAL':
+                new_nodes_list = self.workflow.logicalNodeList(input_node_id, input_result['decision'])
+                self.ra['active_nodes_id'] = active_nodes_list + new_nodes_list
+                # self.ra['active_nodes_id'] = self.workflow.logicalNodeList(input_node_id, input_result['decision'])
+                LOG.info(f'active node updated to: {self.ra["active_nodes_id"]}, based on decision {input_result["decision"]}' )
+            elif input_node_cathegory == 'TASK':
+                new_nodes_list= self.workflow.nextNodeList(input_node_id)
+                self.ra['active_nodes_id'] = active_nodes_list + new_nodes_list
+                # self.ra['active_nodes_id'] = self.workflow.nextNodeList(input_node_id)
+                LOG.info(f'active node updated to: {self.ra["active_nodes_id"]}' )
+
+            # advance workflow: step+1, active workflow+1
+            self.ra['step']=step+1
+            LOG.info(f'workflow advanced to step: {step+1}')
 
         self.save()
 
