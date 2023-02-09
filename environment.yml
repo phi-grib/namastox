@@ -11,9 +11,12 @@ dependencies:
   - requests
   - rdkit
   - flask
+  - flask_cors
   - pyyaml
   - pytest
   - psycopg2
   - python-docx
   - openpyxl
   - appdirs
+  - pip:
+    - flask_api
