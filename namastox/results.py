@@ -69,5 +69,24 @@ def action_results(raname, step=None, out='text'):
 def action_result(raname, resultid, out='text'):
     ''' returns the a given results this raname
     '''
+    # instantiate a ra object
+    ra = Ra(raname)
+    succes, results = ra.load()
+    if not succes:
+        return False, results
 
-    return True, f"get result {resultid} for {raname}. Not implemented"
+    # get a dictionary with the ra.yaml contents that can
+    # be passed to the GUI or shown in screen
+    results = ra.getResults()
+    for iresult in results:
+        if iresult['id'] == resultid:
+            if 'decision' in iresult:
+                LOG.info({'id':iresult['id'],'summary':iresult['summary'],'decision':iresult['decision'] })
+            elif 'value' in iresult:
+                LOG.info({'id':iresult['id'],'summary':iresult['summary'],'decision':iresult['value'] })
+            if out=='json':
+                return True, iresult
+            
+            return True, 'result found'
+    
+    return False, 'result not found'
