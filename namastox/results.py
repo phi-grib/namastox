@@ -61,7 +61,7 @@ def action_results(raname, step=None, out='text'):
             if 'decision' in iresult:
                 odict.append({'id':iresult['id'],'summary':iresult['summary'],'decision':iresult['decision'] })
             elif 'value' in iresult:
-                odict.append({'id':iresult['id'],'summary':iresult['summary'],'decision':iresult['value'] })
+                odict.append({'id':iresult['id'],'summary':iresult['summary'],'value':iresult['value'] })
         return True , odict
         
     return True, f'{len(output)} results found for {raname}'
