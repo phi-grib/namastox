@@ -83,7 +83,7 @@ def action_result(raname, resultid, out='text'):
             if 'decision' in iresult:
                 LOG.info({'id':iresult['id'],'summary':iresult['summary'],'decision':iresult['decision'] })
             elif 'value' in iresult:
-                LOG.info({'id':iresult['id'],'summary':iresult['summary'],'decision':iresult['value'] })
+                LOG.info({'id':iresult['id'],'summary':iresult['summary'],'value':iresult['value'] })
             if out=='json':
                 return True, iresult
             
