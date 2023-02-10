@@ -43,8 +43,8 @@ class Task:
         self.result = {
             'id': None,
             'substance': None,
-            'resul_description': 'text', # text, bool
-            'resul_type': None, # text, bool
+            'result_description': 'text', # text, bool
+            'result_type': None, # text, bool
             'summary': None,
             'summary_type': 'text',  # text, bool, value, 'done'
             'value': None, 
