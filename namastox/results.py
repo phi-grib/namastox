@@ -41,19 +41,28 @@ def action_results(raname, step=None, out='text'):
 
     LOG.debug(f'Retrieved results for {raname}')
     
+    # screen output
     output = []
     for iresult in results:
         if 'decision' in iresult:
             oline = f'decision {iresult["id"]} dec:{iresult["decision"]} summary: {iresult["summary"]} '
-        else: 
+        elif 'value' in iresult:
             oline = f'task   {iresult["id"]} val:{iresult["value"]} summary: {iresult["summary"]} '
-        
+        else:
+            oline = ''
+
         LOG.info(oline)
         output.append(oline)
-
+        
+    # output for WEB
     if out=='json':
-        return True, output
-    
+        if 'decision' in iresult:
+            return True, {'id':iresult['id'],'summary':iresult['summary'],'decision':iresult['decision'] }
+        elif 'value' in iresult:
+            return True, {'id':iresult['id'],'summary':iresult['summary'],'decision':iresult['value'] }
+        else:
+            return False , 'no result'
+        
     return True, f'{len(output)} results found for {raname}'
 
 def action_result(raname, resultid, out='text'):
