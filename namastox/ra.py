@@ -140,6 +140,24 @@ class Ra:
         ''' return a dictionary with RA status'''
         return {'ra':self.ra}
 
+    def getActiveNodes (self):
+        ''' returns a list with the active nodes'''
+        active_nodes_id = self.ra['active_nodes_id']
+        olist = []
+        for node_id in active_nodes_id:
+            input_node = self.workflow.getNode(node_id)
+            itask = input_node.getTask()
+            olist.append({'id':node_id, 'description':itask.getDescriptionText()})
+        return olist
+    
+    def getActiveNode (self, node_id):
+        active_nodes_id = self.ra['active_nodes_id']
+        if node_id in active_nodes_id:
+            input_node = self.workflow.getNode(node_id)
+            itask = input_node.getTask()
+            return (itask.getTemplateDict())
+        return None
+
     def getResults(self):
         ''' return a list with RA results'''
         return self.results

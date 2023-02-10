@@ -56,6 +56,9 @@ class Task:
         self.other = {}
         self.setTask(task_dict)
 
+    def getDescriptionText (self):
+        return (self.description['description'])
+
     def getDescription(self):
         ''' generates a yaml with information for the end-user, describing what should be done
             - type of task

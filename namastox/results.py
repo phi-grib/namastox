@@ -90,3 +90,20 @@ def action_result(raname, resultid, out='text'):
             return True, 'result found'
     
     return False, 'result not found'
+
+def action_pendingTasks(raname):
+    ra = Ra(raname)
+    succes, results = ra.load()
+    if not succes:
+        return False, results
+    
+    return True, ra.getActiveNodes()
+
+def action_pendingTask(raname, resultid):
+    ra = Ra(raname)
+    succes, results = ra.load()
+    if not succes:
+        return False, results
+    
+    return True, ra.getActiveNode(resultid)
+
