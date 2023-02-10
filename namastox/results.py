@@ -92,18 +92,32 @@ def action_result(raname, resultid, out='text'):
     return False, 'result not found'
 
 def action_pendingTasks(raname):
+    ''' returns a list of dictionaries with a short description of the pending tasks
+    '''
     ra = Ra(raname)
     succes, results = ra.load()
     if not succes:
         return False, results
     
-    return True, ra.getActiveNodes()
+    active_nodes = ra.getActiveNodes()
+
+    if len(active_nodes)>0:
+        return True, active_nodes
+    else:
+        return False, 'no active nodes'
 
 def action_pendingTask(raname, resultid):
+    ''' returns a dictionary with a template of the pending task resultid
+    '''
     ra = Ra(raname)
     succes, results = ra.load()
     if not succes:
         return False, results
     
-    return True, ra.getActiveNode(resultid)
+    active_node = ra.getActiveNode(resultid)
+
+    if active_node is not None:
+        return True, active_node
+    else:
+        return False, f'active node {resultid} not found'
 

@@ -54,6 +54,7 @@ class Ra:
             'administration_route': None,
             'species': None,
             'regulatory_frameworks': None,
+            'workflow_custom': None,
             'substances': []
         }
         self.results = []
@@ -113,8 +114,8 @@ class Ra:
                 self.__dict__[ikey]=yaml_dict[ikey]
 
         # load workflow
-        self.workflow = Workflow(self.raname, self.ra['workflow_name'])
-        self.workflow.import_table()
+        if self.ra['step']>0 : 
+            self.workflow = Workflow(self.raname, self.ra['workflow_name'])
 
         return True, 'OK'
 
@@ -181,6 +182,17 @@ class Ra:
             if not 'general' in input:
                 return False, 'wrong format in input file (no "general" info)'
             self.general = input['general']
+
+            # if workflow_custom... copy to repo and replace workflow.csv
+            if 'workflow_custom' in self.general:
+                workflow_custom = self.general['workflow_custom']
+                if workflow_custom is not None:
+                    if os.path.isfile(workflow_custom):
+                        shutil.copy(workflow_custom,self.rapath)
+                        self.ra['workflow_name'] = workflow_custom
+                        LOG.debug (f'workflow name updated to {workflow_custom}')
+
+            self.workflow = Workflow(self.raname, self.ra['workflow_name'])
 
             # set firstnode as active node
             active_node = self.workflow.firstNode()

@@ -10,6 +10,7 @@ general:
   administration_route:         # [oral|topic]
   species:                      # [none|human|rat]
   regulatory_framework:         # regulatory framework [none|ECHA|REACH]
+  workflow_custom:
   substances:                   # list of input substances {}
     #  - name : example
     #    SMILES : c1ccccc1

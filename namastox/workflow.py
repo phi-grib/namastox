@@ -54,12 +54,13 @@ class Workflow:
             LOG.error('CRITICAL: unable to load a correct workflow definition')
             sys.exit(-1)
 
-
     def import_table (self):
         table_path = os.path.join (self.rapath,self.workflow)
+        
+        LOG.debug (f'import table {table_path}')
+
         table_dataframe = pd.read_csv(table_path, sep='\t').replace(np.nan, None)
         table_dict = table_dataframe.to_dict('list')
-        # print (table_dict)
 
         index_labels = ['id', 'name', 'cathegory', 'next_node', 'next_yes', 'next_no']
         for i in index_labels:
@@ -84,12 +85,13 @@ class Workflow:
         ''' load the Expert object from a pickle
         '''
         pickl_path = os.path.join (self.rapath,'workflow.pkl')
+
         if not os.path.isfile(pickl_path):
             return self.import_table()
         
         with open(pickl_path,'rb') as f:
             self.nodes = pickle.load(f)
-       
+            
         return True
 
     def save (self):
