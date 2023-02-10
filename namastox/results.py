@@ -53,15 +53,16 @@ def action_results(raname, step=None, out='text'):
 
         LOG.info(oline)
         output.append(oline)
-        
+
     # output for WEB
     if out=='json':
-        if 'decision' in iresult:
-            return True, {'id':iresult['id'],'summary':iresult['summary'],'decision':iresult['decision'] }
-        elif 'value' in iresult:
-            return True, {'id':iresult['id'],'summary':iresult['summary'],'decision':iresult['value'] }
-        else:
-            return False , 'no result'
+        odict = []
+        for iresult in results:
+            if 'decision' in iresult:
+                odict.append({'id':iresult['id'],'summary':iresult['summary'],'decision':iresult['decision'] })
+            elif 'value' in iresult:
+                odict.append({'id':iresult['id'],'summary':iresult['summary'],'decision':iresult['value'] })
+        return True , odict
         
     return True, f'{len(output)} results found for {raname}'
 
