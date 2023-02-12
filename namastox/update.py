@@ -28,8 +28,7 @@ from namastox.ra import Ra
 LOG = get_logger(__name__)
 
 def action_update(raname, ifile, ofile=None):
-    ''' use the input file to update RA. The new version is submitted to the expert to 
-        further change RA. The final version of RA is stored in the repository and copied
+    ''' use the input file to update RA. The udpated RA version is stored in the repository and copied
         in the historic archive 
     '''
 
@@ -64,3 +63,45 @@ def action_update(raname, ifile, ofile=None):
         outputf.write (results)    
 
     return True, f'{raname} updated'
+
+def action_update_general_info (raname, input_dict):
+    ''' use the input dictionary with General Info to update RA. The updated RA version is stored in the repository and copied
+        in the historic archive 
+    '''
+    # instantiate a ra object
+    ra = Ra(raname)
+    succes, results = ra.load()
+    if not succes:
+        return False, results
+
+    # use input dictionary to update RA
+    success, results = ra.updateGeneralInfo(input_dict)
+
+    if not success:
+        return False, results
+    
+    # save new version and replace the previous one
+    ra.save()
+
+    return True, f'{raname} General Info updated'
+
+def action_update_result (raname, step, input_dict):
+    ''' use the input dictionary with Result to update RA. The updated RA version is stored in the repository and copied
+        in the historic archive 
+    '''
+     # instantiate a ra object
+    ra = Ra(raname)
+    succes, results = ra.load(step)
+    if not succes:
+        return False, results
+
+    # use input dictionary to update RA
+    success, results = ra.update(input_dict)
+
+    if not success:
+        return False, results
+    
+    # save new version and replace the previous one
+    ra.save()
+
+    return True, f'{raname} result updated'
