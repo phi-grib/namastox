@@ -171,6 +171,37 @@ class Ra:
         ''' return a dictionary with RA status'''
         return {'general':self.general}
 
+    def updateGeneralInfo (self, input):
+        ''' process update as GeneralInfo when we are in the first step'''
+        if not 'general' in input:
+            return False, 'wrong format in input file (no "general" info)'
+
+        self.general = input['general']
+
+        # if workflow_custom... copy to repo and replace workflow.csv
+        if 'workflow_custom' in self.general:
+            workflow_custom = self.general['workflow_custom']
+            if workflow_custom is not None:
+                if os.path.isfile(workflow_custom):
+                    shutil.copy(workflow_custom,self.rapath)
+                    self.ra['workflow_name'] = workflow_custom
+                    LOG.debug (f'workflow name updated to {workflow_custom}')
+
+        self.workflow = Workflow(self.raname, self.ra['workflow_name'])
+
+        # set firstnode as active node
+        active_node = self.workflow.firstNode()
+        self.ra['active_nodes_id']=[active_node.getVal('id')]
+        LOG.info(f'active node updated to: {self.ra["active_nodes_id"]}' )
+
+        # advance workflow: we are in step 0, move to step 1
+        LOG.info(f'workflow advanced to step: {1}')
+        self.ra['step']=1
+
+        self.save()
+
+        return True, 'OK'
+
     def update(self, input):
         ''' validate result and if it matchs the requirements of an active node progress in the workflow'''
 
@@ -179,33 +210,7 @@ class Ra:
 
         # special case of the first step
         if step == 0:
-            if not 'general' in input:
-                return False, 'wrong format in input file (no "general" info)'
-            self.general = input['general']
-
-            # if workflow_custom... copy to repo and replace workflow.csv
-            if 'workflow_custom' in self.general:
-                workflow_custom = self.general['workflow_custom']
-                if workflow_custom is not None:
-                    if os.path.isfile(workflow_custom):
-                        shutil.copy(workflow_custom,self.rapath)
-                        self.ra['workflow_name'] = workflow_custom
-                        LOG.debug (f'workflow name updated to {workflow_custom}')
-
-            self.workflow = Workflow(self.raname, self.ra['workflow_name'])
-
-            # set firstnode as active node
-            active_node = self.workflow.firstNode()
-            self.ra['active_nodes_id']=[active_node.getVal('id')]
-            LOG.info(f'active node updated to: {self.ra["active_nodes_id"]}' )
-
-            # advance workflow: step+1
-            LOG.info(f'workflow advanced to step: {step+1}')
-            self.ra['step']=step+1
-
-            self.save()
-
-            return True, 'OK'
+            return self.updateGeneralInfo(input)
         
         if not 'result' in input:
             return False, 'wrong format in input file (no "result" info)'
@@ -232,6 +237,7 @@ class Ra:
                 if type(input_result['decision']) != bool:
                     LOG.info (f'result for node {input_node_id} empty')
                     continue
+
             elif input_node_cathegory == 'TASK':
                 if not 'value' in input_result:
                     continue
@@ -242,20 +248,30 @@ class Ra:
             # append result
             self.results.append(input_result)
 
+            # if update contains links to local files, upload to repository
+            if 'result_link' in input_result:
+                link = input_result['result_link']
+                if link is not None:
+                    if os.path.isfile(link):
+                        hist_dir = os.path.join(self.rapath, 'repo')
+                        try:
+                            shutil.copy(link, hist_dir)
+                        except Exception as err:
+                            LOG.error(f'error: {err}, file {link} not processed')
+
             # replace the current node with the next for the current node only 
             # if logical find new active node (method in workflow?)
-
             active_nodes_list = self.ra['active_nodes_id']
             active_nodes_list.pop(active_nodes_list.index(input_node_id))
+
             if input_node_cathegory == 'LOGICAL':
                 new_nodes_list = self.workflow.logicalNodeList(input_node_id, input_result['decision'])
                 self.ra['active_nodes_id'] = active_nodes_list + new_nodes_list
-                # self.ra['active_nodes_id'] = self.workflow.logicalNodeList(input_node_id, input_result['decision'])
                 LOG.info(f'active node updated to: {self.ra["active_nodes_id"]}, based on decision {input_result["decision"]}' )
+
             elif input_node_cathegory == 'TASK':
                 new_nodes_list= self.workflow.nextNodeList(input_node_id)
                 self.ra['active_nodes_id'] = active_nodes_list + new_nodes_list
-                # self.ra['active_nodes_id'] = self.workflow.nextNodeList(input_node_id)
                 LOG.info(f'active node updated to: {self.ra["active_nodes_id"]}' )
 
             # advance workflow: step+1, active workflow+1
