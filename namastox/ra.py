@@ -145,6 +145,10 @@ class Ra:
         ''' returns a list with the active nodes'''
         active_nodes_id = self.ra['active_nodes_id']
         olist = []
+        
+        if active_nodes_id is None:
+            return olist
+
         for node_id in active_nodes_id:
             input_node = self.workflow.getNode(node_id)
             itask = input_node.getTask()
