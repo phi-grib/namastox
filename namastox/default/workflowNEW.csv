@@ -1,0 +1,23 @@
+num	id	name	cathegory	needs	result_type	result_description	input for	links	next_node	next_yes	next_no
+1	BB001_01	Problem Formulation	TASK		report	problem formulation			2		
+2	BB002_01	Relevant existing data	TASK		report	existing data			3		
+3	DP01EF_01	Is the information sufficient	LOGICAL		bool	justification				4	5
+4		Risk assessment report	END		report	report					
+5	DP02EF_01	Is exposure scenario well defined	LOGICAL		bool	justification				6	9,12,13, 19
+6	BB003_01	Definition of maximum exposure (Emax)	TASK		report	max exposure					
+7	DP03EF_01	Is the TTC applicable	LOGICAL		bool	justification			8	4	9,12,13, 19
+8	BB004_01	Consider wheter TTC may be applicable	TASK		report	TTC applicability			broken		
+9	BB005_01	Identify use scenario	TASK		report	use scenario			10		
+10	BB006_01	Estimate external exposure	TASK		report	external exposure			11,18		
+11	BB007_01	Prioritise parameters using expert jugments	TASK		report	ranked parameters			12		
+12	BB008_01	Generate in vitro data for highly sensitive/uncertain parameters	TASK		in vitro	PK parameters	14	NAM database	14		
+13	BB009_01	Generate in silico parameters	TASK		in silico	PK parameters	14	internal	14		
+14	BB010_01	Run PBPK model	TASK	12,13	in silico	PK results	17	NAM database	15,17		
+15	BB011_01	Perform uncertainty and variability analysis	TASK		in silico	PK variability		internal	16		
+16	BB012_01	Perform sensitivity analysis	TASK		in silico	?		?	18		
+17	BB013_01	Generate estimates of highest test concentration	TASK		in silico	highest test conc		internal	20		
+18	DP05EF_01	Is the information sufficient?	LOGICAL		bool	justification				4	**
+19	BB014_01	Generate in silico predictions of hazard	TASK		in silico	hazard list		internal	20		
+20	BB015_01	Generate HT in vitro data	TASK		in vitro	hazard list		NAM database	21		
+21	BB016_01	Integration of results	TASK		in silico	risk report		internal			
+22	DP04EF_01	Is a toxicological alert identified?	LOGICAL		bool	justification				18	**
