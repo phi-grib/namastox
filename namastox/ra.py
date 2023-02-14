@@ -152,7 +152,9 @@ class Ra:
         for node_id in active_nodes_id:
             input_node = self.workflow.getNode(node_id)
             itask = input_node.getTask()
-            olist.append({'id':node_id, 'description':itask.getDescriptionText()})
+            olist.append({'id':node_id, 
+                           'description':itask.getDescriptionText(),
+                           'cathegory':itask.getCathegoryText()})
         return olist
     
     def getActiveNode (self, node_id):

@@ -59,6 +59,9 @@ class Task:
     def getDescriptionText (self):
         return (self.description['description'])
 
+    def getCathegoryText (self):
+        return (self.description['cathegory'])
+
     def getDescription(self):
         ''' generates a yaml with information for the end-user, describing what should be done
             - type of task
