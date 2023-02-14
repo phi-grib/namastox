@@ -57,9 +57,15 @@ class Task:
         self.setTask(task_dict)
 
     def getDescriptionText (self):
+        '''returns the task description field'''
+        if not 'description' in self.description:
+            return None
         return (self.description['description'])
 
     def getCathegoryText (self):
+        '''returns the task cathegory field'''
+        if not 'cathegory' in self.description:
+            return None
         return (self.description['cathegory'])
 
     def getDescription(self):

@@ -51,6 +51,9 @@ class Ra:
         }
         self.general = {
             'endpoint': {},
+            'title': None,
+            'problem_formulation': None,
+            'uncertainty': None, 
             'administration_route': None,
             'species': None,
             'regulatory_frameworks': None,

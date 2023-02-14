@@ -4,6 +4,9 @@ ra:
   step: 0
   active_nodes_id: # []
 general:
+  title:                     
+  problem_formulation:                     
+  uncertainty:                     
   endpoint:                     # toxicity endpoint {}
     #  name : CMR
     #  description : None
