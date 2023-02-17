@@ -164,9 +164,7 @@ def action_kill(raname, step=None):
     if not success:
         return False, f'unable to remove file {ra_delete}'
 
-    # ************* change rmtree for a function to delete a single file ****
-    print ('>>>>>>>>>>>>>>>>>>>', ra_delete)
-    shutil.rmtree(ra_delete, ignore_errors=True)
+    os.remove(ra_delete)
 
     return True, 'OK'
 
