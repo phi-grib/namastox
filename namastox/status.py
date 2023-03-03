@@ -26,9 +26,7 @@ from namastox.ra import Ra
 LOG = get_logger(__name__)
 
 def action_status(raname, step=None, ofile=None, out='text'):
-    ''' use the input file to update RA. The new version is submitted to the expert to 
-        further change RA. The final version of RA is stored in the repository and copied
-        in the historic archive 
+    ''' return status of RA "raname", at step "step"
     '''
 
     # instantiate a ra object
