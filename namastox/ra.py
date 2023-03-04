@@ -258,15 +258,15 @@ class Ra:
             self.results.append(input_result)
 
             # if update contains links to local files, upload to repository
-            if 'result_link' in input_result:
-                link = input_result['result_link']
-                if link is not None:
-                    if os.path.isfile(link):
-                        hist_dir = os.path.join(self.rapath, 'repo')
-                        try:
-                            shutil.copy(link, hist_dir)
-                        except Exception as err:
-                            LOG.error(f'error: {err}, file {link} not processed')
+            # if 'result_link' in input_result:
+            #     link = input_result['result_link']
+            #     if link is not None:
+            #         if os.path.isfile(link):
+            #             hist_dir = os.path.join(self.rapath, 'repo')
+            #             try:
+            #                 shutil.copy(link, hist_dir)
+            #             except Exception as err:
+            #                 LOG.error(f'error: {err}, file {link} not processed')
 
             # replace the current node with the next for the current node only 
             # if logical find new active node (method in workflow?)

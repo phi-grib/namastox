@@ -258,3 +258,32 @@ def action_info(raname, out='text'):
         return True, info
 
     return True, f'completed info for {raname}'
+
+def action_get_link(raname, linkname):
+    '''
+    Provides a list with all steps for ranames present at the repository 
+    '''
+
+    print ('GET LINK CALLED')
+
+    # instantiate a ra object
+    ra = Ra(raname)
+    succes, results = ra.load()
+    if not succes:
+        return False, results
+    
+    return True, 'OK'
+
+def getRepositoryPath(raname):
+    '''
+    Provides a list with all steps for ranames present at the repository 
+    '''
+
+    # instantiate a ra object
+    ra = Ra(raname)
+    succes, results = ra.load()
+    if not succes:
+        return False, results
+    
+    repo_path = os.path.join(ra.rapath, 'repo')
+    return True, repo_path
