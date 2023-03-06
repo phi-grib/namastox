@@ -272,3 +272,17 @@ def getRepositoryPath(raname):
     
     repo_path = os.path.join(ra.rapath, 'repo')
     return True, repo_path
+
+def getWorkflow(raname):
+    '''
+    returns a marmaid string describing the "visible workflow"
+    '''
+
+    # instantiate a ra object
+    ra = Ra(raname)
+    succes, results = ra.load()
+    if not succes:
+        return False, results
+    
+    workflow_graph = ra.getWorkflowGraph()
+    return (workflow_graph is not None), workflow_graph

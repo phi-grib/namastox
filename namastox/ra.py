@@ -41,6 +41,7 @@ class Ra:
         self.raname = raname
         self.rapath = ra_path(raname)
         self.workflow = None  
+        self.workflow_path
         
         # default, these are loaded from a YAML file
         self.ra = {
@@ -309,6 +310,9 @@ class Ra:
         # for new keys, create a new element with 'value' key
         else:
             self.ra[key] = value
+
+    def getWorkflowGraph(self):
+        return 'xxxx'
            
     #################################################
     # output section
