@@ -41,7 +41,7 @@ class Ra:
         self.raname = raname
         self.rapath = ra_path(raname)
         self.workflow = None  
-        self.workflow_path
+        self.workflow_path = None
         
         # default, these are loaded from a YAML file
         self.ra = {
