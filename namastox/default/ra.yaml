@@ -2,22 +2,18 @@ ra:
   ID:     
   workflow_name: workflow.csv
   step: 0
-  active_nodes_id: # []
+  active_nodes_id: []
+  node_path: []
 general:
   title:                     
   problem_formulation:                     
   uncertainty:                     
   endpoint:                     # toxicity endpoint {}
-    #  name : CMR
-    #  description : None
   administration_route:         # [oral|topic]
   species:                      # [none|human|rat]
   regulatory_framework:         # regulatory framework [none|ECHA|REACH]
   workflow_custom:
-  substances:                   # list of input substances {}
-    #  - name : example
-    #    SMILES : c1ccccc1
-    #    CASRN : 123-456-78
-results:                        # list of results {}         
-notes:                          # list of notes {}
-assessment:                     # list of results {}
+  substances: []                # list of input substances {}
+results: []                     # list of results {}         
+notes: []                       # list of notes {}
+assessment:                     # assessment {}

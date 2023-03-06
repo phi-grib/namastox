@@ -41,14 +41,14 @@ class Ra:
         self.raname = raname
         self.rapath = ra_path(raname)
         self.workflow = None  
-        self.workflow_path = None
         
         # default, these are loaded from a YAML file
         self.ra = {
             'ID': None,
             'workflow_name': None,
             'step': 0,
-            'active_nodes_id': []
+            'active_nodes_id': [],
+            'node_path': []
         }
         self.general = {
             'endpoint': {},
@@ -235,10 +235,13 @@ class Ra:
             if not input_node_id in self.ra["active_nodes_id"]:
                 LOG.info(f'input for node {input_node_id} not in the active nodes list({self.ra["active_nodes_id"]})')
                 continue
-            
+
             # identify workflow node for which this result is being applied
             input_node = self.workflow.getNode(input_node_id)
             input_node_cathegory = input_node.getVal('cathegory')
+
+            if not input_node_id in self.ra['node_path']:
+                self.ra['node_path'].append(input_node_id)
 
             # if node is empty do not process and do not progress in workflow
             if input_node_cathegory == 'LOGICAL':
@@ -313,24 +316,26 @@ class Ra:
 
     def getWorkflowGraph(self):
 
-        w = """graph TD
-        A[Problem formulation]-->B[Relevant existing data]
-        B-->C{"Is the information\nsufficient?"}
-        C--Y-->D[/Risk assesment report/]
-        C--N-->E{"Is exposure scenario\nwell-defined?"}
-        E---G[...]
-        D-->F([Exit])
-        style A fill:#548BD4,stroke:#548BD4
-        style B fill:#548BD4,stroke:#548BD4
-        style C fill:#F2DCDA,stroke:#C32E2D
-        style E fill:#F2DCDA,stroke:#C32E2D
-        style F fill:#D7E3BF,stroke:#A3B77E
-        style G fill:#FFFFFF,stroke:#000000
-        click A onA
-        click B onA
-        click C onA
-        click D onA
-        click E onA"""
+        w = self.workflow.getWorkflowGraph(self.ra['node_path'])
+
+        # w = """graph TD
+        # A[Problem formulation]-->B[Relevant existing data]
+        # B-->C{"Is the information\nsufficient?"}
+        # C--Y-->D[/Risk assesment report/]
+        # C--N-->E{"Is exposure scenario\nwell-defined?"}
+        # E---G[...]
+        # D-->F([Exit])
+        # style A fill:#548BD4,stroke:#548BD4
+        # style B fill:#548BD4,stroke:#548BD4
+        # style C fill:#F2DCDA,stroke:#C32E2D
+        # style E fill:#F2DCDA,stroke:#C32E2D
+        # style F fill:#D7E3BF,stroke:#A3B77E
+        # style G fill:#FFFFFF,stroke:#000000
+        # click A onA
+        # click B onA
+        # click C onA
+        # click D onA
+        # click E onA"""
 
         return w
            

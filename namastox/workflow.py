@@ -118,6 +118,40 @@ class Workflow:
         inode = self.getNode(iid)
         index_list = inode.logicalNodeIndex(decision)        
         return [self.nodes[x].getVal('id') for x in index_list]
+    
+    def getWorkflowGraph (self, node_path):
+
+        print ('WORKFLOW>>>>>', node_path)
+        for iid in node_path:
+            inode = self.getNode(iid)
+            # self.name = node_content['name']
+            # self.id = node_content['id']
+            # self.cathegory = node_content['cathegory']
+            # self.next_node = node_content['next_node']
+            # self.next_yes = node_content['next_yes']
+            # self.next_no = node_content['next_no']
+            print (inode.name, inode.id)
+
+        w = """graph TD
+        A[Problem formulation]-->B[Relevant existing data]
+        B-->C{"Is the information\nsufficient?"}
+        C--Y-->D[/Risk assesment report/]
+        C--N-->E{"Is exposure scenario\nwell-defined?"}
+        E---G[...]
+        D-->F([Exit])
+        style A fill:#548BD4,stroke:#548BD4
+        style B fill:#548BD4,stroke:#548BD4
+        style C fill:#F2DCDA,stroke:#C32E2D
+        style E fill:#F2DCDA,stroke:#C32E2D
+        style F fill:#D7E3BF,stroke:#A3B77E
+        style G fill:#FFFFFF,stroke:#000000
+        click A onA
+        click B onA
+        click C onA
+        click D onA
+        click E onA"""
+                
+        return w
 
 
 
