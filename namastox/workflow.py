@@ -147,6 +147,12 @@ class Workflow:
         body = ''
         style = ''
         links = ''
+        if len(node_path) == 0:
+            inode = self.firstNode()
+            style += self.inodeStyle(inode, False)
+            body += f'{self.inodeBox(inode)}\n'
+            return (header+body+style)
+        
         for iid in node_path:
             inode = self.getNode(iid)
             style += self.inodeStyle(inode, True)
@@ -169,8 +175,6 @@ class Workflow:
                     body += f'{self.inodeBox(inode)}--N-->{self.inodeBox(inext)}\n'
                     style += self.inodeStyle(inext)
 
-        print (node_path)
-        print (header+body+style)
         return (header+body+style)
 
         w = """graph TD
