@@ -119,26 +119,59 @@ class Workflow:
         index_list = inode.logicalNodeIndex(decision)        
         return [self.nodes[x].getVal('id') for x in index_list]
     
+    def inodeStyle (self, inode, past=False):
+        if past:
+            return f'style {inode.id} fill:#CCCCCC,stroke:#CCCCCC\n'
+        if inode.cathegory == 'TASK':
+            return f'style {inode.id} fill:#548BD4,stroke:#548BD4\n'
+        if inode.cathegory == 'LOGICAL':
+            return f'style {inode.id} fill:#F2DCDA,stroke:#C32E2D\n'
+        if inode.cathegory == 'END':
+            return f'style {inode.id} fill:#FFFFFF,stroke:#000000\n'
+
+        return '\n'
+        
+    def inodeBox (self, inode):
+        if inode.cathegory == 'TASK':
+            return f'{inode.id}[{inode.name}]'
+        if inode.cathegory == 'LOGICAL':
+            return f'{inode.id}{{{inode.name}}}'
+        if inode.cathegory == 'END':
+            return f'{inode.id}[/{inode.name}/]'
+        return ''
+           
     def getWorkflowGraph (self, node_path):
 
-        print ('WORKFLOW>>>>>', node_path)
         header = 'graph TD\n'
 
         body = ''
+        style = ''
+        links = ''
         for iid in node_path:
             inode = self.getNode(iid)
+            style += self.inodeStyle(inode, True)
             if inode.cathegory == 'TASK':
                 next_nodes = self.nextNodeList(iid)
                 for jid in next_nodes:
                     inext = self.getNode(jid)
-                    body += f'{inode.id}[{inode.name}]-->{inext.id}[{inext.name}]\n'
+                    body += f'{self.inodeBox(inode)}-->{self.inodeBox(inext)}\n'
+                    style += self.inodeStyle(inext)
+                    
             elif inode.cathegory == 'LOGICAL':
-                next_nodes =self.logicalNodeList(iid)
-                for jid in next_nodes:
+                next_nodes_true  =self.logicalNodeList(iid, True)
+                next_nodes_false =self.logicalNodeList(iid, False)
+                for jid in next_nodes_true:
                     inext = self.getNode(jid)
-                    body += f'{inode.id}[{inode.name}]-->{inext.id}[{inext.name}]\n'
+                    body += f'{self.inodeBox(inode)}--Y-->{self.inodeBox(inext)}\n'
+                    style += self.inodeStyle(inext)
+                for jid in next_nodes_false:
+                    inext = self.getNode(jid)
+                    body += f'{self.inodeBox(inode)}--N-->{self.inodeBox(inext)}\n'
+                    style += self.inodeStyle(inext)
 
-        print (body)
+        print (node_path)
+        print (header+body+style)
+        return (header+body+style)
 
         w = """graph TD
         A[Problem formulation]-->B[Relevant existing data]

@@ -117,7 +117,7 @@ class Ra:
             if yaml_dict[ikey]!=None:
                 self.__dict__[ikey]=yaml_dict[ikey]
 
-        # bakcompatibility
+        # bakcompatibility!
         if not 'node_path' in self.ra:
             self.ra['node_path'] = []
 
@@ -244,6 +244,7 @@ class Ra:
             input_node = self.workflow.getNode(input_node_id)
             input_node_cathegory = input_node.getVal('cathegory')
 
+            # add this node to the list of nodes transited
             if not input_node_id in self.ra['node_path']:
                 self.ra['node_path'].append(input_node_id)
 
