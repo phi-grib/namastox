@@ -122,15 +122,23 @@ class Workflow:
     def getWorkflowGraph (self, node_path):
 
         print ('WORKFLOW>>>>>', node_path)
+        header = 'graph TD\n'
+
+        body = ''
         for iid in node_path:
             inode = self.getNode(iid)
-            # self.name = node_content['name']
-            # self.id = node_content['id']
-            # self.cathegory = node_content['cathegory']
-            # self.next_node = node_content['next_node']
-            # self.next_yes = node_content['next_yes']
-            # self.next_no = node_content['next_no']
-            print (inode.name, inode.id)
+            if inode.cathegory == 'TASK':
+                next_nodes = self.nextNodeList(iid)
+                for jid in next_nodes:
+                    inext = self.getNode(jid)
+                    body += f'{inode.id}[{inode.name}]-->{inext.id}[{inext.name}]\n'
+            elif inode.cathegory == 'LOGICAL':
+                next_nodes =self.logicalNodeList(iid)
+                for jid in next_nodes:
+                    inext = self.getNode(jid)
+                    body += f'{inode.id}[{inode.name}]-->{inext.id}[{inext.name}]\n'
+
+        print (body)
 
         w = """graph TD
         A[Problem formulation]-->B[Relevant existing data]

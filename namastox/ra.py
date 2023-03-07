@@ -117,6 +117,10 @@ class Ra:
             if yaml_dict[ikey]!=None:
                 self.__dict__[ikey]=yaml_dict[ikey]
 
+        # bakcompatibility
+        if not 'node_path' in self.ra:
+            self.ra['node_path'] = []
+
         # load workflow
         if self.ra['step']>0 : 
             self.workflow = Workflow(self.raname, self.ra['workflow_name'])
@@ -316,7 +320,14 @@ class Ra:
 
     def getWorkflowGraph(self):
 
-        w = self.workflow.getWorkflowGraph(self.ra['node_path'])
+        if self.ra['step']>0 : 
+            return self.workflow.getWorkflowGraph(self.ra['node_path'])
+        else:
+            return """graph TD
+                      X[workflow undefined]-->Z[...]
+                      style X fill:#548BD4,stroke:#548BD4
+                      style Z fill:#FFFFFF,stroke:#000000
+                      """
 
         # w = """graph TD
         # A[Problem formulation]-->B[Relevant existing data]
