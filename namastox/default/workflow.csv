@@ -2,10 +2,10 @@ num	id	name	cathegory	needs	result_type	result_description	input for	links	next_
 1	BB001_01	Problem Formulation	TASK		report	Enter a description of the problem formulation, including a clear assessment question			2		
 2	BB002_01	Relevant existing data	TASK		report	existing data			3		
 3	DP01EF_01	Is the information sufficient	LOGICAL		bool	justification				4	5
-4		Risk assessment report	END		report	report					
-5	DP02EF_01	Is exposure scenario well defined	LOGICAL		bool	justification				6	9,12,13, 19
-6	BB003_01	Definition of maximum exposure (Emax)	TASK		report	max exposure					
-7	DP03EF_01	Is the TTC applicable	LOGICAL		bool	justification			8	4	9,12,13, 19
+4	EXIT1	Risk assessment report	END		report	report					
+5	DP02EF_01	Is exposure scenario well defined	LOGICAL		bool	justification				6	9
+6	BB003_01	Definition of maximum exposure Emax	TASK		report	max exposure					
+7	DP03EF_01	Is the TTC applicable	LOGICAL		bool	justification				4	12
 8	BB004_01	Consider wheter TTC may be applicable	TASK		report	TTC applicability			broken		
 9	BB005_01	Identify use scenario	TASK		report	use scenario			10		
 10	BB006_01	Estimate external exposure	TASK		report	external exposure			11,18		

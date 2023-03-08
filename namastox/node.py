@@ -65,4 +65,24 @@ class Node:
         task = None
         task = self.task
         return task
+    
+    def style (self, visited=False):
+        if visited:
+            return f'style {self.id} fill:#CCCCCC,stroke:#CCCCCC\n'
+        if self.cathegory == 'TASK':
+            return f'style {self.id} fill:#548BD4,stroke:#548BD4\n'
+        if self.cathegory == 'LOGICAL':
+            return f'style {self.id} fill:#F2DCDA,stroke:#C32E2D\n'
+        if self.cathegory == 'END':
+            return f'style {self.id} fill:#FFFFFF,stroke:#000000\n'
+        return '\n'
+    
+    def box (self):
+        if self.cathegory == 'TASK':
+            return f'{self.id}[{self.name}]'
+        if self.cathegory == 'LOGICAL':
+            return f'{self.id}{{{self.name}}}'
+        if self.cathegory == 'END':
+            return f'{self.id}[/{self.name}/]\n{self.id}[/{self.name}/]-->Z[end]'
+        return ''
         

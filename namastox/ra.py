@@ -322,7 +322,12 @@ class Ra:
     def getWorkflowGraph(self):
 
         if self.ra['step']>0 : 
-            return self.workflow.getWorkflowGraph(self.ra['node_path'])
+            print ([x['id'] for x in self.results])
+            print (self.ra['node_path'])
+
+            # return self.workflow.getWorkflowGraph(self.ra['node_path'])
+            return self.workflow.getWorkflowGraph(self.results)
+        
         else:
             return """graph TD
                       X[workflow undefined]-->Z[...]
