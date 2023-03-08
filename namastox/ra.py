@@ -48,7 +48,7 @@ class Ra:
             'workflow_name': None,
             'step': 0,
             'active_nodes_id': [],
-            'node_path': []
+            # 'node_path': []
         }
         self.general = {
             'endpoint': {},
@@ -118,8 +118,8 @@ class Ra:
                 self.__dict__[ikey]=yaml_dict[ikey]
 
         # bakcompatibility!
-        if not 'node_path' in self.ra:
-            self.ra['node_path'] = []
+        # if not 'node_path' in self.ra:
+        #     self.ra['node_path'] = []
 
         # load workflow
         if self.ra['step']>0 : 
@@ -245,8 +245,8 @@ class Ra:
             input_node_cathegory = input_node.getVal('cathegory')
 
             # add this node to the list of nodes transited
-            if not input_node_id in self.ra['node_path']:
-                self.ra['node_path'].append(input_node_id)
+            # if not input_node_id in self.ra['node_path']:
+            #     self.ra['node_path'].append(input_node_id)
 
             # if node is empty do not process and do not progress in workflow
             if input_node_cathegory == 'LOGICAL':
@@ -322,8 +322,6 @@ class Ra:
     def getWorkflowGraph(self):
 
         if self.ra['step']>0 : 
-            print ([x['id'] for x in self.results])
-            print (self.ra['node_path'])
 
             # return self.workflow.getWorkflowGraph(self.ra['node_path'])
             return self.workflow.getWorkflowGraph(self.results)

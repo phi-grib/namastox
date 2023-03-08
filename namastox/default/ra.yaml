@@ -3,7 +3,7 @@ ra:
   workflow_name: workflow.csv
   step: 0
   active_nodes_id: []
-  node_path: []
+  # node_path: []
 general:
   title:                     
   problem_formulation:                     
