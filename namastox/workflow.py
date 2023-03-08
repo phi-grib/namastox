@@ -119,7 +119,6 @@ class Workflow:
         index_list = inode.logicalNodeIndex(decision)        
         return [self.nodes[x].getVal('id') for x in index_list]
     
-           
     def graphNext (self, nodeid, inode, decision=None, visited=False):
         inext = self.getNode(nodeid)
         arrow = '-->'
@@ -180,7 +179,6 @@ class Workflow:
             if inode.cathegory == 'TASK':
                 next_nodes = self.nextNodeList(iid)
                 for jid in next_nodes:
-
                     visited = jid in node_path
                     ibody, istyle, ilinks = self.graphNext(jid, inode, None, visited)
                     body += ibody
@@ -193,7 +191,6 @@ class Workflow:
                 if idecision == True:
                     next_nodes_true  = self.logicalNodeList(iid, True)
                     for jid in next_nodes_true:
-                
                         visited = jid in node_path
                         ibody, istyle, ilinks = self.graphNext(jid, inode, True, visited)
                         body += ibody
@@ -202,9 +199,7 @@ class Workflow:
 
                 else:
                     next_nodes_false =self.logicalNodeList(iid, False)
-
                     for jid in next_nodes_false:
-
                         visited = jid in node_path
                         ibody, istyle, ilinks = self.graphNext(jid, inode, False, visited)
                         body += ibody
@@ -212,27 +207,6 @@ class Workflow:
                         links+= ilinks
 
         return (header+body+style+links)
-
-        w = """graph TD
-        A[Problem formulation]-->B[Relevant existing data]
-        B-->C{"Is the information\nsufficient?"}
-        C--Y-->D[/Risk assesment report/]
-        C--N-->E{"Is exposure scenario\nwell-defined?"}
-        E---G[...]
-        D-->F([Exit])
-        style A fill:#548BD4,stroke:#548BD4
-        style B fill:#548BD4,stroke:#548BD4
-        style C fill:#F2DCDA,stroke:#C32E2D
-        style E fill:#F2DCDA,stroke:#C32E2D
-        style F fill:#D7E3BF,stroke:#A3B77E
-        style G fill:#FFFFFF,stroke:#000000
-        click A onA
-        click B onA
-        click C onA
-        click D onA
-        click E onA"""
-                
-        return w
 
 
 
