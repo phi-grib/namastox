@@ -137,7 +137,7 @@ class Workflow:
         if inode.cathegory == 'LOGICAL':
             return f'{inode.id}{{{inode.name}}}'
         if inode.cathegory == 'END':
-            return f'{inode.id}[/{inode.name}/]'
+            return f'{inode.id}[/{inode.name}/]\n{inode.id}[/{inode.name}/]-->Z[end]'
         return ''
            
     def getWorkflowGraph (self, node_path):
@@ -151,17 +151,21 @@ class Workflow:
             inode = self.firstNode()
             style += self.inodeStyle(inode, False)
             body += f'{self.inodeBox(inode)}\n'
+            links += f'click {inode.id} onA\n'
             return (header+body+style)
         
         for iid in node_path:
             inode = self.getNode(iid)
             style += self.inodeStyle(inode, True)
+            links += f'click {inode.id} onA\n'
+
             if inode.cathegory == 'TASK':
                 next_nodes = self.nextNodeList(iid)
                 for jid in next_nodes:
                     inext = self.getNode(jid)
                     body += f'{self.inodeBox(inode)}-->{self.inodeBox(inext)}\n'
                     style += self.inodeStyle(inext)
+                    links += f'click {inext.id} onA\n'
                     
             elif inode.cathegory == 'LOGICAL':
                 next_nodes_true  =self.logicalNodeList(iid, True)
@@ -170,12 +174,16 @@ class Workflow:
                     inext = self.getNode(jid)
                     body += f'{self.inodeBox(inode)}--Y-->{self.inodeBox(inext)}\n'
                     style += self.inodeStyle(inext)
+                    links += f'click {inext.id} onA\n'
+
+
                 for jid in next_nodes_false:
                     inext = self.getNode(jid)
                     body += f'{self.inodeBox(inode)}--N-->{self.inodeBox(inext)}\n'
                     style += self.inodeStyle(inext)
+                    links += f'click {inext.id} onA\n'
 
-        return (header+body+style)
+        return (header+body+style+links)
 
         w = """graph TD
         A[Problem formulation]-->B[Relevant existing data]
