@@ -286,3 +286,13 @@ def getWorkflow(raname):
     
     workflow_graph = ra.getWorkflowGraph()
     return (workflow_graph is not None), workflow_graph
+
+def convertSubstances(file):
+    '''
+    returns a dictionary with a list of substances names, SMILES and CASRN
+    '''
+    mockup = [
+        {'name': 'aspirin', 'SMILES': 'c1ccccc1', 'CASRN': '1234-56-78'},
+        {'name': 'ibuprofen', 'SMILES': 'c1ccccc1O', 'CASRN': '98765-56-78'},
+        ]
+    return True, mockup
