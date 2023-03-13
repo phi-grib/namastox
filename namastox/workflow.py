@@ -163,48 +163,48 @@ class Workflow:
             style += inode.style(False)
             body += f'{inode.box()}\n'
             links += f'click {inode.id} onA\n'
-            return (header+body+style)
         
-        # iterate visited nodes
-        for i,iresult in enumerate(results):
+        else:
+            # iterate for all visited nodes
+            for iresult in results:
 
-            # this is the visited node, show it greyed out
-            iid = iresult['id']
-            inode = self.getNode(iid)
-            style += inode.style(True)
-            links += f'click {inode.id} onA\n'
+                # this is the visited node, show it greyed out
+                iid = iresult['id']
+                inode = self.getNode(iid)
+                style += inode.style(True)
+                links += f'click {inode.id} onA\n'
 
-            # show all nodes linked to visited nodes
-            # for task, show next task (pending task)
-            if inode.cathegory == 'TASK':
-                next_nodes = self.nextNodeList(iid)
-                for jid in next_nodes:
-                    visited = jid in node_path
-                    ibody, istyle, ilinks = self.graphNext(jid, inode, None, visited)
-                    body += ibody
-                    style+= istyle
-                    links+= ilinks
-
-            # for decision, show decision taken in the visited node
-            elif inode.cathegory == 'LOGICAL':
-                idecision = iresult['decision']
-                if idecision == True:
-                    next_nodes_true  = self.logicalNodeList(iid, True)
-                    for jid in next_nodes_true:
+                # show all nodes linked to visited nodes
+                # for task, show next task (pending task)
+                if inode.cathegory == 'TASK':
+                    next_nodes = self.nextNodeList(iid)
+                    for jid in next_nodes:
                         visited = jid in node_path
-                        ibody, istyle, ilinks = self.graphNext(jid, inode, True, visited)
+                        ibody, istyle, ilinks = self.graphNext(jid, inode, None, visited)
                         body += ibody
                         style+= istyle
                         links+= ilinks
 
-                else:
-                    next_nodes_false =self.logicalNodeList(iid, False)
-                    for jid in next_nodes_false:
-                        visited = jid in node_path
-                        ibody, istyle, ilinks = self.graphNext(jid, inode, False, visited)
-                        body += ibody
-                        style+= istyle
-                        links+= ilinks
+                # for decision, show decision taken in the visited node
+                elif inode.cathegory == 'LOGICAL':
+                    idecision = iresult['decision']
+                    if idecision == True:
+                        next_nodes_true  = self.logicalNodeList(iid, True)
+                        for jid in next_nodes_true:
+                            visited = jid in node_path
+                            ibody, istyle, ilinks = self.graphNext(jid, inode, True, visited)
+                            body += ibody
+                            style+= istyle
+                            links+= ilinks
+
+                    else:
+                        next_nodes_false =self.logicalNodeList(iid, False)
+                        for jid in next_nodes_false:
+                            visited = jid in node_path
+                            ibody, istyle, ilinks = self.graphNext(jid, inode, False, visited)
+                            body += ibody
+                            style+= istyle
+                            links+= ilinks
 
         return (header+body+style+links)
 
