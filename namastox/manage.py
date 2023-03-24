@@ -23,6 +23,7 @@
 import os
 import yaml
 import shutil
+from rdkit import Chem
 from namastox.logger import get_logger
 from namastox.ra import Ra
 from namastox.utils import ra_repository_path, ra_path, id_generator
@@ -291,8 +292,41 @@ def convertSubstances(file):
     '''
     returns a dictionary with a list of substances names, SMILES and CASRN
     '''
-    mockup = [
-        {'name': 'aspirin', 'SMILES': 'c1ccccc1', 'CASRN': '1234-56-78'},
-        {'name': 'ibuprofen', 'SMILES': 'c1ccccc1O', 'CASRN': '98765-56-78'},
-        ]
-    return True, mockup
+
+    suppl = Chem.SDMolSupplier(file, sanitize=True)
+    count = 0
+    results = []
+    for mol in suppl:
+        if mol is None:
+            continue
+        count=count+1
+
+        # extract the molecule name
+        if mol.HasProp('name'):  
+            iname = mol.GetProp('name')
+        elif mol.HasProp('Name'):  
+            iname = mol.GetProp('Name')
+        elif mol.HasProp('NAME'):  
+            iname = mol.GetProp('NAME')
+        else:
+            iname = f'mol{count}'
+
+        # extract the CASRN 
+        if mol.HasProp('CASRN'):  
+            icasrn = mol.GetProp('CASRN')
+        if mol.HasProp('CAS'):  
+            icasrn = mol.GetProp('CAS')
+        if mol.HasProp('CAS-RN'):  
+            icasrn = mol.GetProp('CAS-RN')
+        else:
+            icasrn = 'na'
+
+        # obtain the SMILES
+        ismiles = Chem.MolToSmiles(mol)
+
+        results.append( {'name': iname, 'SMILES': ismiles, 'CASRN': icasrn })
+
+    if len(results)> 0:
+        return True, results
+
+    return False, 'empty molecule'

@@ -84,7 +84,7 @@ class Ra:
             with open(ra_file_name, 'r') as pfile:
                 yaml_dict = yaml.safe_load(pfile)
         except Exception as e:
-            return False, e
+            return False, f'error:{e}'
         
         # if a defined step is requested
         if step is not None:
