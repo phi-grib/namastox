@@ -148,7 +148,7 @@ class Workflow:
         return ibody, istyle, ilinks
         
 
-    def getWorkflowGraph (self, results):
+    def getWorkflowGraph (self, results, step=None):
 
         node_path =[iresult['id'] for iresult in results]
 
@@ -166,7 +166,12 @@ class Workflow:
         
         else:
             # iterate for all visited nodes
-            for iresult in results:
+            for istep, iresult in enumerate(results):
+
+                # when a step is defined, draw only until this step
+                if step is not None:
+                    if (istep+1)>step : 
+                        break
 
                 # this is the visited node, show it greyed out
                 iid = iresult['id']

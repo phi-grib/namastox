@@ -319,12 +319,10 @@ class Ra:
         else:
             self.ra[key] = value
 
-    def getWorkflowGraph(self):
+    def getWorkflowGraph(self, step=None):
 
         if self.ra['step']>0 : 
-
-            # return self.workflow.getWorkflowGraph(self.ra['node_path'])
-            return self.workflow.getWorkflowGraph(self.results)
+            return self.workflow.getWorkflowGraph(self.results, step)
         
         else:
             return """graph TD

@@ -271,7 +271,7 @@ def getRepositoryPath(raname):
     repo_path = os.path.join(ra.rapath, 'repo')
     return True, repo_path
 
-def getWorkflow(raname):
+def getWorkflow(raname, step=None):
     '''
     returns a marmaid string describing the "visible workflow"
     '''
@@ -282,7 +282,7 @@ def getWorkflow(raname):
     if not succes:
         return False, results
     
-    workflow_graph = ra.getWorkflowGraph()
+    workflow_graph = ra.getWorkflowGraph(step)
     return (workflow_graph is not None), workflow_graph
 
 def convertSubstances(file):
