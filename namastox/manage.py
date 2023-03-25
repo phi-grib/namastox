@@ -86,10 +86,7 @@ def action_new(raname, outfile=None):
     # Show template
     yaml = ra.getTemplate()
     
-    if outfile is None:
-        for iline in yaml:
-            LOG.info(iline)
-    else:
+    if outfile is not None:
         with open(outfile,'w') as f:
             f.write(yaml)
 
@@ -314,9 +311,9 @@ def convertSubstances(file):
         # extract the CASRN 
         if mol.HasProp('CASRN'):  
             icasrn = mol.GetProp('CASRN')
-        if mol.HasProp('CAS'):  
+        elif mol.HasProp('CAS'):  
             icasrn = mol.GetProp('CAS')
-        if mol.HasProp('CAS-RN'):  
+        elif mol.HasProp('CAS-RN'):  
             icasrn = mol.GetProp('CAS-RN')
         else:
             icasrn = 'na'
