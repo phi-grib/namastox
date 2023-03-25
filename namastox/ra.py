@@ -65,7 +65,6 @@ class Ra:
         self.notes = []
         self.assessment = None
 
-
     def load(self, step=None):       
         ''' load the Ra object from a YAML file
         '''
@@ -141,8 +140,27 @@ class Ra:
         with open(rafile,'w') as f:
             f.write(yaml.dump(dict_temp))
 
+        # remove any other yaml file in the historic describing the same step
+        step = self.ra['step']
+        rahistpath = os.path.join (self.rapath,'hist')
+        for ra_hist_file in os.listdir(rahistpath):
+            remove_file = False
+            ra_hist_item = os.path.join(rahistpath, ra_hist_file)
+            if os.path.isfile(ra_hist_item):
+                idict = {}
+                with open(ra_hist_item, 'r') as pfile:
+                    idict = yaml.safe_load(pfile)
+                    if 'ra' in idict:
+                        if 'step' in idict['ra']:
+                            if step == idict['ra']['step']:
+                                remove_file = True
+                if remove_file:
+                    LOG.info(f'removed old file {ra_hist_item} for step {step}')
+                    os.remove(ra_hist_item) 
+
+        # save in the historic file
         time_label = time.strftime("_%d%b%Y_%H%M%S", time.localtime()) 
-        rahist = os.path.join (self.rapath,'hist',f'ra{time_label}.yaml')
+        rahist = os.path.join (rahistpath,f'ra{time_label}.yaml')
         shutil.copyfile(rafile, rahist)
 
     def getStatus(self):
@@ -279,6 +297,7 @@ class Ra:
 
             # replace the current node with the next for the current node only 
             # if logical find new active node (method in workflow?)
+
             active_nodes_list = self.ra['active_nodes_id']
             active_nodes_list.pop(active_nodes_list.index(input_node_id))
 
