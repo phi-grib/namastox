@@ -203,31 +203,24 @@ class Ra:
         ''' return a dictionary with RA status'''
         return {'general':self.general}
 
-    # def updateWorkflow (self, file):
-    #     print ('*********************', file)
-    #     self.ra['workflow_name'] = file
-    #     self.workflow = Workflow(self.raname, self.ra['workflow_name'])
-
     def updateGeneralInfo (self, input):
-        ''' process update as GeneralInfo when we are in the first step'''
+        ''' process update as GeneralInfo when we are in the first step (step 0)'''
+
         if not 'general' in input:
             return False, 'wrong format in input file (no "general" info)'
 
         self.general = input['general']
-
-        # if workflow_custom... copy to repo and replace workflow.csv
-        if self.raname == 'AAA':
-            print ('HARDCODED!!! REMOVE THIS CODE')
-            self.general['workflow_custom'] = 'alternative.csv'
 
         if 'workflow_custom' in self.general:
             workflow_custom = self.general['workflow_custom']
 
             if workflow_custom is not None:
                 if os.path.isfile(os.path.join(self.rapath,workflow_custom)):
+                    
                     self.ra['workflow_name'] = workflow_custom
-                    if os.path.isfile(os.path.join(self.rapath,'workflow.pkl')):
-                        os.remove(os.path.join(self.rapath,'workflow.pkl'))
+                    workflow_pkl = os.path.join(self.rapath,'workflow.pkl')
+                    if os.path.isfile(workflow_pkl):
+                        os.remove(workflow_pkl)
                     LOG.info (f'workflow name updated to {workflow_custom}')
 
         self.workflow = Workflow(self.raname, self.ra['workflow_name'])
