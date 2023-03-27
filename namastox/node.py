@@ -46,6 +46,10 @@ class Node:
     
     def nextNodeIndex(self):
         index_str = self.next_node 
+        
+        if index_str is None:
+            return []
+        
         index_list = [(int(x)-1) for x in index_str.split(',')] 
         return (index_list)
 
@@ -54,6 +58,9 @@ class Node:
             index_str = str(self.next_yes) 
         else:
             index_str = str(self.next_no) 
+        
+        if index_str is None:
+            return []
 
         index_list = [(int(x)-1) for x in index_str.split(',')] 
         return (index_list)

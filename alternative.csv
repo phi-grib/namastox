@@ -1,0 +1,10 @@
+num	id	name	cathegory	needs	result_type	result_description	input for	links	next_node	next_yes	next_no
+1	DEMO01_01	Problem Formulation	TASK		report	problem formulation			2		
+2	DEMO01_02	Generate estimates of highest test concentration	TASK		in silico	highest test conc		internal	3		
+3	DEMO01_03	Definition of maximum exposure Emax	TASK		report	max exposure			4		
+4	DEMO01_04	Is the TTC applicable	LOGICAL		bool	justification			 	8	5
+5	DEMO01_05	Generate in silico predictions of hazard	TASK		in silico	hazard list		internal	6		
+6	DEMO01_06	Is a toxicological alert identified	LOGICAL		bool	justification				8	7
+7	DEMO01_07	Is the information sufficient	LOGICAL		bool	justification				8	9
+8	EXIT1	Risk assessment report	END		report	report					
+4	DEMO01_09	FAKE	LOGICAL		bool	justification			 	8	5
