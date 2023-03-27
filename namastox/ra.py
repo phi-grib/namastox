@@ -226,7 +226,8 @@ class Ra:
             if workflow_custom is not None:
                 if os.path.isfile(os.path.join(self.rapath,workflow_custom)):
                     self.ra['workflow_name'] = workflow_custom
-                    os.remove(os.path.join(self.rapath,'workflow.pkl'))
+                    if os.path.isfile(os.path.join(self.rapath,'workflow.pkl')):
+                        os.remove(os.path.join(self.rapath,'workflow.pkl'))
                     LOG.info (f'workflow name updated to {workflow_custom}')
 
         self.workflow = Workflow(self.raname, self.ra['workflow_name'])
