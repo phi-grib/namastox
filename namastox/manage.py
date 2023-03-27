@@ -257,6 +257,19 @@ def action_info(raname, out='text'):
 
     return True, f'completed info for {raname}'
 
+def getPath(raname):
+    '''
+    returns the path to the RA folder for ra raname
+    '''
+
+    # instantiate a ra object
+    ra = Ra(raname)
+    succes, results = ra.load()
+    if not succes:
+        return False, results
+    
+    return True, ra.rapath
+
 def getRepositoryPath(raname):
     '''
     returns the path to the repository folder for ra raname
@@ -284,6 +297,16 @@ def getWorkflow(raname, step=None):
     
     workflow_graph = ra.getWorkflowGraph(step)
     return (workflow_graph is not None), workflow_graph
+
+
+def setCustomWorkflow (raname, file):
+
+    print ('?????????????????????', raname, file)
+    # instantiate a ra object
+    ra = Ra(raname)
+    
+    success, result = ra.updateWorkflow (file)
+    return success, result
 
 def convertSubstances(file):
     '''

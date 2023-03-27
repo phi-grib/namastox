@@ -203,6 +203,11 @@ class Ra:
         ''' return a dictionary with RA status'''
         return {'general':self.general}
 
+    # def updateWorkflow (self, file):
+    #     print ('*********************', file)
+    #     self.ra['workflow_name'] = file
+    #     self.workflow = Workflow(self.raname, self.ra['workflow_name'])
+
     def updateGeneralInfo (self, input):
         ''' process update as GeneralInfo when we are in the first step'''
         if not 'general' in input:
@@ -213,6 +218,8 @@ class Ra:
         # if workflow_custom... copy to repo and replace workflow.csv
         if 'workflow_custom' in self.general:
             workflow_custom = self.general['workflow_custom']
+
+            print ('WORKFLOW CUSTOM >>>>>>>>>>>>>>>>>>>>>', workflow_custom)
             if workflow_custom is not None:
                 if os.path.isfile(workflow_custom):
                     shutil.copy(workflow_custom,self.rapath)
