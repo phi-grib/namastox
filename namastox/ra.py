@@ -216,15 +216,18 @@ class Ra:
         self.general = input['general']
 
         # if workflow_custom... copy to repo and replace workflow.csv
+        if self.raname == 'AAA':
+            print ('HARDCODED!!! REMOVE THIS CODE')
+            self.general['workflow_custom'] = 'alternative.csv'
+
         if 'workflow_custom' in self.general:
             workflow_custom = self.general['workflow_custom']
 
-            print ('WORKFLOW CUSTOM >>>>>>>>>>>>>>>>>>>>>', workflow_custom)
             if workflow_custom is not None:
-                if os.path.isfile(workflow_custom):
-                    shutil.copy(workflow_custom,self.rapath)
+                if os.path.isfile(os.path.join(self.rapath,workflow_custom)):
                     self.ra['workflow_name'] = workflow_custom
-                    LOG.debug (f'workflow name updated to {workflow_custom}')
+                    os.remove(os.path.join(self.rapath,'workflow.pkl'))
+                    LOG.info (f'workflow name updated to {workflow_custom}')
 
         self.workflow = Workflow(self.raname, self.ra['workflow_name'])
 
