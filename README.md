@@ -5,6 +5,23 @@ Software tool for supporting the implementation of New Assessment Methods (NAMs)
 
 ## Install
 
+A docker container (https://www.docker.com/), fully configured can be downloaded from DockerHub and installed using:
+
+```bash
+docker run -d -p 5000:5000 mpastorphi/namastox
+```
+Then, the NAMASTOX GUI will be accesible from a web browser at address http://localhost:5000
+
+Please note that the port of this address is defined in the command line above and can be easily customized.
+
+It is also possible to use an existing local folder for storing the RAs. Let's assume you wish to use 'c:\data' as the local flame repository. Start by creating a folder inside named 'ras'. Then, run the following command: 
+
+```bash
+docker run -d -p 5000:5000 -v c:\data:/data mpastorphi/namastox
+```
+Then, as in the previous example, you can acces the NAMASTOX GUI from a web broser at http://localhost:5000
+
+
 NAMASTOX can be used in most Windows, Linux or macOS configurations, provided that a suitable execution environment is set up. We recommend, as a fist step, installing the Conda package and environment manager. Download a suitable Conda or Anaconda distribution for your operative system from [here](https://docs.conda.io/projects/conda/en/latest/user-guide/install/download.html#)
 
 
