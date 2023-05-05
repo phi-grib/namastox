@@ -3,10 +3,10 @@ ra:
   workflow_name: workflow.csv
   step: 0
   active_nodes_id: []
-  # node_path: []
 general:
   title:                     
-  problem_formulation:                     
+  general_description:                     
+  background:                     
   uncertainty:                     
   endpoint:                     # toxicity endpoint {}
   administration_route:         # [oral|topic]
