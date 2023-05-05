@@ -14,6 +14,10 @@ general:
   regulatory_framework:         # regulatory framework [none|ECHA|REACH]
   workflow_custom:
   substances: []                # list of input substances {}
+  # substance_name: []
+  # substance_id: []
+  # substance_CASRN: []
+  # substance_structure: 
 results: []                     # list of results {}         
 notes: []                       # list of notes {}
 assessment:                     # assessment {}

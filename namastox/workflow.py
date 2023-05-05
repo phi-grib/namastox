@@ -78,6 +78,7 @@ class Workflow:
                 node_content[key]=value   
             self.nodes.append(Node(node_content))
              
+
         self.save()
 
         return True

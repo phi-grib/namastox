@@ -33,25 +33,27 @@ class Task:
         ''' constructor '''
 
         self.description = {
-            'cathegory': 'TASK',
-            'area': None,
-            'description': None, 
-            'method_type': 'expert', # expert, NAM, in silico, 
-            'method_link': None 
+            'name': None,
+            'cathegory': 'TASK',     # TASK | LOGICAL | END
+            'description': None,     # cannot be left empty
+            'method_type': 'expert', # expert | invitro | insilico, 
+            'method_link': None,      # link to method repo
+            'area': None            # TODO: remove 
         }
 
         self.result = {
+            # move to description
             'id': None,
-            'substance': None,
-            'result_description': 'text', # text, bool
-            'result_type': None, # text, bool
+            'result_type': None,     # text | value | bool
+
+            'substance': None,       # TODO: remove
+            'decision': False,       # for LOGICAL tasks
+            'report': False,         # for result_type = text
+            'value': None,           # for result_type = value 
+            'unit': None,            # for result_type = value 
+            'uncertainty': None,     # for result_type = value 
             'summary': None,
-            'summary_type': 'text',  # text, bool, value, 'done'
-            'value': None, 
-            'unit': None,
-            'uncertainty': None,
-            'decision': False,
-            'result_link': None
+            'result_link': None      # TODO: should be a list
         }
         self.other = {}
         self.setTask(task_dict)
@@ -109,8 +111,10 @@ class Task:
         if cathegory == 'TASK':
             temp_result.pop ('decision')
         elif cathegory == 'LOGICAL':
+            temp_result.pop ('report')
             temp_result.pop ('value')
             temp_result.pop ('unit')
+            temp_result.pop ('uncertainty')
         return temp_result
 
     def valResult(self, task_result):
@@ -125,8 +129,10 @@ class Task:
         if self.description['cathegory'] == 'LOGICAL':
             compulsory_keys.append ('decision')
         elif self.description['cathegory'] == 'TASK':
+            compulsory_keys.append ('report')
             compulsory_keys.append ('value')
             compulsory_keys.append ('unit')
+            compulsory_keys.append ('uncertainty')
 
         for ikey in compulsory_keys:
             if ikey not in task_result:
