@@ -63,7 +63,7 @@ class Workflow:
         table_dataframe = pd.read_csv(table_path, sep='\t').replace(np.nan, None)
         table_dict = table_dataframe.to_dict('list')
 
-        index_labels = ['id', 'name', 'cathegory', 'next_node', 'next_yes', 'next_no']
+        index_labels = ['id', 'name', 'category', 'next_node', 'next_yes', 'next_no']
         for i in index_labels:
             if not i in table_dict:
                 return False
@@ -132,7 +132,7 @@ class Workflow:
         istyle = inext.style()
         ilinks = f'click {inext.id} onA\n'
 
-        if inext.cathegory == 'LOGICAL' and not visited:
+        if inext.category == 'LOGICAL' and not visited:
             next_nodes_true  =self.logicalNodeList(nodeid, True)
             for jid in next_nodes_true:
                 ilog = self.getNode(jid)
@@ -183,7 +183,7 @@ class Workflow:
 
                 # show all nodes linked to visited nodes
                 # for task, show next task (pending task)
-                if inode.cathegory == 'TASK':
+                if inode.category == 'TASK':
                     next_nodes = self.nextNodeList(iid)
                     for jid in next_nodes:
                         visited = jid in node_path
@@ -193,7 +193,7 @@ class Workflow:
                         links+= ilinks
 
                 # for decision, show decision taken in the visited node
-                elif inode.cathegory == 'LOGICAL':
+                elif inode.category == 'LOGICAL':
                     idecision = iresult['decision']
                     if idecision == True:
                         next_nodes_true  = self.logicalNodeList(iid, True)

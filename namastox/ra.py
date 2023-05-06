@@ -180,7 +180,7 @@ class Ra:
             itask = input_node.getTask()
             olist.append({'id':node_id, 
                            'description':itask.getDescriptionText(),
-                           'cathegory':itask.getCathegoryText()})
+                           'Category':itask.getCategoryText()})
         return olist
     
     def getActiveNode (self, node_id):
@@ -264,21 +264,21 @@ class Ra:
 
             # identify workflow node for which this result is being applied
             input_node = self.workflow.getNode(input_node_id)
-            input_node_cathegory = input_node.getVal('cathegory')
+            input_node_Category = input_node.getVal('Category')
 
             # add this node to the list of nodes transited
             # if not input_node_id in self.ra['node_path']:
             #     self.ra['node_path'].append(input_node_id)
 
             # if node is empty do not process and do not progress in workflow
-            if input_node_cathegory == 'LOGICAL':
+            if input_node_Category == 'LOGICAL':
                 if not 'decision' in input_result:
                     continue
                 if type(input_result['decision']) != bool:
                     LOG.info (f'result for node {input_node_id} empty')
                     continue
 
-            elif input_node_cathegory == 'TASK':
+            elif input_node_Category == 'TASK':
                 if not 'value' in input_result:
                     continue
                 if input_result['value'] is None:
@@ -305,12 +305,12 @@ class Ra:
             active_nodes_list = self.ra['active_nodes_id']
             active_nodes_list.pop(active_nodes_list.index(input_node_id))
 
-            if input_node_cathegory == 'LOGICAL':
+            if input_node_Category == 'LOGICAL':
                 new_nodes_list = self.workflow.logicalNodeList(input_node_id, input_result['decision'])
                 self.ra['active_nodes_id'] = active_nodes_list + new_nodes_list
                 LOG.info(f'active node updated to: {self.ra["active_nodes_id"]}, based on decision {input_result["decision"]}' )
 
-            elif input_node_cathegory == 'TASK':
+            elif input_node_Category == 'TASK':
                 new_nodes_list= self.workflow.nextNodeList(input_node_id)
                 self.ra['active_nodes_id'] = active_nodes_list + new_nodes_list
                 LOG.info(f'active node updated to: {self.ra["active_nodes_id"]}' )

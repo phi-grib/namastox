@@ -33,7 +33,7 @@ class Node:
         ''' constructor '''
         self.name = node_content['name']
         self.id = node_content['id']
-        self.cathegory = node_content['cathegory']
+        self.category = node_content['category']
         self.next_node = node_content['next_node']
         self.next_yes = node_content['next_yes']
         self.next_no = node_content['next_no']
@@ -76,20 +76,20 @@ class Node:
     def style (self, visited=False):
         if visited:
             return f'style {self.id} fill:#CCCCCC,stroke:#CCCCCC\n'
-        if self.cathegory == 'TASK':
+        if self.category == 'TASK':
             return f'style {self.id} fill:#548BD4,stroke:#548BD4\n'
-        if self.cathegory == 'LOGICAL':
+        if self.category == 'LOGICAL':
             return f'style {self.id} fill:#F2DCDA,stroke:#C32E2D\n'
-        if self.cathegory == 'END':
+        if self.category == 'END':
             return f'style {self.id} fill:#FFFFFF,stroke:#000000\n'
         return '\n'
     
     def box (self):
-        if self.cathegory == 'TASK':
+        if self.category == 'TASK':
             return f'{self.id}[{self.name}]'
-        if self.cathegory == 'LOGICAL':
+        if self.category == 'LOGICAL':
             return f'{self.id}{{{self.name}}}'
-        if self.cathegory == 'END':
+        if self.category == 'END':
             return f'{self.id}[/{self.name}/]\n{self.id}[/{self.name}/]-->Z[end]'
         return ''
         

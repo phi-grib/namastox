@@ -7,17 +7,17 @@ general:
   title:                     
   general_description:                     
   background:                     
-  uncertainty:                     
   endpoint:                     # toxicity endpoint {}
   administration_route:         # [oral|topic]
   species:                      # [none|human|rat]
   regulatory_framework:         # regulatory framework [none|ECHA|REACH]
+  uncertainty:                     
+  substances: []                # list of input substances {}  TODO: deprecated!
+  substance_name: []            # list of substances names
+  substance_id: []              # list of substances IDs
+  substance_CASRN: []           # list of substances CAS-RN
+  substance_SMILES:             # list of substances SMILES 
   workflow_custom:
-  substances: []                # list of input substances {}
-  # substance_name: []
-  # substance_id: []
-  # substance_CASRN: []
-  # substance_structure: 
 results: []                     # list of results {}         
 notes: []                       # list of notes {}
 assessment:                     # assessment {}

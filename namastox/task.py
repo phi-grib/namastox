@@ -34,7 +34,7 @@ class Task:
 
         self.description = {
             'name': None,
-            'cathegory': 'TASK',     # TASK | LOGICAL | END
+            'category': 'TASK',     # TASK | LOGICAL | END
             'description': None,     # cannot be left empty
             'method_type': 'expert', # expert | invitro | insilico, 
             'method_link': None,      # link to method repo
@@ -64,11 +64,11 @@ class Task:
             return None
         return (self.description['description'])
 
-    def getCathegoryText (self):
-        '''returns the task cathegory field'''
-        if not 'cathegory' in self.description:
+    def getcategoryText (self):
+        '''returns the task category field'''
+        if not 'category' in self.description:
             return None
-        return (self.description['cathegory'])
+        return (self.description['category'])
 
     def getDescription(self):
         ''' generates a yaml with information for the end-user, describing what should be done
@@ -78,12 +78,12 @@ class Task:
             - empty result template
         '''
         return yaml.dump({'task description':self.description, 
-                          'result':self.getResult(self.description['cathegory'])})
+                          'result':self.getResult(self.description['category'])})
     
     def getTemplateDict(self):
-        '''returns the results dict for entering the results, adapted to the node cathegory
+        '''returns the results dict for entering the results, adapted to the node category
         '''
-        return {'result':self.getResult(self.description['cathegory'])}
+        return {'result':self.getResult(self.description['category'])}
 
     def getTemplate(self):
         '''generates a YAML for entering the results'''
@@ -106,11 +106,11 @@ class Task:
                 self.other[ikey]=task_dict[ikey]
 
     # UTILS
-    def getResult (self, cathegory):
+    def getResult (self, category):
         temp_result = self.result.copy()
-        if cathegory == 'TASK':
+        if category == 'TASK':
             temp_result.pop ('decision')
-        elif cathegory == 'LOGICAL':
+        elif category == 'LOGICAL':
             temp_result.pop ('report')
             temp_result.pop ('value')
             temp_result.pop ('unit')
@@ -126,9 +126,9 @@ class Task:
 
         compulsory_keys = ['substance', 'summary']
 
-        if self.description['cathegory'] == 'LOGICAL':
+        if self.description['category'] == 'LOGICAL':
             compulsory_keys.append ('decision')
-        elif self.description['cathegory'] == 'TASK':
+        elif self.description['category'] == 'TASK':
             compulsory_keys.append ('report')
             compulsory_keys.append ('value')
             compulsory_keys.append ('unit')
