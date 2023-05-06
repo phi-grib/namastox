@@ -64,7 +64,7 @@ class Task:
             return None
         return (self.description['description'])
 
-    def getcategoryText (self):
+    def getCategoryText (self):
         '''returns the task category field'''
         if not 'category' in self.description:
             return None

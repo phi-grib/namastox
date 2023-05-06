@@ -1,4 +1,4 @@
-num	is	name	cathegory 	needs	result_type	result_description	input for	links	next_node	next_yes	next_no
+num	is	name	category 	needs	result_type	result_description	input for	links	next_node	next_yes	next_no
 1	BB001_01	Problem Formulation	TASK		report	problem formulation			2		
 2	BB002_01	Relevant existing data	TASK		report	existing data			3		
 3	DP01EF_01	Is the information sufficient	LOGICAL		bool	justification				4	5

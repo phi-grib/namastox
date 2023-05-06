@@ -1,4 +1,4 @@
-num	id	name	cathegory	needs	result_type	result_description	input for	links	next_node	next_yes	next_no
+num	id	name	category	needs	result_type	result_description	input for	links	next_node	next_yes	next_no
 1	DEMO01_01	Problem Formulation	TASK		report	problem formulation			2		
 2	DEMO01_02	Generate estimates of highest test concentration	TASK		in silico	highest test conc		internal	3		
 3	DEMO01_03	Definition of maximum exposure Emax	TASK		report	max exposure			4		
