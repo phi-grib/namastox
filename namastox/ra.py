@@ -27,6 +27,7 @@ import os
 import time
 import hashlib
 from namastox.utils import ra_path
+from namastox.task import Task
 from namastox.workflow import Workflow
 from namastox.logger import get_logger
 LOG = get_logger(__name__)
@@ -188,12 +189,35 @@ class Ra:
         if node_id in active_nodes_id:
             input_node = self.workflow.getNode(node_id)
             itask = input_node.getTask()
-            return (itask.getTemplateDict())
+            return (itask.getDescriptionDict())
         return None
 
     def getResults(self):
         ''' return a list with RA results'''
         return self.results
+
+    def getResult(self, resultid):
+        for iresult in self.results:
+            if iresult['id'] == resultid:
+                return iresult
+        return None
+    
+    def getTask(self, resultid):
+        itask = self.workflow.getTask(resultid)
+        if itask == None:
+            return None
+        icombo = itask.getDescriptionDict()
+
+        found = False
+        for iresult in self.results:
+            if iresult['id'] == resultid:
+                found = True
+                icombo['result'] = iresult
+
+        if not found:
+            return None        
+
+        return icombo
 
     def getNotes(self):
         ''' return a list with RA notes'''

@@ -70,6 +70,16 @@ class Task:
             return None
         return (self.description['category'])
 
+    def getDescriptionDict(self):
+        ''' generates a yaml with information for the end-user, describing what should be done
+            - type of task
+            - description
+            - link to NAM method database
+            - empty result template
+        '''
+        return {'task description':self.description, 
+                'result':self.getResult(self.description['category'])}
+    
     def getDescription(self):
         ''' generates a yaml with information for the end-user, describing what should be done
             - type of task
@@ -104,6 +114,11 @@ class Task:
         for ikey in task_dict:
             if ikey not in self.result and ikey not in self.description:
                 self.other[ikey]=task_dict[ikey]
+
+    def setResult(self, result_dict):
+        for ikey in self.result:
+            if ikey in result_dict:
+                self.result[ikey]=result_dict[ikey]
 
     # UTILS
     def getResult (self, category):

@@ -47,7 +47,6 @@ class Workflow:
         self.rapath = ra_path(raname)
 
         success = self.load()
-        print ('loaded')
         if not success:
             success = self.import_table()
 
@@ -107,6 +106,13 @@ class Workflow:
         for inode in self.nodes:
             if inode.getVal('id') == iid:
                 return inode
+        return None
+
+    def getTask (self, iid):
+        for inode in self.nodes:
+            if inode.getVal('id') == iid:
+                return inode.getTask()
+        return None    
             
     def firstNode (self):
         return self.nodes[0]

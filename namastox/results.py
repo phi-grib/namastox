@@ -77,19 +77,35 @@ def action_result(raname, resultid, out='text'):
 
     # get a dictionary with the ra.yaml contents that can
     # be passed to the GUI or shown in screen
-    results = ra.getResults()
-    for iresult in results:
-        if iresult['id'] == resultid:
-            if 'decision' in iresult:
-                LOG.info({'id':iresult['id'],'summary':iresult['summary'],'decision':iresult['decision'] })
-            elif 'value' in iresult:
-                LOG.info({'id':iresult['id'],'summary':iresult['summary'],'value':iresult['value'] })
-            if out=='json':
-                return True, iresult
-            
-            return True, 'result found'
+
+    iresult = ra.getResult(resultid)
+    if iresult is None:
+        return False, 'result not found'
     
-    return False, 'result not found'
+    if out=='json':
+        return True, iresult
+    
+    if 'decision' in iresult:
+        LOG.info({'id':iresult['id'],'summary':iresult['summary'],'decision':iresult['decision'] })
+    elif 'value' in iresult:
+        LOG.info({'id':iresult['id'],'summary':iresult['summary'],'value':iresult['value'] })
+    
+    return True, 'result found'
+    
+def action_task(raname, resultid):
+    ''' returns the task resultid
+    '''
+    # instantiate a ra object
+    ra = Ra(raname)
+    succes, results = ra.load()
+    if not succes:
+        return False, results
+    
+    itask = ra.getTask(resultid)
+    if itask is None:
+        return False, 'result not found'
+    
+    return True, itask
 
 def action_pendingTasks(raname):
     ''' returns a list of dictionaries with a short description of the pending tasks
