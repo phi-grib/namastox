@@ -23,6 +23,7 @@
 import os
 import yaml
 import shutil
+import tarfile
 from rdkit import Chem
 from namastox.logger import get_logger
 from namastox.ra import Ra
@@ -350,3 +351,40 @@ def convertSubstances(file):
         return True, results
 
     return False, 'empty molecule'
+
+def exportRA (raname):
+
+    current_path = os.getcwd()
+
+    root_path = ra_repository_path()
+    compressedfile = os.path.join(root_path, raname+'.tgz')
+
+    with tarfile.open(compressedfile, 'w:gz') as tar:
+        os.chdir(root_path)
+        tar.add(os.path.join(raname))
+        os.chdir(current_path)
+
+    return True, compressedfile
+
+
+def importRA (filename):
+
+    root_path = ra_repository_path()
+    raname = os.path.splitext(os.path.basename(filename))[0]
+    base_path = os.path.join(root_path, raname)
+
+    # safety checks
+    if os.path.isdir(base_path):
+        return False, f'RA {raname} already exists'
+
+    # create directory
+    try:
+        os.mkdir(base_path)
+    except Exception as e:
+        return False, f'Error creating directory {base_path}: {e}'
+
+    # unpack tar.gz. This is done for any kind of export file
+    with tarfile.open(filename, 'r:gz') as tar:
+        tar.extractall(root_path)
+
+    return True, 'OK'
