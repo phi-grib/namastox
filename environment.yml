@@ -18,5 +18,5 @@ dependencies:
   - python-docx
   - openpyxl
   - appdirs
-  - pip:
-    - flask_api
+  # - pip:
+    # - flask_api
