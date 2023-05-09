@@ -34,11 +34,21 @@ class Task:
 
         self.description = {
             'name': None,
-            'category': 'TASK',     # TASK | LOGICAL | END
+            'id': None,
+            'result_type': None,     # text | value | bool
+            'category': 'TASK',      # TASK | LOGICAL | END
             'description': None,     # cannot be left empty
             'method_type': 'expert', # expert | invitro | insilico, 
-            'method_link': None,      # link to method repo
-            'area': None            # TODO: remove 
+            'method_link': None,     # link to method repo
+            'area': None,            # TODO: remove 
+
+            'decision': 'lorem ipsum',       
+            'report': 'lorem ipsum',         
+            'value': 'lorem ipsum',          
+            'unit': 'lorem ipsum',            
+            'uncertainty': 'lorem ipsum',     
+            'summary': 'lorem ipsum',
+            'result_link': 'lorem ipsum'     
         }
 
         self.result = {
@@ -47,6 +57,7 @@ class Task:
             'result_type': None,     # text | value | bool
 
             'substance': None,       # TODO: remove
+
             'decision': False,       # for LOGICAL tasks
             'report': False,         # for result_type = text
             'value': None,           # for result_type = value 
@@ -55,6 +66,7 @@ class Task:
             'summary': None,
             'result_link': None      # TODO: should be a list
         }
+
         self.other = {}
         self.setTask(task_dict)
 

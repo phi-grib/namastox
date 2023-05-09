@@ -1,0 +1,23 @@
+num	id	result_type	name	category	description	method_type	method_link	input_for	next_node	next_yes	next_no
+1	BB001_01	text	Problem Formulation	TASK	Enter a description of the problem formulation, including a clear assessment question	expert			2		
+2	BB002_01	text	Relevant existing data	TASK	Search for available data about this compound in existing data sources (see suggested links)	expert			3		
+3	DP01EF_01	bool	Is the information sufficient	LOGICAL	Justify if existing data is sufficient for answering the question posed in the Problem Formulation					4	5
+4	EXIT1	text	Risk assessment report	END							
+5	DP02EF_01	bool	Is exposure scenario well defined	LOGICAL	Justify if the exposure scenario is well defined in existing data					6	9
+6	BB003_01	value	Definition of maximum exposure Emax	TASK	Define the maximum exposure (Emax) value. Document this choice	expert					
+7	DP03EF_01	bool	Is the TTC applicable	LOGICAL	Justify if a decision based on the Threshold of Toxicological Concern can be applicable					4	12
+8	BB004_01	text	Consider wheter TTC may be applicable	TASK	TTC applicability	expert			0		
+9	BB005_01	text	Identify use scenario	TASK	Identify which are the relevant use scenarios, in the context of the problem formulation. Document the data sources 	expert			10		
+10	BB006_01	value	Estimate external exposure	TASK	Estimate the external exposure	expert			11,18		
+11	BB007_01	text	Prioritise parameters using expert judgements	TASK	Prioritize the toxico kinetic parameters which should be estimated first, considering the use scenario and the characteristics of the compound 	expert			12		
+12	BB008_01	value	Generate in vitro data for highly sensitive/uncertain parameters	TASK	Apply suitable in vitro methods for estimating the toxico kinetics parameters that can were considered to have the highest priority. 	invitro	NAM database	14	14		
+13	BB009_01	value	Generate in silico parameters	TASK	Calculate PK parameters using in silico methods	insilico	internal	14	14		
+14	BB010_01	value	Run PBPK model	TASK	Calculate PK parameters using PBPK	insilico	NAM database	17	15,17		
+15	BB011_01	value	Perform uncertainty and variability analysis	TASK	Estimate the uncertainty and variability of critical parameters	insilico	internal		16		
+16	BB012_01	value	Perform sensitivity analysis	TASK	Perform sensitivity analysis	insilico	 		18		
+17	BB013_01	value	Generate estimates of highest test concentration	TASK	Estimate the highest test concentration 	insilico	internal		20		
+18	DP05EF_01	bool	Is the information sufficient?	LOGICAL	Justify if the information generated so far is sufficient to answer the question posed in the Problem Formulation					4	0
+19	BB014_01	value	Generate in silico predictions of hazard	TASK	Apply a battery of in silico methods for relevant hazard	insilico	internal		20		
+20	BB015_01	value	Generate HT in vitro data	TASK	Apply Hight-throughput transcriptomics to identify the main genes and pathways which are activated by the tested compounds	invitro	NAM database		21		
+21	BB016_01	report 	Integration of results	TASK	Integrate the results obtained so far by different methods, identifying the most important conclusions, related with the Problem Formulation	expert	 				
+22	DP04EF_01	bool	Is a toxicological alert identified?	LOGICAL	Evaluate if the results of the structural alerts justify to exit from the assessment 					18	0

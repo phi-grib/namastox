@@ -124,7 +124,10 @@ class Workflow:
 
     def logicalNodeList (self, iid, decision):
         inode = self.getNode(iid)
-        index_list = inode.logicalNodeIndex(decision)        
+        index_list = inode.logicalNodeIndex(decision)   
+        print ('index_list:', index_list)   
+        print ('selfnodes len:', len(self.nodes))     
+
         return [self.nodes[x].getVal('id') for x in index_list]
     
     def graphNext (self, nodeid, inode, decision=None, visited=False):
