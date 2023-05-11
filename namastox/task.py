@@ -35,6 +35,7 @@ class Task:
         self.description = {
             'name': None,
             'id': None,
+            'label': None,
             'result_type': None,     # text | value | bool
             'category': 'TASK',      # TASK | LOGICAL | END
             'description': None,     # cannot be left empty
@@ -42,20 +43,21 @@ class Task:
             'method_link': None,     # link to method repo
             'area': None,            # TODO: remove 
 
-            'decision': 'lorem ipsum',       
-            'report': 'lorem ipsum',         
-            'value': 'lorem ipsum',          
-            'unit': 'lorem ipsum',            
-            'uncertainty': 'lorem ipsum',     
-            'summary': 'lorem ipsum',
-            'result_link': 'lorem ipsum'     
+            'decision': 'Select yes or no to the question posed in the description',       
+            'report': 'Text report with the main conclussions of the task',         
+            'value': 'Enter a numerical value (as a floating point) with the result of the task',          
+            'unit': 'Units of the value (e.g., mg/K)',            
+            'uncertainty': 'Information about the uncertainty associated to the value',     
+            'summary': 'Short description of the results',
+            'result_link': 'Link any relevant document in PDF format'     
         }
 
         self.result = {
-            # move to description
+            # move to description ###################################
             'id': None,
             'result_type': None,     # text | value | bool
-
+            #######################################
+            
             'substance': None,       # TODO: remove
 
             'decision': False,       # for LOGICAL tasks

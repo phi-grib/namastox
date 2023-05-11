@@ -62,7 +62,7 @@ class Workflow:
         table_dataframe = pd.read_csv(table_path, sep='\t').replace(np.nan, None)
         table_dict = table_dataframe.to_dict('list')
 
-        index_labels = ['id', 'name', 'category', 'next_node', 'next_yes', 'next_no']
+        index_labels = ['id', 'label', 'name', 'category', 'next_node', 'next_yes', 'next_no']
         for i in index_labels:
             if not i in table_dict:
                 return False
