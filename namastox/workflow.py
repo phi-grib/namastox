@@ -146,14 +146,14 @@ class Workflow:
             for jid in next_nodes_true:
                 ilog = self.getNode(jid)
                 ibody += f'{inext.box()}--Y-->{ilog.box()}\n'
-                istyle += ilog.style(True)
+                istyle += ilog.style(True, True)
                 ilinks += f'click {ilog.id} onA\n'
 
             next_nodes_false  =self.logicalNodeList(nodeid, False)
             for jid in next_nodes_false:
                 ilog = self.getNode(jid)
                 ibody += f'{inext.box()}--N-->{ilog.box()}\n'
-                istyle += ilog.style(True)
+                istyle += ilog.style(True, True)
                 ilinks += f'click {ilog.id} onA\n' 
              
         return ibody, istyle, ilinks

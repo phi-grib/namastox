@@ -73,16 +73,29 @@ class Node:
         task = self.task
         return task
     
-    def style (self, visited=False):
+    def style (self, visited=False, future=False):
+        # color of next nodes
+        if future:
+            return f'style {self.id} fill:#e9f5f9,stroke:#a8d5e5\n'
+        
+        # color of visited nodes
         if visited:
-            return f'style {self.id} fill:#CCCCCC,stroke:#CCCCCC\n'
-        if self.category == 'TASK':
-            return f'style {self.id} fill:#548BD4,stroke:#548BD4\n'
-        if self.category == 'LOGICAL':
-            return f'style {self.id} fill:#F2DCDA,stroke:#C32E2D\n'
+            return f'style {self.id} fill:#DDDDDD,stroke:#DDDDDD\n'
+        
+        # color of terminao nodes
         if self.category == 'END':
             return f'style {self.id} fill:#FFFFFF,stroke:#000000\n'
-        return '\n'
+
+        # color of visited nodes
+        return f'style {self.id} fill:#78A4DE,stroke:#6697d9\n'
+        
+        # if self.category == 'TASK' :
+        #     return f'style {self.id} fill:#78A4DE,stroke:#6697d9\n'
+        # if self.category == 'LOGICAL':
+        #     return f'style {self.id} fill:#78A4DE,stroke:#6697d9\n'
+        #     # return f'style {self.id} fill:#548BD4,stroke:#548BD4\n'
+        #     # return f'style {self.id} fill:#F2DCDA,stroke:#C32E2D\n'
+        # return '\n'
     
     def box (self):
         if self.category == 'TASK':

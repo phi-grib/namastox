@@ -1,0 +1,6 @@
+visited     grey
+
+task        blue
+question    blue
+
+next        pale blue
