@@ -4,3 +4,7 @@ task        blue
 question    blue
 
 next        pale blue
+
+
+Selecting a task activate the next one WITHOUT checking if it has been already completed
+

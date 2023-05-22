@@ -138,7 +138,7 @@ class Workflow:
         elif decision is False:
             arrow = '--N-->'
         ibody = f'{inode.box()}{arrow}{inext.box()}\n'
-        istyle = inext.style()
+        istyle = inext.style(False, False)
         ilinks = f'click {inext.id} onA\n'
 
         if inext.category == 'LOGICAL' and not visited:
@@ -171,7 +171,7 @@ class Workflow:
         # no node visited so far, present the first node in the workflow 
         if len(results) == 0:
             inode = self.firstNode()
-            style += inode.style(False)
+            style += inode.style(False, False)
             body += f'{inode.box()}\n'
             links += f'click {inode.id} onA\n'
         
@@ -187,7 +187,7 @@ class Workflow:
                 # this is the visited node, show it greyed out
                 iid = iresult['id']
                 inode = self.getNode(iid)
-                style += inode.style(True)
+                style += inode.style(True, False)
                 links += f'click {inode.id} onA\n'
 
                 # show all nodes linked to visited nodes

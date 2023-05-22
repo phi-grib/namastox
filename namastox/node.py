@@ -74,19 +74,19 @@ class Node:
         return task
     
     def style (self, visited=False, future=False):
-        # color of next nodes
+        # next nodes
         if future:
             return f'style {self.id} fill:#e9f5f9,stroke:#a8d5e5\n'
         
-        # color of visited nodes
+        # visited nodes
         if visited:
             return f'style {self.id} fill:#DDDDDD,stroke:#DDDDDD\n'
         
-        # color of terminao nodes
+        # terminal nodes
         if self.category == 'END':
             return f'style {self.id} fill:#FFFFFF,stroke:#000000\n'
 
-        # color of visited nodes
+        # standard nodes (TASK or LOGICAL)
         return f'style {self.id} fill:#78A4DE,stroke:#6697d9\n'
         
         # if self.category == 'TASK' :
