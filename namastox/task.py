@@ -45,8 +45,9 @@ class Task:
 
             'decision': 'Select yes or no to the question posed in the description',       
             'report': 'Text report with the main conclussions of the task',         
-            'value': 'Enter a numerical value (as a floating point) with the result of the task',          
-            'unit': 'Units of the value (e.g., mg/K)',            
+            'unit': 'Units of the value (e.g., mg/K)', # deprecated            
+            'value': 'Enter a numerical value (as a floating point) with the result of the task', # deprecated          
+            'values': 'Enter one or many numerical parameters, consisting in a description, value (as a floating point) and unit',          
             'uncertainty': 'Information about the uncertainty associated to the value',     
             'summary': 'Short description of the results',
             'result_link': 'Link any relevant document in PDF format'     
@@ -62,8 +63,13 @@ class Task:
 
             'decision': False,       # for LOGICAL tasks
             'report': False,         # for result_type = text
-            'value': None,           # for result_type = value 
-            'unit': None,            # for result_type = value 
+            'values': [],            # list of values {
+                                     #  'parameter': 'pKa',
+                                     #  'value': 0.18,
+                                     #  'unit': 'nM',
+                                     # }
+            'value': None,           # for result_type = value *** DEPRECATED ***
+            'unit': None,            # for result_type = value *** DEPRECATED ***
             'uncertainty': None,     # for result_type = value 
             'summary': None,
             'result_link': None      # TODO: should be a list
@@ -141,6 +147,7 @@ class Task:
             temp_result.pop ('decision')
         elif category == 'LOGICAL':
             temp_result.pop ('report')
+            temp_result.pop ('values')
             temp_result.pop ('value')
             temp_result.pop ('unit')
             temp_result.pop ('uncertainty')
@@ -160,6 +167,7 @@ class Task:
         elif self.description['category'] == 'TASK':
             compulsory_keys.append ('report')
             compulsory_keys.append ('value')
+            # compulsory_keys.append ('values')
             compulsory_keys.append ('unit')
             compulsory_keys.append ('uncertainty')
 
