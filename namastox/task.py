@@ -72,7 +72,11 @@ class Task:
             'unit': None,            # for result_type = value *** DEPRECATED ***
             'uncertainty': None,     # for result_type = value 
             'summary': None,
-            'result_link': None      # TODO: should be a list
+            'result_link': None,     # *** DEPRECATED ***
+            'links': []              # list of link names and files {
+                                     #   'result_name' : 'in-silico predicton using model XGSHAT3 ',
+                                     #   'result_link' : 'report.pdf'  
+                                     # }
         }
 
         self.other = {}
@@ -166,7 +170,7 @@ class Task:
             compulsory_keys.append ('decision')
         elif self.description['category'] == 'TASK':
             compulsory_keys.append ('report')
-            compulsory_keys.append ('value')
+            # compulsory_keys.append ('value')   *** deprecated ***
             # compulsory_keys.append ('values')
             compulsory_keys.append ('unit')
             compulsory_keys.append ('uncertainty')
