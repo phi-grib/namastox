@@ -98,10 +98,23 @@ class Node:
         # return '\n'
     
     def box (self):
+
+        # split labels in half, adding '\\n' betweeen the two 
+        # middle words
+        words = self.name.split()
+        label = ''
+        for i,iword in enumerate(words):
+            label += iword
+            if i == round(len(words)/2.0)-1:
+                label += '\\n'
+            else:
+                label += ' '
+
         if self.category == 'TASK':
-            return f'{self.id}[{self.name}]'
+            return f'{self.id}[{label}]'
         if self.category == 'LOGICAL':
-            return f'{self.id}{{{self.name}}}'
+            # label = 'this string \\n is broken'
+            return f'{self.id}{{{label}}}'
         if self.category == 'END':
             return f'{self.id}[/{self.name}/]\n{self.id}[/{self.name}/]-->Z[end]'
         return ''
