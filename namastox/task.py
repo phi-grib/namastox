@@ -41,24 +41,22 @@ class Task:
             'description': None,     # cannot be left empty
             'method_type': 'expert', # expert | invitro | insilico, 
             'method_link': None,     # link to method repo
-            'area': None,            # TODO: remove 
+            # 'area': None,            # TODO: remove 
 
             'decision': 'Select yes or no to the question posed in the description',       
             'report': 'Text report with the main conclussions of the task',            
             'values': 'Enter one or many numerical parameters, consisting in a description, value (as a floating point) and unit',          
-            'uncertainty': 'Information about the uncertainty associated to the value',     
+            'uncertainty': 'Information about the uncertainty associated to the value, expressed either quantitatively or qualitatively',     
             'summary': 'Short description of the results',
-            'result_link': 'Link any relevant document in PDF format'     
+            'links': 'Link any relevant document in PDF format'     
         }
 
         self.result = {
             # move to description ###################################
             'id': None,
             'result_type': None,     # text | value | bool
-            #######################################
+            #########################################################
             
-            'substance': None,       # TODO: remove
-
             'decision': False,       # for LOGICAL tasks
             'report': False,         # for result_type = text
             'values': [],            # list of values {
@@ -66,15 +64,17 @@ class Task:
                                      #  'value': 0.18,
                                      #  'unit': 'nM',
                                      # }
-            # 'value': None,           # for result_type = value *** DEPRECATED ***
-            # 'unit': None,            # for result_type = value *** DEPRECATED ***
             'uncertainty': None,     # for result_type = value 
             'summary': None,
-            'result_link': None,     # *** DEPRECATED ***
             'links': []              # list of link names and files {
                                      #   'result_name' : 'in-silico predicton using model XGSHAT3 ',
                                      #   'result_link' : 'report.pdf'  
                                      # }
+
+            # 'value': None,           # for result_type = value *** DEPRECATED ***
+            # 'unit': None,            # for result_type = value *** DEPRECATED ***
+            # 'substance': None,       # *** DEPRECATED ***
+            # 'result_link': None,     # *** DEPRECATED ***
         }
 
         self.other = {}
@@ -162,7 +162,7 @@ class Task:
         if type(task_result) is not dict:
             return False
 
-        compulsory_keys = ['substance', 'summary']
+        compulsory_keys = ['summary']
 
         if self.description['category'] == 'LOGICAL':
             compulsory_keys.append ('decision')

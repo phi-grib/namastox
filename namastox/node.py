@@ -74,20 +74,24 @@ class Node:
         return task
     
     def style (self, visited=False, future=False):
+
         # next nodes
         if future:
-            return f'style {self.id} fill:#e9f5f9,stroke:#a8d5e5\n'
+            return_style = f'style {self.id} fill:#e9f5f9,stroke:#a8d5e5\n'
         
         # visited nodes
-        if visited:
-            return f'style {self.id} fill:#DDDDDD,stroke:#DDDDDD\n'
+        elif visited:
+            return_style = f'style {self.id} fill:#DDDDDD,stroke:#DDDDDD\n'
         
+        else:
+            return_style = f'style {self.id} fill:#78A4DE,stroke:#6697d9\n'
+
         # terminal nodes
         if self.category == 'END':
-            return f'style {self.id} fill:#FFFFFF,stroke:#000000\n'
+            return_style += 'style Z999 fill:#FFFFFF,stroke:#000000\n'
 
         # standard nodes (TASK or LOGICAL)
-        return f'style {self.id} fill:#78A4DE,stroke:#6697d9\n'
+        return return_style
         
         # if self.category == 'TASK' :
         #     return f'style {self.id} fill:#78A4DE,stroke:#6697d9\n'
@@ -116,6 +120,6 @@ class Node:
             # label = 'this string \\n is broken'
             return f'{self.id}{{{label}}}'
         if self.category == 'END':
-            return f'{self.id}[/{self.name}/]\n{self.id}[/{self.name}/]-->Z[end]'
+            return f'{self.id}[/{self.name}/]\n{self.id}[/{self.name}/]-->Z999[end]'
         return ''
         
