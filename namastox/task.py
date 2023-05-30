@@ -59,7 +59,7 @@ class Task:
             'result_type': None,     # text | value | bool
             #######################################
             
-            # 'substance': None,       # TODO: remove
+            'substance': None,       # TODO: remove
 
             'decision': False,       # for LOGICAL tasks
             'report': False,         # for result_type = text
@@ -69,10 +69,10 @@ class Task:
                                      #  'unit': 'nM',
                                      # }
             'value': None,           # for result_type = value *** DEPRECATED ***
-            # 'unit': None,            # for result_type = value *** DEPRECATED ***
+            'unit': None,            # for result_type = value *** DEPRECATED ***
             'uncertainty': None,     # for result_type = value 
             'summary': None,
-            # 'result_link': None,     # *** DEPRECATED ***
+            'result_link': None,     # *** DEPRECATED ***
             'links': []              # list of link names and files {
                                      #   'result_name' : 'in-silico predicton using model XGSHAT3 ',
                                      #   'result_link' : 'report.pdf'  
