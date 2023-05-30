@@ -68,7 +68,7 @@ class Task:
                                      #  'value': 0.18,
                                      #  'unit': 'nM',
                                      # }
-            # 'value': None,           # for result_type = value *** DEPRECATED ***
+            'value': None,           # for result_type = value *** DEPRECATED ***
             # 'unit': None,            # for result_type = value *** DEPRECATED ***
             'uncertainty': None,     # for result_type = value 
             'summary': None,
