@@ -352,6 +352,58 @@ def convertSubstances(file):
 
     return False, 'empty molecule'
 
+def getLocalModels ():
+    from flame import manage as flame_manage
+
+    results = []
+    success, models = flame_manage.action_dir()
+    if not success:
+        return False, results
+    
+    for imodel in models:
+        results.append((imodel['modelname'], imodel['version']))
+
+    return True, results
+
+def predictLocalModels (raname, models, versions):
+
+    from flame import context
+
+    print (raname, models, versions)
+
+    # instantiate a ra object
+    ra = Ra(raname)
+    succes, results = ra.load()
+    if not succes:
+        return False, results
+    
+    success, ra_repo_path = getRepositoryPath (raname)
+    structure_sdf = os.path.join(ra_repo_path,'structure.sdf')
+
+    generalInfo = ra.getGeneralInfo()
+    generalInfo = generalInfo['general']
+    if 'substance_SMILES' in generalInfo:
+
+        # extract SMILES and write a SDFile in RA repository
+        smiles = generalInfo['substance_SMILES'][0]['SMILES']
+        mol = Chem.MolFromSmiles(smiles)
+        writer = Chem.SDWriter(structure_sdf)
+        writer.write(mol)
+        writer.close()
+
+        # predicts
+        arguments = {'infile':structure_sdf,
+                     'multi': {'endpoints': models, 
+                               'versions': versions}
+                     }
+        success, results = context.profile_cmd(arguments)
+        return True, results
+
+    else:
+        return False, f'no substance defined in {raname}'
+
+    return False, 'not implemented'
+
 def exportRA (raname):
 
     current_path = os.getcwd()
