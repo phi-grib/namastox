@@ -369,8 +369,6 @@ def predictLocalModels (raname, models, versions):
 
     from flame import context
 
-    print (raname, models, versions)
-
     # instantiate a ra object
     ra = Ra(raname)
     succes, results = ra.load()
@@ -392,8 +390,9 @@ def predictLocalModels (raname, models, versions):
         writer.close()
 
         # predicts
-        arguments = {'infile':structure_sdf,
-                     'multi': {'endpoints': models, 
+        arguments = {'label' : 'namastox',
+                     'infile': structure_sdf,
+                     'multi' : {'endpoints': models, 
                                'versions': versions}
                      }
         success, results = context.profile_cmd(arguments)
@@ -402,7 +401,14 @@ def predictLocalModels (raname, models, versions):
     else:
         return False, f'no substance defined in {raname}'
 
-    return False, 'not implemented'
+def getLocalModelPrediction():
+    from flame import manage as flame_manage
+
+    success, results = flame_manage.action_profiles_summary('namastox',output="summary")
+    if success:
+        return True, results
+    else:
+        return False, 'unable to retrieve prediction results'
 
 def exportRA (raname):
 

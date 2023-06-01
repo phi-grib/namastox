@@ -265,6 +265,8 @@ class Ra:
     def update(self, input):
         ''' validate result and if it matchs the requirements of an active node progress in the workflow'''
 
+        print ('>>>>>>>>>>>>>>>', input )
+
         # validate result
         step = self.ra['step']
 
@@ -303,9 +305,9 @@ class Ra:
                     continue
 
             elif input_node_category == 'TASK':
-                if not 'value' in input_result:
+                if not 'values' in input_result:
                     continue
-                if input_result['value'] is None:
+                if len(input_result['values'])==0:
                     LOG.info (f'result for node {input_node_id} empty')
                     continue
 

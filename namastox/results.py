@@ -46,8 +46,8 @@ def action_results(raname, step=None, out='text'):
     for iresult in results:
         if 'decision' in iresult:
             oline = f'decision {iresult["id"]} dec:{iresult["decision"]} summary: {iresult["summary"]} '
-        elif 'value' in iresult:
-            oline = f'task   {iresult["id"]} val:{iresult["value"]} summary: {iresult["summary"]} '
+        elif 'values' in iresult:
+            oline = f'task   {iresult["id"]} val:{iresult["values"]} summary: {iresult["summary"]} '
         else:
             oline = ''
 
@@ -60,8 +60,8 @@ def action_results(raname, step=None, out='text'):
         for iresult in results:
             if 'decision' in iresult:
                 odict.append({'id':iresult['id'],'summary':iresult['summary'],'decision':iresult['decision'] })
-            elif 'value' in iresult:
-                odict.append({'id':iresult['id'],'summary':iresult['summary'],'value':iresult['value'] })
+            elif 'values' in iresult:
+                odict.append({'id':iresult['id'],'summary':iresult['summary'],'values':iresult['values'] })
         return True , odict
         
     return True, f'{len(output)} results found for {raname}'
@@ -87,8 +87,8 @@ def action_result(raname, resultid, out='text'):
     
     if 'decision' in iresult:
         LOG.info({'id':iresult['id'],'summary':iresult['summary'],'decision':iresult['decision'] })
-    elif 'value' in iresult:
-        LOG.info({'id':iresult['id'],'summary':iresult['summary'],'value':iresult['value'] })
+    elif 'values' in iresult:
+        LOG.info({'id':iresult['id'],'summary':iresult['summary'],'values':iresult['values'] })
     
     return True, 'result found'
     
