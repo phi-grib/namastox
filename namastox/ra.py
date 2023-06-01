@@ -193,12 +193,18 @@ class Ra:
         return None
 
     def getResults(self):
+        import copy
         ''' return a list with RA results'''
-        return self.results
+        temp = []
+        for iresult in self.results:
+            iresult['name'] = self.workflow.getTaskName(iresult['id']) 
+            temp.append(iresult)
+        return temp
 
     def getResult(self, resultid):
         for iresult in self.results:
             if iresult['id'] == resultid:
+                iresult['name'] = self.workflow.getTaskName(resultid)
                 return iresult
         return None
     
@@ -400,7 +406,7 @@ class Ra:
         # click E onA"""
 
         return w
-           
+    
     #################################################
     # output section
     #################################################

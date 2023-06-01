@@ -158,6 +158,12 @@ class Workflow:
              
         return ibody, istyle, ilinks
         
+    def getTaskName (self, id):
+        for inode in self.nodes:
+            if inode.id == id:
+                itask = inode.getTask()
+                return itask.description['name']
+        return None
 
     def getWorkflowGraph (self, results, step=None):
 
