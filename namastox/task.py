@@ -80,6 +80,12 @@ class Task:
         self.other = {}
         self.setTask(task_dict)
 
+    def getName (self):
+        '''returns the task name field'''
+        if not 'name' in self.description:
+            return None
+        return (self.description['name'])
+    
     def getDescriptionText (self):
         '''returns the task description field'''
         if not 'description' in self.description:

@@ -180,8 +180,9 @@ class Ra:
             input_node = self.workflow.getNode(node_id)
             itask = input_node.getTask()
             olist.append({'id':node_id, 
-                           'description':itask.getDescriptionText(),
-                           'category':itask.getCategoryText()})
+                          'name':itask.getName(),
+                          'description':itask.getDescriptionText(),
+                          'category':itask.getCategoryText()})
         return olist
     
     def getActiveNode (self, node_id):
@@ -193,17 +194,19 @@ class Ra:
         return None
 
     def getResults(self):
-        import copy
         ''' return a list with RA results'''
         temp = []
         for iresult in self.results:
+            # enrich the results by adding the name of the task
             iresult['name'] = self.workflow.getTaskName(iresult['id']) 
             temp.append(iresult)
         return temp
 
     def getResult(self, resultid):
+        ''' return the RA result with ID as the one provided as argument'''
         for iresult in self.results:
             if iresult['id'] == resultid:
+                # enrich the results by adding the name of the task
                 iresult['name'] = self.workflow.getTaskName(resultid)
                 return iresult
         return None
@@ -270,8 +273,6 @@ class Ra:
 
     def update(self, input):
         ''' validate result and if it matchs the requirements of an active node progress in the workflow'''
-
-        print ('>>>>>>>>>>>>>>>', input )
 
         # validate result
         step = self.ra['step']
