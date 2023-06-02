@@ -22,10 +22,11 @@
 
 import os
 import yaml
+import json
 import shutil
 import requests
-import ssl
-from urllib3 import poolmanager
+import urllib3
+from urllib3.util.ssl_ import create_urllib3_context
 import tarfile
 from rdkit import Chem
 from namastox.logger import get_logger
@@ -467,20 +468,6 @@ class TLSAdapter(requests.adapters.HTTPAdapter):
                 ssl_context=ctx)
 
 
-# import requests
-# import urllib3
-# from urllib3.exceptions import InsecureRequestWarning
-# from requests.adapters import HTTPAdapter
-# from requests.packages.urllib3.util.retry import Retry
-
-# Disable SSL verification and insecure request warnings
-# urllib3.disable_warnings(InsecureRequestWarning)
-
-
-import urllib3
-import json
-from urllib3.util.ssl_ import create_urllib3_context
-
 def getInfoStructure(molname):
 
     # URL from COMPTOX
@@ -497,7 +484,7 @@ def getInfoStructure(molname):
         resp = http.request('POST', url, json=payload)
         if resp.status==200:
             rdict = json.loads(resp.data)
-            print (rdict)
+            # print (rdict)
             return True, rdict
 
     return False, resp.status
