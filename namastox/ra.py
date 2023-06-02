@@ -65,6 +65,21 @@ class Ra:
         self.results = []
         self.notes = []
         self.assessment = None
+        self.placehoders = {
+            'endpoint': 'Toxicological endpoint(s) of interest',
+            'title': 'Descriptive name for this study',
+            'problem_formulation': 'Short description of the toxicological issue to be adressed',
+            'uncertainty': 'Comments about the acceptable uncertainty levels', 
+            'administration_route': 'Administration routes of the toxican to be considered',
+            'species': 'Biological species to be considered',
+            'regulatory_frameworks': 'Regulatory bodies for which this study can be of interest',
+            'workflow_custom': 'File describing the workflow. If empty the ASPA workflow will be used instead',
+            'substances': {
+                'name': ' Substance name or names separated by a colon',
+                'id': ' Substance ID or IDs separated by a colon',
+                'cas-rn': ' Substance CAS-RN or CAS-RNs separated by a colon',
+            }
+        }
 
     def load(self, step=None):       
         ''' load the Ra object from a YAML file
@@ -234,7 +249,8 @@ class Ra:
 
     def getGeneralInfo(self):
         ''' return a dictionary with RA status'''
-        return {'general':self.general}
+        return {'general':self.general, 
+                'placeholders':self.placehoders}
 
     def updateGeneralInfo (self, input):
         ''' process update as GeneralInfo when we are in the first step (step 0)'''
