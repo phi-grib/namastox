@@ -23,6 +23,9 @@
 import os
 import yaml
 import shutil
+import requests
+import ssl
+from urllib3 import poolmanager
 import tarfile
 from rdkit import Chem
 from namastox.logger import get_logger
@@ -446,3 +449,55 @@ def importRA (filename):
         tar.extractall(root_path)
 
     return True, 'OK'
+
+
+class TLSAdapter(requests.adapters.HTTPAdapter):
+    def init_poolmanager(self, connections, maxsize, block=False):
+        """Create and initialize the urllib3 PoolManager."""
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+        ctx.set_ciphers('DEFAULT@SECLEVEL=1')
+
+        self.poolmanager = poolmanager.PoolManager(
+                num_pools=connections,
+                maxsize=maxsize,
+                block=block,
+                ssl_version=ssl.PROTOCOL_TLS,
+                ssl_context=ctx)
+
+
+# import requests
+# import urllib3
+# from urllib3.exceptions import InsecureRequestWarning
+# from requests.adapters import HTTPAdapter
+# from requests.packages.urllib3.util.retry import Retry
+
+# Disable SSL verification and insecure request warnings
+# urllib3.disable_warnings(InsecureRequestWarning)
+
+
+import urllib3
+import json
+from urllib3.util.ssl_ import create_urllib3_context
+
+def getInfoStructure(molname):
+
+    # URL from COMPTOX
+    url = "https://comptox.epa.gov/dashboard-api/batchsearch/chemicals"
+    
+    # Adding a payload
+    payload = {"identifierTypes":["chemical_name"],"massError":0,"downloadItems":[],"searchItems":f"{molname}","inputType":"IDENTIFIER"}
+    
+    ctx = create_urllib3_context()
+    ctx.load_default_certs()
+    ctx.options |= 0x4  # ssl.OP_LEGACY_SERVER_CONNECT
+
+    with urllib3.PoolManager(ssl_context=ctx) as http:
+        resp = http.request('POST', url, json=payload)
+        if resp.status==200:
+            rdict = json.loads(resp.data)
+            print (rdict)
+            return True, rdict
+
+    return False, resp.status
