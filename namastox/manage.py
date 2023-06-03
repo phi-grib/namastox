@@ -468,14 +468,17 @@ class TLSAdapter(requests.adapters.HTTPAdapter):
                 ssl_context=ctx)
 
 
-def getInfoStructure(molname):
+def getInfoStructure(molname=None, casrn=None):
 
     # URL from COMPTOX
     url = "https://comptox.epa.gov/dashboard-api/batchsearch/chemicals"
     
     # Adding a payload
-    payload = {"identifierTypes":["chemical_name"],"massError":0,"downloadItems":[],"searchItems":f"{molname}","inputType":"IDENTIFIER"}
-    
+    if casrn != None:
+        payload = {"identifierTypes":["CASRN"],"massError":0,"downloadItems":[],"searchItems":f"{casrn}","inputType":"IDENTIFIER"}
+    elif molname != None:
+        payload = {"identifierTypes":["chemical_name"],"massError":0,"downloadItems":[],"searchItems":f"{molname}","inputType":"IDENTIFIER"}
+
     ctx = create_urllib3_context()
     ctx.load_default_certs()
     ctx.options |= 0x4  # ssl.OP_LEGACY_SERVER_CONNECT
