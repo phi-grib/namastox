@@ -66,13 +66,15 @@ class Ra:
         self.notes = []
         self.assessment = None
         self.placehoders = {
+            'general_description': 'Descriptive text about this study',
+            'background': 'Any relevant information',
             'endpoint': 'Toxicological endpoint(s) of interest',
             'title': 'Descriptive name for this study',
             'problem_formulation': 'Short description of the toxicological issue to be adressed',
             'uncertainty': 'Comments about the acceptable uncertainty levels', 
             'administration_route': 'Administration routes of the toxican to be considered',
             'species': 'Biological species to be considered',
-            'regulatory_frameworks': 'Regulatory bodies for which this study can be of interest',
+            'regulatory_framework': 'Regulatory bodies for which this study can be of interest',
             'workflow_custom': 'File describing the workflow. If empty the ASPA workflow will be used instead',
             'substances': {
                 'name': ' Substance name or names separated by a colon',
