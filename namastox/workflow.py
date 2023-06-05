@@ -138,7 +138,7 @@ class Workflow:
         elif decision is False:
             arrow = '--N-->'
         ibody = f'{inode.box()}{arrow}{inext.box()}\n'
-        istyle = inext.style(False, False)
+        istyle = inext.style(visited=visited, future=False)
         ilinks = f'click {inext.id} onA\n'
 
         if inext.category == 'LOGICAL' and not visited:
@@ -164,6 +164,14 @@ class Workflow:
                 itask = inode.getTask()
                 return itask.description['name']
         return None
+
+    def isVisitedNode(self, id, results):
+        node_path =[iresult['id'] for iresult in results]
+
+        if id in node_path:
+            return True
+        
+        return False
 
     def getWorkflowGraph (self, results, step=None):
 

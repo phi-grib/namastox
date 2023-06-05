@@ -362,7 +362,13 @@ class Ra:
                 LOG.info(f'active node updated to: {self.ra["active_nodes_id"]}, based on decision {input_result["decision"]}' )
 
             elif input_node_category == 'TASK':
-                new_nodes_list= self.workflow.nextNodeList(input_node_id)
+                new_nodes_list = self.workflow.nextNodeList(input_node_id)
+
+                # clean visited nodes
+                for inew_node in new_nodes_list:
+                    if self.workflow.isVisitedNode(inew_node, self.results):
+                        new_nodes_list.pop(new_nodes_list.index(inew_node))
+
                 self.ra['active_nodes_id'] = active_nodes_list + new_nodes_list
                 LOG.info(f'active node updated to: {self.ra["active_nodes_id"]}' )
 
