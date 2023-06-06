@@ -125,8 +125,8 @@ class Workflow:
     def logicalNodeList (self, iid, decision):
         inode = self.getNode(iid)
         index_list = inode.logicalNodeIndex(decision)   
-        print ('index_list:', index_list)   
-        print ('selfnodes len:', len(self.nodes))     
+        # print ('index_list:', index_list)   
+        # print ('selfnodes len:', len(self.nodes))     
 
         return [self.nodes[x].getVal('id') for x in index_list]
     
@@ -162,7 +162,7 @@ class Workflow:
         for inode in self.nodes:
             if inode.id == id:
                 itask = inode.getTask()
-                return itask.description['name']
+                return itask.getName()
         return None
 
     def isVisitedNode(self, id, results):
