@@ -3,13 +3,17 @@ channels:
   - default
   - rdkit
   - conda-forge 
+  - chembl
 dependencies:
   - pip
   - python=3.10
   - numpy
   - setuptools
-  - requests
+  - scikit-learn
+  - imbalanced-learn
+  - chembl_structure_pipeline
   - rdkit
+  - requests
   - flask
   - flask_cors
   - pyyaml
@@ -18,5 +22,8 @@ dependencies:
   - python-docx
   - openpyxl
   - appdirs
-  # - pip:
-    # - flask_api
+  - pip:
+     - xgboost
+     - "https://github.com/phi-grib/standardiser/archive/master.zip"
+     - "https://github.com/phi-grib/nonconformist/archive/master.zip"
+     
