@@ -386,7 +386,9 @@ def predictLocalModels (raname, models, versions):
     if 'substance_SMILES' in generalInfo:
 
         # extract SMILES and write a SDFile in RA repository
-        smiles = generalInfo['substance_SMILES'][0]['SMILES']
+        # smiles = generalInfo['substance_SMILES'][0]['SMILES']
+        smiles = generalInfo['substance_SMILES']
+
         mol = Chem.MolFromSmiles(smiles)
         writer = Chem.SDWriter(structure_sdf)
         writer.write(mol)
