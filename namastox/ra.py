@@ -156,9 +156,15 @@ class Ra:
 
         # remove any other yaml file in the historic describing the same step
         step = self.ra['step']
+        
+        files_to_rename = []
+
         rahistpath = os.path.join (self.rapath,'hist')
+
         for ra_hist_file in os.listdir(rahistpath):
-            remove_file = False
+            if not ra_hist_file.startswith('ra_'):
+                continue
+            # remove_file = False
             ra_hist_item = os.path.join(rahistpath, ra_hist_file)
             if os.path.isfile(ra_hist_item):
                 idict = {}
@@ -167,10 +173,15 @@ class Ra:
                     if 'ra' in idict:
                         if 'step' in idict['ra']:
                             if step == idict['ra']['step']:
-                                remove_file = True
-                if remove_file:
-                    LOG.info(f'removed old file {ra_hist_item} for step {step}')
-                    os.remove(ra_hist_item) 
+                                files_to_rename.append(ra_hist_file)
+                                # remove_file = True
+                # if remove_file:
+                #     LOG.info(f'removed old file {ra_hist_item} for step {step}')
+                #     os.rename(ra_hist_item, os.path.join(rahistpath, 'bk_'+ ra_hist_file[3:]))
+                #     # os.remove(ra_hist_item) 
+            for ifile in files_to_rename:
+                os.rename(os.path.join(rahistpath,ifile), 
+                          os.path.join(rahistpath, 'bk_'+ ifile[3:]))
 
         # save in the historic file
         time_label = time.strftime("_%d%b%Y_%H%M%S", time.localtime()) 
@@ -284,7 +295,7 @@ class Ra:
         LOG.info(f'workflow advanced to step: {1}')
         self.ra['step']=1
 
-        self.save()
+        # self.save()
 
         return True, 'OK'
 
@@ -322,8 +333,18 @@ class Ra:
 
     def edit_result (self, input_result):
         input_result_id = input_result['id']
+        input_node = self.getNode(input_result_id)
+        input_node_category = input_node.getVal('category')
+ 
         for i, iresult in enumerate(self.results):
             if iresult['id'] == input_result_id:
+
+                # for now, decisions cannot be ammended
+                if input_node_category == 'LOGICAL':
+                    if input_result['decision']!=self.results[i]['decision']:
+                        LOG.info (f'decisions cannot be ammended')
+                        return
+
                 self.results[i] = input_result
             LOG.info(f'result {i} updated successfully')
 
@@ -370,7 +391,7 @@ class Ra:
             else:
                 self.edit_result(input_result)
 
-        self.save()
+        # self.save()
 
         return True, 'OK'
 

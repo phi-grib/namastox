@@ -105,6 +105,10 @@ def getRaHistoric (raname, step):
         return False, f'Historic repository for risk assessment {raname} not found'
 
     for ra_hist_file in os.listdir(rahist):
+        # do not use backup files
+        if ra_hist_file.startswith('bk_'):
+            continue
+        
         ra_hist_item = os.path.join(rahist, ra_hist_file)
         if os.path.isfile(ra_hist_item):
             idict = {}
