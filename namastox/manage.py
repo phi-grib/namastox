@@ -345,10 +345,20 @@ def convertSubstances(file):
         else:
             icasrn = 'na'
 
+        # extract the ID 
+        if mol.HasProp('id'):  
+            iid = mol.GetProp('id')
+        elif mol.HasProp('ID'):  
+            iid = mol.GetProp('ID')
+        elif mol.HasProp('molid'):  
+            iid = mol.GetProp('molid')
+        else:
+            iid = 'na'
+
         # obtain the SMILES
         ismiles = Chem.MolToSmiles(mol)
 
-        results.append( {'name': iname, 'smiles': ismiles, 'casrn': icasrn })
+        results.append( {'name': iname, 'id': iid, 'smiles': ismiles, 'casrn': icasrn })
 
     if len(results)> 0:
         return True, results
