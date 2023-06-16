@@ -24,7 +24,6 @@ import os
 import yaml
 import json
 import shutil
-import requests
 import urllib3
 from urllib3.util.ssl_ import create_urllib3_context
 import tarfile
@@ -98,6 +97,8 @@ def action_new(raname, outfile=None):
     return True, f'New risk assessment {raname} created'
 
 def getRaHistoric (raname, step):
+    ''' retrieves from the historical record the item corresponding to the step given as argument
+    '''
     radir = ra_path(raname)
     rahist = os.path.join(radir,'hist')
     if not os.path.isdir(rahist):
@@ -173,7 +174,7 @@ def action_kill(raname, step=None):
 
 def action_list(out='text'):
     '''
-    In no argument is provided lists all ranames present at the repository 
+    if no argument is provided lists all ranames present at the repository 
      otherwyse lists all versions for the raname provided as argument
     '''
 
@@ -205,7 +206,7 @@ def action_list(out='text'):
 
 def action_steps(raname, out='text'):
     '''
-    Provides a list with all steps for ranames present at the repository 
+    provides a list with all steps for ranames present at the repository 
     '''
 
     radir = ra_path(raname)
@@ -235,7 +236,7 @@ def action_steps(raname, out='text'):
 
 def action_info(raname, out='text'):
     '''
-    Provides a list with all steps for ranames present at the repository 
+    provides a list with all steps for ranames present at the repository 
     '''
 
     # instantiate a ra object
@@ -305,6 +306,9 @@ def getWorkflow(raname, step=None):
 
 
 def setCustomWorkflow (raname, file):
+    '''
+    defines the file provided as argument as a custom workflow
+    '''
 
     # instantiate a ra object
     ra = Ra(raname)
@@ -366,6 +370,11 @@ def convertSubstances(file):
     return False, 'empty molecule'
 
 def getLocalModels ():
+    '''
+    returns the list of local models calling directly the Flame library. The models must be 
+    available in a properly configured Flame repository
+    '''
+
     from flame import manage as flame_manage
 
     results = []
@@ -395,8 +404,6 @@ def predictLocalModels (raname, models, versions):
     generalInfo = generalInfo['general']
     try:
         # extract SMILES and write a SDFile in RA repository
-        # smiles = generalInfo['substance_SMILES'][0]['SMILES']
-        # smiles = generalInfo['substance_SMILES']
         smiles = generalInfo['substances'][0]['smiles']
     except:
         return False, f'no substance defined in {raname}'
@@ -421,6 +428,9 @@ def predictLocalModels (raname, models, versions):
 
 
 def getLocalModelPrediction():
+    ''' 
+    returns the profile result produced by Flame in summary format 
+    '''
     from flame import manage as flame_manage
 
     success, results = flame_manage.action_profiles_summary('namastox',output="summary")
@@ -430,6 +440,10 @@ def getLocalModelPrediction():
         return False, 'unable to retrieve prediction results'
 
 def exportRA (raname):
+    '''
+    compresses (as tgz) the ra with the name gives as argument in the ra repository and
+    returns the name of the file
+    '''
 
     current_path = os.getcwd()
 
@@ -467,22 +481,6 @@ def importRA (filename):
     return True, 'OK'
 
 
-class TLSAdapter(requests.adapters.HTTPAdapter):
-    def init_poolmanager(self, connections, maxsize, block=False):
-        """Create and initialize the urllib3 PoolManager."""
-        ctx = ssl.create_default_context()
-        ctx.check_hostname = False
-        ctx.verify_mode = ssl.CERT_NONE
-        ctx.set_ciphers('DEFAULT@SECLEVEL=1')
-
-        self.poolmanager = poolmanager.PoolManager(
-                num_pools=connections,
-                maxsize=maxsize,
-                block=block,
-                ssl_version=ssl.PROTOCOL_TLS,
-                ssl_context=ctx)
-
-
 def getInfoStructure(molname=None, casrn=None):
 
     # URL from COMPTOX
@@ -502,7 +500,6 @@ def getInfoStructure(molname=None, casrn=None):
         resp = http.request('POST', url, json=payload)
         if resp.status==200:
             rdict = json.loads(resp.data)
-            # print (rdict)
             return True, rdict
 
     return False, resp.status
