@@ -27,6 +27,8 @@ LOG = get_logger(__name__)
 
 class Task:
     ''' Class representing a task associade to a workflow node
+        Everything related with the topological aspects of the task is
+        represented by class Node
     '''
 
     def __init__(self, task_dict:dict=None):
@@ -55,7 +57,7 @@ class Task:
             'id': None,
             'result_type': None,     # text | value | bool
             #########################################################
-            
+            'date': None,
             'decision': False,       # for LOGICAL tasks
             'report': False,         # for result_type = text
             'values': [],            # list of values {
@@ -121,7 +123,7 @@ class Task:
         '''generates a YAML for entering the results'''
         return yaml.dump(self.getTemplateDict())
 
-    def setTask(self, task_dict):
+    def setTask(self, task_dict:dict):
         '''parses the input dictionary and assign contents for description and results
            this functions is typically called when parsing the table with the workflow
         '''
@@ -137,28 +139,26 @@ class Task:
             if ikey not in self.result and ikey not in self.description:
                 self.other[ikey]=task_dict[ikey]
 
-    def setResult(self, result_dict):
+    def setResult(self, result_dict:dict):
+        ''' sets the fields of the results dict provided in argument as fields of self.result'''
         for ikey in self.result:
             if ikey in result_dict:
                 self.result[ikey]=result_dict[ikey]
 
-    # UTILS
     def getResult (self, category):
+        ''' returns self.results, removing information for the type of task provided as argument'''
         temp_result = self.result.copy()
         if category == 'TASK':
             temp_result.pop ('decision')
         elif category == 'LOGICAL':
             temp_result.pop ('report')
             temp_result.pop ('values')
-            # temp_result.pop ('value')
-            # temp_result.pop ('unit')
             temp_result.pop ('uncertainty')
         return temp_result
 
-    def valResult(self, task_result):
+    def valResult(self, task_result:dict):
         ''' makes sure that the task_result dict meets the task requirements
         '''
-
         if type(task_result) is not dict:
             return False
 
@@ -168,9 +168,7 @@ class Task:
             compulsory_keys.append ('decision')
         elif self.description['category'] == 'TASK':
             compulsory_keys.append ('report')
-            # compulsory_keys.append ('value')   *** deprecated ***
             compulsory_keys.append ('values')
-            # compulsory_keys.append ('unit')
             compulsory_keys.append ('uncertainty')
 
         for ikey in compulsory_keys:

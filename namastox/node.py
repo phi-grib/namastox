@@ -27,6 +27,8 @@ LOG = get_logger(__name__)
 
 class Node:
     ''' Class representing a workflow node
+        This class represents only the *topological aspects* of the node
+        All the data is in class Task (results)
     '''
     # def __init__(self, node_name, node_id, node_type, node_task=None):
     def __init__(self, node_content):
@@ -46,10 +48,8 @@ class Node:
     
     def nextNodeIndex(self):
         index_str = self.next_node 
-        
         if index_str is None:
             return []
-        
         index_list = [(int(x)-1) for x in index_str.split(',')] 
         return (index_list)
 
@@ -94,8 +94,7 @@ class Node:
         
     
     def box (self):
-        # split labels in half, adding '\\n' betweeen the two 
-        # middle words
+        # split labels in half, adding '\\n' betweeen the two middle words
         words = self.name.split()
         label = ''
         for i,iword in enumerate(words):
@@ -108,7 +107,6 @@ class Node:
         if self.category == 'TASK':
             return f'{self.id}[{label}]'
         if self.category == 'LOGICAL':
-            # label = 'this string \\n is broken'
             return f'{self.id}{{{label}}}'
         if self.category == 'END':
             return f'{self.id}[/{self.name}/]\n{self.id}[/{self.name}/]-->Z999[end]'

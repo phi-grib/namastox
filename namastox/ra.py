@@ -391,6 +391,8 @@ class Ra:
             else:
                 self.edit_result(input_result)
 
+            input_result['date']= time.strftime("%d/%b/%Y %H:%M", time.localtime()) 
+
         # self.save()
 
         return True, 'OK'
