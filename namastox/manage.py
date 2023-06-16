@@ -348,7 +348,7 @@ def convertSubstances(file):
         # obtain the SMILES
         ismiles = Chem.MolToSmiles(mol)
 
-        results.append( {'name': iname, 'SMILES': ismiles, 'CASRN': icasrn })
+        results.append( {'name': iname, 'smiles': ismiles, 'casrn': icasrn })
 
     if len(results)> 0:
         return True, results
@@ -383,28 +383,32 @@ def predictLocalModels (raname, models, versions):
 
     generalInfo = ra.getGeneralInfo()
     generalInfo = generalInfo['general']
-    if 'substance_SMILES' in generalInfo:
-
+    try:
         # extract SMILES and write a SDFile in RA repository
         # smiles = generalInfo['substance_SMILES'][0]['SMILES']
-        smiles = generalInfo['substance_SMILES']
-
-        mol = Chem.MolFromSmiles(smiles)
-        writer = Chem.SDWriter(structure_sdf)
-        writer.write(mol)
-        writer.close()
-
-        # predicts
-        arguments = {'label' : 'namastox',
-                     'infile': structure_sdf,
-                     'multi' : {'endpoints': models, 
-                               'versions': versions}
-                     }
-        success, results = context.profile_cmd(arguments)
-        return True, results
-
-    else:
+        # smiles = generalInfo['substance_SMILES']
+        smiles = generalInfo['substances'][0]['smiles']
+    except:
         return False, f'no substance defined in {raname}'
+
+    try:
+        mol = Chem.MolFromSmiles(smiles)
+    except:
+        return False, f'incorrect SMILES format: {smiles}'
+    
+    writer = Chem.SDWriter(structure_sdf)
+    writer.write(mol)
+    writer.close()
+
+    # predicts
+    arguments = {'label' : 'namastox',
+                    'infile': structure_sdf,
+                    'multi' : {'endpoints': models, 
+                            'versions': versions}
+                    }
+    success, results = context.profile_cmd(arguments)
+    return success, results
+
 
 def getLocalModelPrediction():
     from flame import manage as flame_manage

@@ -79,7 +79,7 @@ class Ra:
             'substances': {
                 'name': ' Substance name or names separated by a colon',
                 'id': ' Substance ID or IDs separated by a colon',
-                'cas-rn': ' Substance CAS-RN or CAS-RNs separated by a colon',
+                'casrn': ' Substance CAS-RN or CAS-RNs separated by a colon',
             }
         }
 
