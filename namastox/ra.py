@@ -134,10 +134,6 @@ class Ra:
             if yaml_dict[ikey]!=None:
                 self.__dict__[ikey]=yaml_dict[ikey]
 
-        # bakcompatibility!
-        # if not 'node_path' in self.ra:
-        #     self.ra['node_path'] = []
-
         # load workflow
         if self.ra['step']>0 : 
             self.workflow = Workflow(self.raname, self.ra['workflow_name'])
@@ -194,7 +190,7 @@ class Ra:
             return olist
 
         for node_id in active_nodes_id:
-            input_node = self.workflow.getNode(node_id)
+            input_node = self.getNode(node_id)
             itask = input_node.getTask()
             olist.append({'id':node_id, 
                           'name':itask.getName(),
@@ -205,7 +201,7 @@ class Ra:
     def getActiveNode (self, node_id):
         active_nodes_id = self.ra['active_nodes_id']
         if node_id in active_nodes_id:
-            input_node = self.workflow.getNode(node_id)
+            input_node = self.getNode(node_id)
             itask = input_node.getTask()
             return (itask.getDescriptionDict())
         return None
@@ -244,6 +240,9 @@ class Ra:
             return None        
 
         return icombo
+    
+    def getNode(self, result_id):
+        return self.workflow.getNode(result_id)
 
     def getNotes(self):
         ''' return a list with RA notes'''
@@ -289,10 +288,48 @@ class Ra:
 
         return True, 'OK'
 
+    def append_result (self, input_result):
+        # identify workflow node for which this result is being applied
+        input_result_id = input_result['id']
+        input_node = self.getNode(input_result_id)
+        input_node_category = input_node.getVal('category')
+
+        self.results.append(input_result)
+
+        active_nodes_list = self.ra['active_nodes_id']
+        active_nodes_list.pop(active_nodes_list.index(input_result_id))
+
+        if input_node_category == 'LOGICAL':
+            new_nodes_list = self.workflow.logicalNodeList(input_result_id, input_result['decision'])
+            self.ra['active_nodes_id'] = active_nodes_list + new_nodes_list
+            LOG.info(f'active node updated to: {self.ra["active_nodes_id"]}, based on decision {input_result["decision"]}' )
+
+        elif input_node_category == 'TASK':
+            new_nodes_list = self.workflow.nextNodeList(input_result_id)
+
+            # clean visited nodes
+            for inew_node in new_nodes_list:
+                if self.workflow.isVisitedNode(inew_node, self.results):
+                    new_nodes_list.pop(new_nodes_list.index(inew_node))
+
+            self.ra['active_nodes_id'] = active_nodes_list + new_nodes_list
+            LOG.info(f'active node updated to: {self.ra["active_nodes_id"]}' )
+
+        # advance workflow: step+1, active workflow+1
+        step = self.ra['step']
+        self.ra['step']=step+1
+        LOG.info(f'workflow advanced to step: {step+1}')
+
+    def edit_result (self, input_result):
+        input_result_id = input_result['id']
+        for i, iresult in enumerate(self.results):
+            if iresult['id'] == input_result_id:
+                self.results[i] = input_result
+            LOG.info(f'result {i} updated successfully')
+
     def update(self, input):
         ''' validate result and if it matchs the requirements of an active node progress in the workflow'''
 
-        # validate result
         step = self.ra['step']
 
         # special case of the first step
@@ -306,75 +343,32 @@ class Ra:
         for input_result in input['result']:
             
             # identify the node for which this result has been obtained
-            input_node_id = input_result['id']
-
-            # validate input, the template must be tagged for this workflow node
-            if not input_node_id in self.ra["active_nodes_id"]:
-                LOG.info(f'input for node {input_node_id} not in the active nodes list({self.ra["active_nodes_id"]})')
-                continue
-
-            # identify workflow node for which this result is being applied
-            input_node = self.workflow.getNode(input_node_id)
+            input_result_id = input_result['id']
+            input_node = self.getNode(input_result_id)
             input_node_category = input_node.getVal('category')
-
-            # add this node to the list of nodes transited
-            # if not input_node_id in self.ra['node_path']:
-            #     self.ra['node_path'].append(input_node_id)
-
+            
             # if node is empty do not process and do not progress in workflow
             if input_node_category == 'LOGICAL':
                 if not 'decision' in input_result:
                     continue
-                if type(input_result['decision']) != bool:
-                    LOG.info (f'result for node {input_node_id} empty')
-                    continue
 
+                if type(input_result['decision']) != bool:
+                    LOG.info (f'result for node {input_result_id} empty')
+                    continue
+                
             elif input_node_category == 'TASK':
                 if not 'values' in input_result:
                     continue
+                
                 if len(input_result['values'])==0:
-                    LOG.info (f'result for node {input_node_id} empty')
+                    LOG.info (f'result for node {input_result_id} empty')
                     continue
-
-            # append result
-            self.results.append(input_result)
-
-            # if update contains links to local files, upload to repository
-            # if 'result_link' in input_result:
-            #     link = input_result['result_link']
-            #     if link is not None:
-            #         if os.path.isfile(link):
-            #             hist_dir = os.path.join(self.rapath, 'repo')
-            #             try:
-            #                 shutil.copy(link, hist_dir)
-            #             except Exception as err:
-            #                 LOG.error(f'error: {err}, file {link} not processed')
-
-            # replace the current node with the next for the current node only 
-            # if logical find new active node (method in workflow?)
-
-            active_nodes_list = self.ra['active_nodes_id']
-            active_nodes_list.pop(active_nodes_list.index(input_node_id))
-
-            if input_node_category == 'LOGICAL':
-                new_nodes_list = self.workflow.logicalNodeList(input_node_id, input_result['decision'])
-                self.ra['active_nodes_id'] = active_nodes_list + new_nodes_list
-                LOG.info(f'active node updated to: {self.ra["active_nodes_id"]}, based on decision {input_result["decision"]}' )
-
-            elif input_node_category == 'TASK':
-                new_nodes_list = self.workflow.nextNodeList(input_node_id)
-
-                # clean visited nodes
-                for inew_node in new_nodes_list:
-                    if self.workflow.isVisitedNode(inew_node, self.results):
-                        new_nodes_list.pop(new_nodes_list.index(inew_node))
-
-                self.ra['active_nodes_id'] = active_nodes_list + new_nodes_list
-                LOG.info(f'active node updated to: {self.ra["active_nodes_id"]}' )
-
-            # advance workflow: step+1, active workflow+1
-            self.ra['step']=step+1
-            LOG.info(f'workflow advanced to step: {step+1}')
+            
+            # if this result is for an active node APPEND the information
+            if input_result_id in self.ra["active_nodes_id"]:
+                self.append_result(input_result)
+            else:
+                self.edit_result(input_result)
 
         self.save()
 
@@ -402,34 +396,13 @@ class Ra:
     def getWorkflowGraph(self, step=None):
 
         if self.ra['step']>0 : 
-            return self.workflow.getWorkflowGraph(self.results, step)
-        
+            return self.workflow.getWorkflowGraph(self.results, step)     
         else:
             return """graph TD
                       X[workflow undefined]-->Z[...]
                       style X fill:#548BD4,stroke:#548BD4
                       style Z fill:#FFFFFF,stroke:#000000
                       """
-
-        # w = """graph TD
-        # A[Problem formulation]-->B[Relevant existing data]
-        # B-->C{"Is the information\nsufficient?"}
-        # C--Y-->D[/Risk assesment report/]
-        # C--N-->E{"Is exposure scenario\nwell-defined?"}
-        # E---G[...]
-        # D-->F([Exit])
-        # style A fill:#548BD4,stroke:#548BD4
-        # style B fill:#548BD4,stroke:#548BD4
-        # style C fill:#F2DCDA,stroke:#C32E2D
-        # style E fill:#F2DCDA,stroke:#C32E2D
-        # style F fill:#D7E3BF,stroke:#A3B77E
-        # style G fill:#FFFFFF,stroke:#000000
-        # click A onA
-        # click B onA
-        # click C onA
-        # click D onA
-        # click E onA"""
-
         return w
     
     #################################################
@@ -447,7 +420,7 @@ class Ra:
             result_labels = '# input needed for the following nodes\n'
             result_list = []
             for iid in self.ra['active_nodes_id']:
-                inode = self.workflow.getNode(iid)
+                inode = self.getNode(iid)
                 result_labels+= f'# node {inode.getVal("name")}\n'
 
                 itask = inode.getTask()

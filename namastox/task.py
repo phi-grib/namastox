@@ -41,7 +41,6 @@ class Task:
             'description': None,     # cannot be left empty
             'method_type': 'expert', # expert | invitro | insilico, 
             'method_link': None,     # link to method repo
-            # 'area': None,            # TODO: remove 
 
             'decision': 'Select yes or no to the question posed in the description',       
             'report': 'Text report with the main conclussions of the task',            
@@ -70,11 +69,6 @@ class Task:
                                      #   'result_name' : 'in-silico predicton using model XGSHAT3 ',
                                      #   'result_link' : 'report.pdf'  
                                      # }
-
-            # 'value': None,           # for result_type = value *** DEPRECATED ***
-            # 'unit': None,            # for result_type = value *** DEPRECATED ***
-            # 'substance': None,       # *** DEPRECATED ***
-            # 'result_link': None,     # *** DEPRECATED ***
         }
 
         self.other = {}

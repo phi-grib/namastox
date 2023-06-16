@@ -82,7 +82,6 @@ class Node:
         # visited nodes
         elif visited:
             return_style = f'style {self.id} fill:#DDDDDD,stroke:#DDDDDD\n'
-        
         else:
             return_style = f'style {self.id} fill:#78A4DE,stroke:#6697d9\n'
 
@@ -93,16 +92,8 @@ class Node:
         # standard nodes (TASK or LOGICAL)
         return return_style
         
-        # if self.category == 'TASK' :
-        #     return f'style {self.id} fill:#78A4DE,stroke:#6697d9\n'
-        # if self.category == 'LOGICAL':
-        #     return f'style {self.id} fill:#78A4DE,stroke:#6697d9\n'
-        #     # return f'style {self.id} fill:#548BD4,stroke:#548BD4\n'
-        #     # return f'style {self.id} fill:#F2DCDA,stroke:#C32E2D\n'
-        # return '\n'
     
     def box (self):
-
         # split labels in half, adding '\\n' betweeen the two 
         # middle words
         words = self.name.split()
