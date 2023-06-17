@@ -154,7 +154,7 @@ class Ra:
         with open(rafile,'w') as f:
             f.write(yaml.dump(dict_temp))
 
-        # remove any other yaml file in the historic describing the same step
+        # rename other yaml file in the historic describing the same step as bk_
         step = self.ra['step']
         
         files_to_rename = []
@@ -164,7 +164,6 @@ class Ra:
         for ra_hist_file in os.listdir(rahistpath):
             if not ra_hist_file.startswith('ra_'):
                 continue
-            # remove_file = False
             ra_hist_item = os.path.join(rahistpath, ra_hist_file)
             if os.path.isfile(ra_hist_item):
                 idict = {}
@@ -174,11 +173,7 @@ class Ra:
                         if 'step' in idict['ra']:
                             if step == idict['ra']['step']:
                                 files_to_rename.append(ra_hist_file)
-                                # remove_file = True
-                # if remove_file:
-                #     LOG.info(f'removed old file {ra_hist_item} for step {step}')
-                #     os.rename(ra_hist_item, os.path.join(rahistpath, 'bk_'+ ra_hist_file[3:]))
-                #     # os.remove(ra_hist_item) 
+
             for ifile in files_to_rename:
                 os.rename(os.path.join(rahistpath,ifile), 
                           os.path.join(rahistpath, 'bk_'+ ifile[3:]))
@@ -189,11 +184,13 @@ class Ra:
         shutil.copyfile(rafile, rahist)
 
     def getStatus(self):
-        ''' return a dictionary with RA status'''
+        ''' return a dictionary with RA status
+        '''
         return {'ra':self.ra}
 
     def getActiveNodes (self):
-        ''' returns a list with the active nodes'''
+        ''' returns a list with the active nodes
+        '''
         active_nodes_id = self.ra['active_nodes_id']
         olist = []
         
@@ -210,6 +207,9 @@ class Ra:
         return olist
     
     def getActiveNode (self, node_id):
+        ''' return a dictionary with the task description of the node_id given as argument,
+            but only if this discribes an active node
+        '''
         active_nodes_id = self.ra['active_nodes_id']
         if node_id in active_nodes_id:
             input_node = self.getNode(node_id)
@@ -218,7 +218,8 @@ class Ra:
         return None
 
     def getResults(self):
-        ''' return a list with RA results'''
+        ''' return a list with RA results
+        '''
         temp = []
         for iresult in self.results:
             # enrich the results by adding the name of the task
@@ -227,7 +228,8 @@ class Ra:
         return temp
 
     def getResult(self, resultid):
-        ''' return the RA result with ID as the one provided as argument'''
+        ''' return the RA result with ID as the one provided as argument
+        '''
         for iresult in self.results:
             if iresult['id'] == resultid:
                 # enrich the results by adding the name of the task
@@ -235,15 +237,19 @@ class Ra:
                 return iresult
         return None
     
-    def getTask(self, resultid):
-        itask = self.workflow.getTask(resultid)
+    def getTask(self, result_id):
+        ''' utility funcion to obtain the Task with the result_id given as argument
+            note that we extract the task description from the workflow and add the results from
+            the internal result list
+        '''
+        itask = self.workflow.getTask(result_id)
         if itask == None:
             return None
         icombo = itask.getDescriptionDict()
 
         found = False
         for iresult in self.results:
-            if iresult['id'] == resultid:
+            if iresult['id'] == result_id:
                 found = True
                 icombo['result'] = iresult
 
@@ -253,19 +259,24 @@ class Ra:
         return icombo
     
     def getNode(self, result_id):
+        '''utility funcion to obtain the node with the result_id given as argument
+        '''
         return self.workflow.getNode(result_id)
 
     def getNotes(self):
-        ''' return a list with RA notes'''
+        ''' return a list with RA notes
+        '''
         return self.notes
 
     def getGeneralInfo(self):
-        ''' return a dictionary with RA status'''
+        ''' return a dictionary with RA status
+        '''
         return {'general':self.general, 
                 'placeholders':self.placehoders}
 
     def updateGeneralInfo (self, input):
-        ''' process update as GeneralInfo when we are in the first step (step 0)'''
+        ''' process update as GeneralInfo when we are in the first step (step 0)
+        '''
 
         if not 'general' in input:
             return False, 'wrong format in input file (no "general" info)'
@@ -295,11 +306,16 @@ class Ra:
         LOG.info(f'workflow advanced to step: {1}')
         self.ra['step']=1
 
+        # DO NOT SAVE HERE! this is called by update.py and it will be saved from there
         # self.save()
 
         return True, 'OK'
 
     def append_result (self, input_result):
+        ''' utility function used by update
+            used when the input_result will apply to a terminal node (active node) and 
+            therefore will expand the workflow
+        '''
         # identify workflow node for which this result is being applied
         input_result_id = input_result['id']
         input_node = self.getNode(input_result_id)
@@ -332,6 +348,10 @@ class Ra:
         LOG.info(f'workflow advanced to step: {step+1}')
 
     def edit_result (self, input_result):
+        ''' utility function used by update
+            used when the input result is an already existing node and we only want to update its contents
+            decisions cannot be edited to change their value
+        '''
         input_result_id = input_result['id']
         input_node = self.getNode(input_result_id)
         input_node_category = input_node.getVal('category')
@@ -349,7 +369,8 @@ class Ra:
             LOG.info(f'result {i} updated successfully')
 
     def update(self, input):
-        ''' validate result and if it matchs the requirements of an active node progress in the workflow'''
+        ''' validate result and if it matchs the requirements of an active node progress in the workflow
+        '''
 
         step = self.ra['step']
 
@@ -393,6 +414,7 @@ class Ra:
 
             input_result['date']= time.strftime("%d/%b/%Y %H:%M", time.localtime()) 
 
+        # DO NOT SAVE HERE! this is called by update.py and it will be saved from there
         # self.save()
 
         return True, 'OK'
@@ -417,6 +439,9 @@ class Ra:
             self.ra[key] = value
 
     def getWorkflowGraph(self, step=None):
+        ''' returns a mermaid graph for the workflow, util the step given as argument
+            if the ra is in step 0 and the workflow is still undefined, return a fallback graph 
+        '''
 
         if self.ra['step']>0 : 
             return self.workflow.getWorkflowGraph(self.results, step)     
