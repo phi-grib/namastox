@@ -175,8 +175,9 @@ class Ra:
                                 files_to_rename.append(ra_hist_file)
 
             for ifile in files_to_rename:
-                os.rename(os.path.join(rahistpath,ifile), 
-                          os.path.join(rahistpath, 'bk_'+ ifile[3:]))
+                ipath = os.path.join(rahistpath,ifile)
+                if os.path.isfile(ipath):
+                    os.rename(ipath, os.path.join(rahistpath, 'bk_'+ ifile[3:]))
 
         # save in the historic file
         time_label = time.strftime("_%d%b%Y_%H%M%S", time.localtime()) 
