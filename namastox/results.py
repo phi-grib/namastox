@@ -58,10 +58,17 @@ def action_results(raname, step=None, out='text'):
     if out=='json':
         odict = []
         for iresult in results:
+
+            if 'date' in iresult:
+                idate = iresult['date']
+            else:
+                idate = 'na'
+
             if 'decision' in iresult:
-                odict.append({'id':iresult['id'],'name':iresult['name'],'summary':iresult['summary'],'decision':iresult['decision'] })
+                odict.append({'id':iresult['id'],'name':iresult['name'],'summary':iresult['summary'],'decision':iresult['decision'], 'date': idate })
             elif 'values' in iresult:
-                odict.append({'id':iresult['id'],'name':iresult['name'],'summary':iresult['summary'],'values':iresult['values'] })
+                odict.append({'id':iresult['id'],'name':iresult['name'],'summary':iresult['summary'],'values':iresult['values'], 'date': idate })
+                
         return True , odict
         
     return True, f'{len(output)} results found for {raname}'
