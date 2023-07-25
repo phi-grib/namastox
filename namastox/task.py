@@ -45,7 +45,7 @@ class Task:
             'method_link': None,     # link to method repo
 
             'decision': 'Select yes or no to the question posed in the description',       
-            'report': 'Text report with the main conclussions of the task',            
+            'report': 'Text report with the main conclusions of tasks or justification for decisions',            
             'values': 'Enter one or many numerical parameters, consisting in a description, value (as a floating point) and unit',          
             'uncertainty': 'Information about the uncertainty associated to the value, expressed either quantitatively or qualitatively',     
             'summary': 'Short description of the results',
@@ -151,9 +151,9 @@ class Task:
         if category == 'TASK':
             temp_result.pop ('decision')
         elif category == 'LOGICAL':
-            temp_result.pop ('report')
+            # temp_result.pop ('report')
             temp_result.pop ('values')
-            temp_result.pop ('uncertainty')
+            # temp_result.pop ('uncertainty')
         return temp_result
 
     def valResult(self, task_result:dict):
@@ -162,14 +162,12 @@ class Task:
         if type(task_result) is not dict:
             return False
 
-        compulsory_keys = ['summary']
+        compulsory_keys = ['summary', 'uncertainty', 'report']
 
         if self.description['category'] == 'LOGICAL':
             compulsory_keys.append ('decision')
         elif self.description['category'] == 'TASK':
-            compulsory_keys.append ('report')
             compulsory_keys.append ('values')
-            compulsory_keys.append ('uncertainty')
 
         for ikey in compulsory_keys:
             if ikey not in task_result:
