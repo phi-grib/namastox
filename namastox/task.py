@@ -47,6 +47,7 @@ class Task:
             'decision': 'Select yes or no to the question posed in the description',       
             'report': 'Text report with the main conclusions of tasks or justification for decisions',            
             'values': 'Enter one or many numerical parameters, consisting in a description, value (as a floating point) and unit',          
+            'justification': 'Text providing a detailed justification of the decision taken',          
             'uncertainty': 'Information about the uncertainty associated to the value, expressed either quantitatively or qualitatively',     
             'summary': 'Short description of the results',
             'links': 'Link any relevant document in PDF format'     
@@ -65,7 +66,8 @@ class Task:
                                      #  'value': 0.18,
                                      #  'unit': 'nM',
                                      # }
-            'uncertainty': None,     # for result_type = value 
+            'justification': None,
+            'uncertainty': None,     # for TASKS
             'summary': None,
             'links': []              # list of link names and files {
                                      #   'result_name' : 'in-silico predicton using model XGSHAT3 ',
@@ -150,6 +152,7 @@ class Task:
         temp_result = self.result.copy()
         if category == 'TASK':
             temp_result.pop ('decision')
+            temp_result.pop ('justification')
         elif category == 'LOGICAL':
             # temp_result.pop ('report')
             temp_result.pop ('values')
@@ -166,6 +169,7 @@ class Task:
 
         if self.description['category'] == 'LOGICAL':
             compulsory_keys.append ('decision')
+            compulsory_keys.append ('justification')
         elif self.description['category'] == 'TASK':
             compulsory_keys.append ('values')
 
