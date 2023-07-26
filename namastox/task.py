@@ -150,13 +150,16 @@ class Task:
     def getResult (self, category):
         ''' returns self.results, removing information for the type of task provided as argument'''
         temp_result = self.result.copy()
+        
         if category == 'TASK':
-            temp_result.pop ('decision')
-            temp_result.pop ('justification')
+            black_keys = ['decision', 'justification']
         elif category == 'LOGICAL':
-            # temp_result.pop ('report')
-            temp_result.pop ('values')
-            # temp_result.pop ('uncertainty')
+            black_keys = ['values']
+
+        for bkey in black_keys:
+            if bkey in temp_result:
+                temp_result.pop (bkey)
+
         return temp_result
 
     def valResult(self, task_result:dict):
