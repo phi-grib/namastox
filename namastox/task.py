@@ -48,7 +48,17 @@ class Task:
             'report': 'Text report with the main conclusions of tasks or justification for decisions',            
             'values': 'Enter one or many numerical parameters, consisting in a description, value (as a floating point) and unit',          
             'justification': 'Text providing a detailed justification of the decision taken',          
-            'uncertainty': 'Information about the uncertainty associated to the value, expressed either quantitatively or qualitatively',     
+            'uncertainty': 'Information about the uncertainty associated to the result',     
+            'uncertainty_term': ['Almost certain (0.99-1.00)',
+                                 'Extremely likely (0.95-0.99)',
+                                 'Very likely (0.90-0.95)',
+                                 'Likely (0.66-0.90)',
+                                 'About as likely as not (0.33-0.66)',
+                                 'Unlikely (0.10-0.33)',
+                                 'Very unlikely (0.05-0.10)',
+                                 'Extremely unlikely (0.01-0.05)',
+                                 'Almost impossible (0.00-0.01)'],
+            'uncertainty_p': 'Uncertainty of result, as probability of being true, from 0 to 1',     
             'summary': 'Short description of the results',
             'links': 'Link any relevant document in PDF format'     
         }
@@ -58,18 +68,28 @@ class Task:
             'id': None,
             'result_type': None,     # text | value | bool
             #########################################################
-            'date': None,
-            'decision': False,       # for LOGICAL tasks
+            # for LOGICAL
+            'decision': False,       
+            'justification': None,   
+            
+            # for TASK
+            'uncertainty': None,     
+            'uncertainty_term': None,
+            'uncertainty_p': None,   
+
             'report': False,         # for result_type = text
-            'values': [],            # list of values {
+
+            'values': [],            # for result_type = report
+                                     # list of values {
                                      #  'parameter': 'pKa',
                                      #  'value': 0.18,
                                      #  'unit': 'nM',
                                      # }
-            'justification': None,
-            'uncertainty': None,     # for TASKS
+            
+            # for ALL
+            'date': None,
             'summary': None,
-            'links': []              # list of link names and files {
+            'links': [],             # list of link names and files {
                                      #   'result_name' : 'in-silico predicton using model XGSHAT3 ',
                                      #   'result_link' : 'report.pdf'  
                                      # }
