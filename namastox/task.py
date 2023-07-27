@@ -73,9 +73,9 @@ class Task:
             'justification': None,   
             
             # for TASK
-            'uncertainty': None,     
-            'uncertainty_term': None,
-            'uncertainty_p': None,   
+            'uncertainty': [],     
+            'uncertainty_term': [],
+            'uncertainty_p': [],   
 
             'report': False,         # for result_type = text
 
@@ -188,13 +188,18 @@ class Task:
         if type(task_result) is not dict:
             return False
 
-        compulsory_keys = ['summary', 'uncertainty', 'report']
+        compulsory_keys = ['summary']
 
         if self.description['category'] == 'LOGICAL':
             compulsory_keys.append ('decision')
             compulsory_keys.append ('justification')
+
         elif self.description['category'] == 'TASK':
+            compulsory_keys.append ('report')
             compulsory_keys.append ('values')
+            compulsory_keys.append ('uncertainty')
+            compulsory_keys.append ('uncertainty_term')
+            compulsory_keys.append ('uncertainty_p')
 
         for ikey in compulsory_keys:
             if ikey not in task_result:
