@@ -230,10 +230,19 @@ class Ra:
         for node_id in upstream_nodes_id:
             input_node = self.getNode(node_id)
             itask = input_node.getTask()
+
+            ivalue = []
+            iuncertainties = []
+            for iresult in self.results:
+                if iresult['id'] == node_id:
+                    ivalue = iresult['values']
+                    iuncertainties = iresult['uncertainties']
+                    break
+
             olist.append({'id':node_id, 
                           'name':itask.getName(),
-                          'values':itask.getValues(),
-                        #   'uncertainties':itask.getUncertainties()
+                          'values':ivalue,
+                          'uncertainties':iuncertainties
                           })
         return olist
 

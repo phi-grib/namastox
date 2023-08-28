@@ -190,9 +190,6 @@ class Workflow:
         self.recurse_list = []
         self.recurse(iid)
 
-        # print ('++++',self.recurse_list)
-        # print (self.nodes[self.recurse_list[0]].id)
-        # print (self.nodes[self.recurse_list[1]].id)
         for i in self.recurse_list:
             upstream_nodes.append(self.nodes[i].id)
 
