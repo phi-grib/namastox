@@ -66,6 +66,8 @@ class Task:
             'links': 'Link any relevant document in PDF format'     
         }
 
+        # The content of self.result is ONLY used to generate empty templates. Results are NOT stored here, but in ra.results[]
+    
         self.result = {
             # move to description ###################################
             'id': None,
@@ -90,7 +92,7 @@ class Task:
             # 'uncertainty_term': [],
             # 'uncertainty_p': [],   
 
-            'uncertainties': [],      # list of values {
+            'uncertainties': [],     # list of values {
                                      #  'uncertainty': 'experimental SEM +/- 0.34',
                                      #  'p' : 0.99
                                      #  'term' : 'Very likely'
@@ -171,11 +173,11 @@ class Task:
             if ikey not in self.result and ikey not in self.description:
                 self.other[ikey]=task_dict[ikey]
 
-    def setResult(self, result_dict:dict):
-        ''' sets the fields of the results dict provided in argument as fields of self.result'''
-        for ikey in self.result:
-            if ikey in result_dict:
-                self.result[ikey]=result_dict[ikey]
+    # def setResult(self, result_dict:dict):
+    #     ''' sets the fields of the results dict provided in argument as fields of self.result'''
+    #     for ikey in self.result:
+    #         if ikey in result_dict:
+    #             self.result[ikey]=result_dict[ikey]
 
     def getResult (self, category):
         ''' returns self.results, removing information for the type of task provided as argument'''
@@ -192,37 +194,29 @@ class Task:
 
         return temp_result
 
-    def valResult(self, task_result:dict):
-        ''' makes sure that the task_result dict meets the task requirements
-        '''
-        if type(task_result) is not dict:
-            return False
+    # def valResult(self, task_result:dict):
+    #     ''' makes sure that the task_result dict meets the task requirements
+    #     '''
+    #     if type(task_result) is not dict:
+    #         return False
 
-        compulsory_keys = ['summary']
+    #     compulsory_keys = ['summary']
 
-        if self.description['category'] == 'LOGICAL':
-            compulsory_keys.append ('decision')
-            compulsory_keys.append ('justification')
+    #     if self.description['category'] == 'LOGICAL':
+    #         compulsory_keys.append ('decision')
+    #         compulsory_keys.append ('justification')
 
-        elif self.description['category'] == 'TASK':
-            compulsory_keys.append ('report')
-            compulsory_keys.append ('values')
-            compulsory_keys.append ('uncertainties')
-            # compulsory_keys.append ('uncertainty')
-            # compulsory_keys.append ('uncertainty_term')
-            # compulsory_keys.append ('uncertainty_p')
+    #     elif self.description['category'] == 'TASK':
+    #         compulsory_keys.append ('report')
+    #         compulsory_keys.append ('values')
+    #         compulsory_keys.append ('uncertainties')
+    #         # compulsory_keys.append ('uncertainty')
+    #         # compulsory_keys.append ('uncertainty_term')
+    #         # compulsory_keys.append ('uncertainty_p')
 
-        for ikey in compulsory_keys:
-            if ikey not in task_result:
-                return False
+    #     for ikey in compulsory_keys:
+    #         if ikey not in task_result:
+    #             return False
 
-        return True
-    
-    def getValues (self):
-        ''' returns the values in the results dictionary'''
-        return self.result['values']
-    
-    def getUncertainties (self):
-        ''' returns the uncertainties in the results dictionary'''
-        return self.result['uncertainties']
+    #     return True
         

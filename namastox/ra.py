@@ -231,6 +231,8 @@ class Ra:
             input_node = self.getNode(node_id)
             itask = input_node.getTask()
 
+            # the content of the nodes (values, uncertainties) is extracted
+            # from self.results
             ivalue = []
             iuncertainties = []
             for iresult in self.results:
@@ -239,6 +241,7 @@ class Ra:
                     iuncertainties = iresult['uncertainties']
                     break
 
+            # the name of the node is extracted from the itask description 
             olist.append({'id':node_id, 
                           'name':itask.getName(),
                           'values':ivalue,
