@@ -89,7 +89,7 @@ class Task:
             # 'uncertainty': [],     
             # 'uncertainty_term': [],
             # 'uncertainty_p': [],   
-            
+
             'uncertainties': [],      # list of values {
                                      #  'uncertainty': 'experimental SEM +/- 0.34',
                                      #  'p' : 0.99
@@ -217,3 +217,12 @@ class Task:
                 return False
 
         return True
+    
+    def getValues (self):
+        ''' returns the values in the results dictionary'''
+        return self.result['values']
+    
+    def getUncertainties (self):
+        ''' returns the uncertainties in the results dictionary'''
+        return self.result['uncertainties']
+        

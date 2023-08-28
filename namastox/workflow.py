@@ -165,6 +165,39 @@ class Workflow:
                 return itask.getName()
         return None
 
+    def recurse (self, iid):
+        for i,inode in enumerate(self.nodes):
+            next_list = inode.nextNodeIndex()
+            if iid in next_list:
+                self.recurse_list.append(i)
+                self.recurse(i)
+                return
+        
+    def getUpstreamNodes (self, id):
+
+        upstream_nodes  = []
+        iid = -1
+
+        for i,inode in enumerate(self.nodes):
+            if inode.id == id:
+                iid = i
+                break
+
+        # nothing found, return an empty string
+        if iid == -1:
+            return upstream_nodes
+        
+        self.recurse_list = []
+        self.recurse(iid)
+
+        # print ('++++',self.recurse_list)
+        # print (self.nodes[self.recurse_list[0]].id)
+        # print (self.nodes[self.recurse_list[1]].id)
+        for i in self.recurse_list:
+            upstream_nodes.append(self.nodes[i].id)
+
+        return upstream_nodes
+
     def isVisitedNode(self, id, results):
         node_path =[iresult['id'] for iresult in results]
 

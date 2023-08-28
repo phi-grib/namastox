@@ -50,7 +50,15 @@ class Node:
         index_str = self.next_node 
         if index_str is None:
             return []
-        index_list = [(int(x)-1) for x in index_str.split(',')] 
+        
+        index_raw=index_str.strip().split(',')
+        index_list=[]
+        for i in index_raw:
+            if i != '':
+                index_list.append(int(i)-1)
+
+        # index_list = [(int(x)-1) for x in index_str.split(',')] 
+        
         return (index_list)
 
     def logicalNodeIndex(self, decision):

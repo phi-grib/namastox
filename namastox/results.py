@@ -143,4 +143,19 @@ def action_pendingTask(raname, resultid):
         return True, active_node
     else:
         return False, f'active node {resultid} not found'
+    
+def action_upstreamTasks(raname, resultid):
+    ''' returns a dictionary with a list of selected fields of upstream tasks for the resultid task
+    '''
+    ra = Ra(raname)
+    succes, results = ra.load()
+    if not succes:
+        return False, results
+    
+    upstream_nodes = ra.getUpstreamNodes(resultid)
+
+    if upstream_nodes is not None:
+        return True, upstream_nodes
+    else:
+        return False, f'active node {resultid} not found'
 

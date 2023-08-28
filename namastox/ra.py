@@ -218,6 +218,25 @@ class Ra:
             return (itask.getDescriptionDict())
         return None
 
+    def getUpstreamNodes (self, node_id):
+        ''' returns a list with nodes upstream to the node_id provided as argument
+            this is ONLY for decision nodes, but no checking is performed for now
+
+        '''
+        olist = []
+
+        upstream_nodes_id = self.workflow.getUpstreamNodes (node_id)
+
+        for node_id in upstream_nodes_id:
+            input_node = self.getNode(node_id)
+            itask = input_node.getTask()
+            olist.append({'id':node_id, 
+                          'name':itask.getName(),
+                          'values':itask.getValues(),
+                        #   'uncertainties':itask.getUncertainties()
+                          })
+        return olist
+
     def getResults(self):
         ''' return a list with RA results
         '''
