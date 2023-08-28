@@ -47,9 +47,11 @@ class Task:
             'decision': 'Select yes or no to the question posed in the description',       
             'report': 'Text report with the main conclusions of tasks or justification for decisions',            
             'values': 'Enter one or many numerical parameters, consisting in a description, value (as a floating point) and unit',          
-            'justification': 'Text providing a detailed justification of the decision taken',          
-            'uncertainty': 'Information about the uncertainty associated to the result',     
-            'uncertainty_term': ['Almost certain (0.99-1.00)',
+            'justification': 'Text providing a detailed justification of the decision taken', 
+            'uncertainties':  'Enter uncertainty information about this task, including a textual description, a probability value and a descriptive term',         
+            
+            'uncertainty': 'Information about the uncertainty associated to the result',         # DEPRECATED
+            'uncertainty_term': ['Almost certain (0.99-1.00)',                                   # DEPRECATED
                                  'Extremely likely (0.95-0.99)',
                                  'Very likely (0.90-0.95)',
                                  'Likely (0.66-0.90)',
@@ -58,7 +60,8 @@ class Task:
                                  'Very unlikely (0.05-0.10)',
                                  'Extremely unlikely (0.01-0.05)',
                                  'Almost impossible (0.00-0.01)'],
-            'uncertainty_p': 'Uncertainty of result, as probability of being true, from 0 to 1',     
+            'uncertainty_p': 'Uncertainty of result, as probability of being true, from 0 to 1', # DEPRECATED    
+
             'summary': 'Short description of the results',
             'links': 'Link any relevant document in PDF format'     
         }
@@ -73,9 +76,6 @@ class Task:
             'justification': None,   
             
             # for TASK
-            'uncertainty': [],     
-            'uncertainty_term': [],
-            'uncertainty_p': [],   
 
             'report': False,         # for result_type = text
 
@@ -84,6 +84,16 @@ class Task:
                                      #  'parameter': 'pKa',
                                      #  'value': 0.18,
                                      #  'unit': 'nM',
+                                     # }
+
+            # 'uncertainty': [],     
+            # 'uncertainty_term': [],
+            # 'uncertainty_p': [],   
+            
+            'uncertainties': [],      # list of values {
+                                     #  'uncertainty': 'experimental SEM +/- 0.34',
+                                     #  'p' : 0.99
+                                     #  'term' : 'Very likely'
                                      # }
             
             # for ALL
@@ -197,9 +207,10 @@ class Task:
         elif self.description['category'] == 'TASK':
             compulsory_keys.append ('report')
             compulsory_keys.append ('values')
-            compulsory_keys.append ('uncertainty')
-            compulsory_keys.append ('uncertainty_term')
-            compulsory_keys.append ('uncertainty_p')
+            compulsory_keys.append ('uncertainties')
+            # compulsory_keys.append ('uncertainty')
+            # compulsory_keys.append ('uncertainty_term')
+            # compulsory_keys.append ('uncertainty_p')
 
         for ikey in compulsory_keys:
             if ikey not in task_result:
