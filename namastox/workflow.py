@@ -171,13 +171,11 @@ class Workflow:
             if iid in next_list:
                 self.recurse_list.append(i)
                 self.recurse(i)
-                return
         
     def getUpstreamNodes (self, id):
-
         upstream_nodes  = []
         iid = -1
-
+        
         for i,inode in enumerate(self.nodes):
             if inode.id == id:
                 iid = i

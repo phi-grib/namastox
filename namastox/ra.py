@@ -228,6 +228,11 @@ class Ra:
         upstream_nodes_id = self.workflow.getUpstreamNodes (node_id)
 
         for node_id in upstream_nodes_id:
+
+            # skip non-visited nodes
+            if not self.workflow.isVisitedNode(node_id, self.results):
+                continue
+
             input_node = self.getNode(node_id)
             itask = input_node.getTask()
 
