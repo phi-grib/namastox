@@ -414,18 +414,20 @@ def predictLocalModels (raname, models, versions):
     writer.write(mol)
     writer.close()
 
-    if len(models)>1:
-        # profile
-        arguments = {'label' : 'namastox',
-                        'infile': structure_sdf,
-                        'multi' : {'endpoints': models, 
-                                'versions': versions}
-                        }
-        success, results = context.profile_cmd(arguments)
-        return success, results
-    else:
-        #TODO: implement a call to predict 
-        return False, f'please select more than one model'
+    # profile requires more than one model selected
+    # if only one model is selected, run the prediction twice
+    if len(models)==1:
+        models.append(models[0])
+        versions.append(versions[0])
+
+    arguments = {'label' : 'namastox',
+                 'infile': structure_sdf,
+                 'multi' : {'endpoints': models, 
+                            'versions': versions}
+                }
+    
+    success, results = context.profile_cmd(arguments)
+    return success, results
 
 def getLocalModelPrediction():
     ''' 
@@ -435,6 +437,14 @@ def getLocalModelPrediction():
 
     success, results = flame_manage.action_profiles_summary('namastox',output="summary")
     if success:
+
+        # when only a model is selected the profile runs it twice, remove the last one
+        models = results['models']
+        if len(models)==2:
+            if models[0] == models[1]:
+                results['models'].pop(1)
+                results['results'].pop(1)
+
         return True, results
     else:
         return False, 'unable to retrieve prediction results'
@@ -504,9 +514,12 @@ def getInfoStructure(molname=None, casrn=None):
     ctx.options |= 0x4  # ssl.OP_LEGACY_SERVER_CONNECT
 
     with urllib3.PoolManager(ssl_context=ctx) as http:
-        resp = http.request('POST', url, json=payload)
+        try:
+            resp = http.request('POST', url, json=payload)
+        except Exception as ins:
+            return False, ins
+        
         if resp.status==200:
-            rdict = json.loads(resp.data)
-            return True, rdict
+            return True, json.loads(resp.data)
 
     return False, resp.status
