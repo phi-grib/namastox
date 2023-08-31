@@ -383,6 +383,19 @@ def getLocalModels ():
 
     return True, results
 
+def getModelDocumentation (model_name, model_ver):
+
+    from flame import manage as flame_manage
+
+    success, documentation = flame_manage.action_documentation(model_name, model_ver, oformat='JSON')
+
+    if not success:
+        return False, documentation
+
+    documentation_JSON = documentation.dumpJSON()
+
+    return True, documentation_JSON
+
 def predictLocalModels (raname, models, versions):
     ''' returns a prediction using the substance defined in the ra, using the list of local models and versions specified
     '''
@@ -433,9 +446,14 @@ def getLocalModelPrediction():
     ''' 
     returns the profile result produced by Flame in summary format 
     '''
+    # TODO: uses the label 'namastox', this does not allow concurrent use (colliding predictions)
+    # TODO: we only extract the summary. Exctract probabilities when the models are conformal
     from flame import manage as flame_manage
 
     success, results = flame_manage.action_profiles_summary('namastox',output="summary")
+    # isuccess, iresults = flame_manage.action_profiles_summary('namastox',output="xxx")
+    # for ii in iresults:
+    #     print (ii.getJSON())
     if success:
 
         # when only a model is selected the profile runs it twice, remove the last one
@@ -465,7 +483,6 @@ def exportRA (raname):
         os.chdir(current_path)
 
     return True, compressedfile
-
 
 def importRA (filename):
     '''
