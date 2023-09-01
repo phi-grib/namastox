@@ -447,25 +447,60 @@ def getLocalModelPrediction():
     returns the profile result produced by Flame in summary format 
     '''
     # TODO: uses the label 'namastox', this does not allow concurrent use (colliding predictions)
-    # TODO: we only extract the summary. Exctract probabilities when the models are conformal
     from flame import manage as flame_manage
 
-    success, results = flame_manage.action_profiles_summary('namastox',output="summary")
-    # isuccess, iresults = flame_manage.action_profiles_summary('namastox',output="xxx")
-    # for ii in iresults:
-    #     print (ii.getJSON())
+    success, results = flame_manage.action_profiles_summary('namastox',output=None)
     if success:
 
-        # when only a model is selected the profile runs it twice, remove the last one
-        models = results['models']
-        if len(models)==2:
-            if models[0] == models[1]:
-                results['models'].pop(1)
-                results['results'].pop(1)
+        # initialize list of results 
+        model=[]
+        x_val=[]
+        x_upp=[]
+        x_low=[]
+        p_0  =[]
+        p_1  =[]
 
-        return True, results
+        # when only one model is selected we predict twice as a workaround. Here we clean the duplicate
+        if len (results) == 2 and results[0].getMeta('modelID') == results[1].getMeta('modelID'):
+            results.pop(1)
+
+        # valiables to extract
+        var_list = [x_upp, x_low, p_0, p_1]
+        nam_list = ['upper_limit', 'lower_limit', 'p0', 'p1']
+
+        for ii in results:
+
+            # append model info
+            model.append((ii.getMeta("endpoint"),ii.getMeta("version")))
+            x_val.append(ii.getVal("values")[0])
+
+            # extract available results, making sure that the field exist, and adding -99.9 as a missing value
+            for j,k in zip(var_list,nam_list): 
+                iii = ii.getVal(k)
+                if  iii != None:
+                    j.append(iii[0])
+                else:
+                    j.append(-99.9) 
+        
+        # print (model, x_val, x_low, x_upp, p_0, p_1)
+
+        return True, {'models':model, 'results':x_val, 'lower':x_low, 'upper':x_upp, 'p0': p_0, 'p1': p_1}
     else:
         return False, 'unable to retrieve prediction results'
+
+    # success, results = flame_manage.action_profiles_summary('namastox',output="summary")
+    # print (results)
+    # if success:
+    #     # when only a model is selected the profile runs it twice, remove the last one
+    #     models = results['models']
+    #     if len(models)==2:
+    #         if models[0] == models[1]:
+    #             results['models'].pop(1)
+    #             results['results'].pop(1)
+
+    #     return True, results
+    # else:
+    #     return False, 'unable to retrieve prediction results'
 
 def exportRA (raname):
     '''
