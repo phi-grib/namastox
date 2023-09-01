@@ -489,7 +489,7 @@ def getLocalModelPrediction():
                     j.append(iii[0])
 
                     # compose an uncertainty label
-                    if k == 'lower_limit':
+                    if   k == 'lower_limit':
                         uncstr += f'CI {iii[0]:.2f}'
                     elif k == 'upper_limit':
                         uncstr += f' to {iii[0]:.2f}'
