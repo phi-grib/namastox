@@ -463,32 +463,52 @@ def getLocalModelPrediction():
         x_low=[]
         p_0  =[]
         p_1  =[]
+        unc  =[]
 
         # when only one model is selected we predict twice as a workaround. Here we clean the duplicate
         if len (results) == 2 and results[0].getMeta('modelID') == results[1].getMeta('modelID'):
             results.pop(1)
 
         # valiables to extract
-        var_list = [x_upp, x_low, p_0, p_1]
-        nam_list = ['upper_limit', 'lower_limit', 'p0', 'p1']
+        var_list = [x_low, x_upp, p_0, p_1]
+        nam_list = ['lower_limit', 'upper_limit', 'p0', 'p1']
 
         for ii in results:
 
             # append model info
             model.append((ii.getMeta("endpoint"),ii.getMeta("version")))
-            x_val.append(ii.getVal("values")[0])
+            ival = ii.getVal("values")[0]
+            x_val.append(ival)
 
+            uncstr = ''
+            
             # extract available results, making sure that the field exist, and adding -99.9 as a missing value
             for j,k in zip(var_list,nam_list): 
                 iii = ii.getVal(k)
                 if  iii != None:
                     j.append(iii[0])
+
+                    # compose an uncertainty label
+                    if k == 'lower_limit':
+                        uncstr += f'CI {iii[0]:.2f}'
+                    elif k == 'upper_limit':
+                        uncstr += f' to {iii[0]:.2f}'
+                    elif k == 'p0' and ival == 0.0:
+                        uncstr = f'{iii[0]:.2f}'
+                    elif k == 'p1' and ival == 1.0:
+                        uncstr = f'{iii[0]:.2f}'
                 else:
                     j.append(-99.9) 
+
+            # fill unc with the uncertainty label
+            if uncstr=='':
+                unc.append ("na")
+            else:
+                unc.append(uncstr)
         
         # print (model, x_val, x_low, x_upp, p_0, p_1)
 
-        return True, {'models':model, 'results':x_val, 'lower':x_low, 'upper':x_upp, 'p0': p_0, 'p1': p_1}
+        return True, {'models':model, 'results':x_val, 'lower':x_low, 'upper':x_upp, 'p0': p_0, 'p1': p_1, 'uncertainty': unc}
     else:
         return False, 'unable to retrieve prediction results'
 
