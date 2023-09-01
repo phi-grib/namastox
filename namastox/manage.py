@@ -392,9 +392,13 @@ def getModelDocumentation (model_name, model_ver):
     if not success:
         return False, documentation
 
-    documentation_JSON = documentation.dumpJSON()
+    documentation_YAML = documentation.dumpYAML()
+    documentation_str = ''
+    for iline in documentation_YAML:
+        documentation_str+= iline.split('#')[0]+'\n'
+    documentation_dict = yaml.safe_load(documentation_str)
 
-    return True, documentation_JSON
+    return True, documentation_dict
 
 def predictLocalModels (raname, models, versions):
     ''' returns a prediction using the substance defined in the ra, using the list of local models and versions specified
