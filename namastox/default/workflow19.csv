@@ -1,9 +1,18 @@
 num	id	label	result_type	name	category	description	method_type	method_link	next_node	next_yes	next_no
 1	A0001	BB001_01	text	Problem formulation	TASK	Enter a description of the problem formulation, including a clear assessment question	expert		2		
-2	A0002	BB002_01	text	Relevant existing data	TASK	Search for available data about this compound in existing data sources (see suggested links)	expert		3		
-3	A0003	DP01EF_01	bool	Is the information sufficient?	LOGICAL	Justify if existing data is sufficient for answering the question posed in the Problem Formulation				4	5,14,18
-4	Z0001	EXIT1	text	Risk assessment report	END				4		
+2	A0002	BB002_01	text	Relevant existing data for substance of interest?	TASK	Search for available data about this compound in existing data sources (see suggested links)	expert		3		
+3	A0003	DP01EF_01	bool	Information sufficient?	LOGICAL	Justify if existing data is sufficient for answering the question posed in the Problem Formulation	 			4	7
+4	A0004	BB017_01	value	Derive Point-of-Departure (POD)	TASK	>>> Derive Point-of-Departure (POD)	expert		5		
+5	Z0001	EXIT1	text	Risk assessment report	END						
+7	A0004	DP02EF_01	bool	Is read-across applicable?	LOGICAL	Justify in the application of read-accross can answer the question posed in the Problem Formulation				8	11,25,35
+8	A0005	BB019_01	text	Perform read-across using existing data	TASK	>> Perform read-across using existing data			9		
+9	A0006	DP01EF_01	bool	Information sufficient?	LOGICAL	Justify if existing data is sufficient for answering the question posed in the Problem Formulation				4	10
+10	A0007	BB020_01	value	Generate NAM data based on read-across hypothesis 	TASK	>> Generate NAM data based on read-across hypothesis (Hazard and ADME)			11		
+11	A0008	BB021_01	text	Integration of results	TASK	>> Analyze and integrate the results obtained in previous steps			12		
+12	A0009	DP01EF_01	bool	Information sufficient?	LOGICAL	Justify if existing data is sufficient for answering the question posed in the Problem Formulation				4	11,25,35
+											
 5	B0001	BB014_01	value	Generate in silico predictions of hazard	TASK	Apply a battery of in silico methods for relevant hazard	insilico	local_models	6		
+											
 6	B0002		bool	Alert for genotoxicity, skin irritation or sensitization?	LOGICAL	Search for alerts in the structure associated to skin irritation or sensitization 	insilico	internal		7	9
 7	B0003		text	Defined approaches or dedicated test to confirm or characterize alert	TASK	Alerts detected in the previous step should be confirmed by applying in vitro or in silico approaches, like the ones we suggest in our links	invitro+insilico	internal	8		
 8	B0004		bool	Is the information sufficient?	LOGICAL	Justify if existing data is sufficient for answering the question posed in the Problem Formulation				5	4
