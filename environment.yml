@@ -20,7 +20,7 @@ dependencies:
   - pytest
   - psycopg2
   - python-docx
-  - openpyxl
+  - XlsxWriter
   - appdirs
   - pip:
      - xgboost

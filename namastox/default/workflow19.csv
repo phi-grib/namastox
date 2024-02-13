@@ -11,6 +11,9 @@ num	id	label	result_type	name	category	description	method_type	method_link	next_
 11	A0008	BB021_01	text	Integration of results	TASK	>> Analyze and integrate the results obtained in previous steps			12		
 12	A0009	DP01EF_01	bool	Information sufficient?	LOGICAL	Justify if existing data is sufficient for answering the question posed in the Problem Formulation				4	11,25,35
 											
+											
+											
+											
 5	B0001	BB014_01	value	Generate in silico predictions of hazard	TASK	Apply a battery of in silico methods for relevant hazard	insilico	local_models	6		
 											
 6	B0002		bool	Alert for genotoxicity, skin irritation or sensitization?	LOGICAL	Search for alerts in the structure associated to skin irritation or sensitization 	insilico	internal		7	9
