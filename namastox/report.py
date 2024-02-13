@@ -22,33 +22,32 @@
 
 from namastox.logger import get_logger
 from namastox.ra import Ra
+import os, yaml
 
 LOG = get_logger(__name__)
 
-def action_report(raname, pfile=None, wfile=None):
-    ''' generate a report with the current status of the RA 
-    '''
+def action_report (raname, report_format):
 
     # instantiate a ra object
     ra = Ra(raname)
     succes, results = ra.load()
+
     if not succes:
         return False, results
+    
+    if report_format == 'yaml':
+        reportfile = os.path.join (ra.rapath,'report.yaml')
+        dict_temp = {
+            'ra': ra.ra,
+            'general': ra.general, 
+            'results': ra.results,
+            'notes': ra.notes,
+        }
+        with open(reportfile,'w') as f:
+            f.write(yaml.dump(dict_temp))
 
-    # show exec summary
-    LOG.info (f'Risk assessment {raname}, ID {ra.getVal("ID")}')
+        return True, reportfile
+    else:
+        print ('format unknown')
 
-    substances = ra.getVal("substances")
-    if type(substances) == list:
-        for isubs in substances:
-            for key in isubs:
-                LOG.info (f'substance {isubs[key]}') 
-
-    endpoint = ra.getVal("endpoint")
-    if type(endpoint) == dict:
-        for iend in endpoint:
-            LOG.info (f'endpoint {endpoint[iend]}') 
-
-    LOG.info (f'Administration route {ra.getVal("administration_route")}')
-
-    return True, results
+    return False, None
