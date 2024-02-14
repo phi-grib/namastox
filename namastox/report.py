@@ -96,6 +96,9 @@ def action_report (raname, report_format):
         irow+=1
    
         # Results section
+
+        bool_to_text = {True:'Yes', False:'No'}
+
         for reitem in ra.results:
             #TODO use a more descriptive label
             worksheet.write(irow, 0, reitem['id'], label_format )
@@ -115,7 +118,11 @@ def action_report (raname, report_format):
                     worksheet.write(irow, 3, ilink['File'], value_format )
                     irow+=1
 
-            if 'decision' in reitem:
+            if 'decision' in reitem and reitem['decision']:
+                worksheet.write(irow, 1, 'decision', label_format )
+                worksheet.write(irow, 3, bool_to_text[reitem['report']], value_format )
+                irow+=1
+
                 worksheet.write(irow, 1, 'justification', label_format )
                 worksheet.write(irow, 3, reitem['justification'], value_format )
                 irow+=1
@@ -126,17 +133,26 @@ def action_report (raname, report_format):
                         worksheet.write(irow, 1, 'result', label_format )
                         worksheet.write(irow, 3, iresult, value_format )
                         irow+=1
+                    
+                    for iresult in reitem['uncertainties']:
+                        if iresult['p'] > 0:
+                            worksheet.write(irow, 2, 'p', label_format )
+                            worksheet.write(irow, 3, iresult['p'], value_format )
+                            irow+=1
+            
+                        if iresult['term'] != '':
+                            worksheet.write(irow, 2, 'term', label_format )
+                            worksheet.write(irow, 3, iresult['term'], value_format )
+                            irow+=1
     
-                # valores numéricos
-    
-                # uncertainties
+                #TODO: valores numéricos
 
             irow+=1
 
 
 
 
-        # Notes section
+        #TODO: Notes section
 
         # close workbook    
         workbook.close()
