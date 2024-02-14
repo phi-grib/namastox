@@ -58,7 +58,8 @@ def action_report (raname, report_format):
         worksheet = workbook.add_worksheet()
 
         # define styles
-        worksheet.set_column(0,2,width=25)
+        worksheet.set_column(0,0,width=40)
+        worksheet.set_column(1,2,width=25)
         worksheet.set_column(3,3,width=60)
 
         label_format = workbook.add_format()
@@ -98,10 +99,13 @@ def action_report (raname, report_format):
         # Results section
 
         bool_to_text = {True:'Yes', False:'No'}
+        workflow = ra.workflow
 
         for reitem in ra.results:
+
             #TODO use a more descriptive label
-            worksheet.write(irow, 0, reitem['id'], label_format )
+            node_name = (workflow.getNode(reitem['id']).getVal('name'))
+            worksheet.write(irow, 0, node_name, label_format )
 
             worksheet.write(irow, 1, 'date', label_format )
             worksheet.write(irow, 3, reitem['date'], value_format )
@@ -129,23 +133,55 @@ def action_report (raname, report_format):
             
             else:
                 if reitem['result_type'] == 'text':
+
                     for iresult in reitem['values']:
                         worksheet.write(irow, 1, 'result', label_format )
                         worksheet.write(irow, 3, iresult, value_format )
                         irow+=1
                     
                     for iresult in reitem['uncertainties']:
-                        if iresult['p'] > 0:
-                            worksheet.write(irow, 2, 'p', label_format )
+                        if 'p' in iresult and iresult['p'] > 0:
+                            worksheet.write(irow, 2, 'confidence p', label_format )
                             worksheet.write(irow, 3, iresult['p'], value_format )
                             irow+=1
             
-                        if iresult['term'] != '':
-                            worksheet.write(irow, 2, 'term', label_format )
+                        if 'term' in iresult and iresult['term'] != '':
+                            worksheet.write(irow, 2, 'uncertainty', label_format )
                             worksheet.write(irow, 3, iresult['term'], value_format )
                             irow+=1
-    
-                #TODO: valores numéricos
+
+                elif reitem['result_type'] == 'value':
+                            
+                    #TODO: fallback if there is not matching
+                    if len(reitem['values'])==len(reitem['uncertainties']):
+                        for iresult,iuncertain in zip(reitem['values'],reitem['uncertainties']):
+                            worksheet.write(irow, 1, 'result', label_format )
+                                
+                            if 'parameter' in iresult:
+                                worksheet.write(irow, 2, 'parameter', value_format )
+                                worksheet.write(irow, 3, iresult['parameter'], value_format )
+                                irow+=1
+                                
+                            if 'unit' in iresult and iresult['unit']!='':
+                                worksheet.write(irow, 2, 'unit', value_format )
+                                worksheet.write(irow, 3, iresult['unit'], value_format )
+                                irow+=1
+                                
+                            if 'value' in iresult:
+                                worksheet.write(irow, 2, 'value', value_format )
+                                worksheet.write(irow, 3, iresult['value'], value_format )
+                                irow+=1
+                
+                            if 'p' in iuncertain and iuncertain['p'] > 0:
+                                worksheet.write(irow, 2, 'confidence p', label_format )
+                                worksheet.write(irow, 3, iuncertain['p'], value_format )
+                                irow+=1
+                
+                            if 'term' in iuncertain and iuncertain['term'] != '':
+                                worksheet.write(irow, 2, 'uncertainty', label_format )
+                                worksheet.write(irow, 3, iuncertain['term'], value_format )
+                                irow+=1
+       
 
             irow+=1
 
