@@ -23,12 +23,7 @@
 from namastox.logger import get_logger
 from namastox.ra import Ra
 import os, yaml
-
-os.environ['OPENBLAS_CORETYPE']='haswell'
-
 import xlsxwriter
-
-
 
 LOG = get_logger(__name__)
 
@@ -41,19 +36,19 @@ def action_report (raname, report_format):
     if not succes:
         return False, results
     
-    dict_temp = {
-        'ra': ra.ra,
-        'general': ra.general, 
-        'results': ra.results,
-        'notes': ra.notes,
-    }
 
     if report_format == 'yaml':
     
         reportfile = os.path.join (ra.rapath,'report.yaml')
+
+        # include only "human interesting" sections
+        dict_temp = {
+            'general': ra.general, 
+            'results': ra.results,
+            'notes': ra.notes,
+        }
         with open(reportfile,'w') as f:
             f.write(yaml.dump(dict_temp))
-        return True, reportfile
     
     elif report_format == 'excel':
 
@@ -62,25 +57,94 @@ def action_report (raname, report_format):
         workbook = xlsxwriter.Workbook(reportfile)
         worksheet = workbook.add_worksheet()
 
-        worksheet.write('A1', 'Hello world')
+        # define styles
+        worksheet.set_column(0,2,width=25)
+        worksheet.set_column(3,3,width=60)
 
-        workbook.close()
-        return True, reportfile
+        label_format = workbook.add_format()
+        label_format.set_align('top') 
+        
+        value_format = workbook.add_format()
+        value_format.set_text_wrap() 
+        value_format.set_align('top') 
 
+        # General section
+        raitem = ra.general
+        labels = ['title','endpoint', 'general_description', 'administration_route', 'regulatory_framework','species','background']
+
+        irow =0 
+        worksheet.write(irow, 0, 'General Information', label_format )
+        for ilabel in labels:
+            if not ilabel in raitem:
+                continue
+            worksheet.write(irow, 1, ilabel.replace('_',' '), label_format )
+            worksheet.write(irow, 3, raitem[ilabel], value_format )
+            irow+=1
+
+        substances_items = ra.general['substances']
+        substance_keys = ['name', 'casrn', 'id', 'smiles']
+        
+        for isubstance in substances_items:
+            worksheet.write(irow, 1, 'substance', label_format ) 
+            for ikey in substance_keys:
+                if not ikey in isubstance:
+                    continue
+                worksheet.write(irow, 2, ikey, label_format )
+                worksheet.write(irow, 3, isubstance[ikey], value_format )
+                irow+=1
+
+        irow+=1
+   
+        # Results section
+        for reitem in ra.results:
+            #TODO use a more descriptive label
+            worksheet.write(irow, 0, reitem['id'], label_format )
+
+            worksheet.write(irow, 1, 'date', label_format )
+            worksheet.write(irow, 3, reitem['date'], value_format )
+            irow+=1
+            
+            worksheet.write(irow, 1, 'summary', label_format )
+            worksheet.write(irow, 3, reitem['summary'], value_format )
+            irow+=1
+
+            if len(reitem['links'])> 0:            
+                worksheet.write(irow, 1, 'links', label_format )
+                for ilink in reitem['links']:
+                    worksheet.write(irow, 2, ilink['label'].replace('_',' '), label_format )
+                    worksheet.write(irow, 3, ilink['File'], value_format )
+                    irow+=1
+
+            if 'decision' in reitem:
+                worksheet.write(irow, 1, 'justification', label_format )
+                worksheet.write(irow, 3, reitem['justification'], value_format )
+                irow+=1
+            
+            else:
+                if reitem['result_type'] == 'text':
+                    for iresult in reitem['values']:
+                        worksheet.write(irow, 1, 'result', label_format )
+                        worksheet.write(irow, 3, iresult, value_format )
+                        irow+=1
     
-        # ws.title = f"RA {raname} report" 
-        # alignment_style = Alignment(vertical='top',wrapText=True)
+                # valores numéricos
+    
+                # uncertainties
 
-        # try:    
-        #     wb.save(reportfile)
-        #     return True, reportfile
-        # except:
-        #     return False, f'error saving report as {reportfile}'
+            irow+=1
+
+
+
+
+        # Notes section
+
+        # close workbook    
+        workbook.close()
 
     else:
-        print ('format unknown')
+        return False, 'format unsupported'
 
-    return False, None
+    return True, reportfile
 
 
 
