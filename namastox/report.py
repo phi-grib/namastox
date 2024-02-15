@@ -43,6 +43,8 @@ def report_excel (ra):
     worksheet.set_column(0,0,width=40)
     worksheet.set_column(1,2,width=25)
     worksheet.set_column(3,3,width=60)
+    worksheet.set_column(4,6,width=25)
+
 
     label_format = workbook.add_format({'align':'top', 'text_wrap': True, 'bold': True})
     value_format = workbook.add_format({'align':'top', 'text_wrap': True, 'font_color':'#3465A4'})
@@ -81,21 +83,22 @@ def report_excel (ra):
 
     for reitem in ra.results:
 
-        #TODO use a more descriptive label
-        node_name = (workflow.getNode(reitem['id']).getVal('name'))
-        worksheet.write(irow, 0, node_name+f" ({reitem['id']})", label_format )
+        # Name and Description are not in results but in workflow
+        inode = workflow.getNode(reitem['id'])
+        itask = inode.getTask()
+        idict = itask.getDescriptionDict()
+        name = idict['task description']['name']
+        description = idict['task description']['description']
 
+        worksheet.write(irow, 0, name+f" ({reitem['id']})", label_format )
+
+        worksheet.write(irow, 1, 'description', label_format )
+        worksheet.write(irow, 3, description, value_format )
+        irow+=1
         
         worksheet.write(irow, 1, 'summary', label_format )
         worksheet.write(irow, 3, reitem['summary'], value_format )
         irow+=1
-
-        if len(reitem['links'])> 0:            
-            worksheet.write(irow, 1, 'links', label_format )
-            for ilink in reitem['links']:
-                worksheet.write(irow, 2, ilink['label'].replace('_',' '), label_format )
-                worksheet.write(irow, 3, ilink['File'], value_format )
-                irow+=1
 
         if 'decision' in reitem and reitem['decision']:
             worksheet.write(irow, 1, 'decision', label_format )
@@ -117,47 +120,75 @@ def report_excel (ra):
                 if 'uncertainties' in reitem:
                     for iresult in reitem['uncertainties']:
                         if 'p' in iresult and iresult['p'] > 0:
-                            worksheet.write(irow, 2, 'confidence p', label_format )
+                            worksheet.write(irow, 1, 'confidence p', label_format )
                             worksheet.write(irow, 3, iresult['p'], value_format )
                             irow+=1
             
                         if 'term' in iresult and iresult['term'] != '':
-                            worksheet.write(irow, 2, 'uncertainty', label_format )
+                            worksheet.write(irow, 1, 'uncertainty', label_format )
                             worksheet.write(irow, 3, iresult['term'], value_format )
                             irow+=1
 
             elif reitem['result_type'] == 'value':
                         
-                #TODO: fallback if there is not matching
                 if len(reitem['values'])==len(reitem['uncertainties']):
+                    worksheet.write(irow, 1, 'result', label_format )
+                    
                     for iresult,iuncertain in zip(reitem['values'],reitem['uncertainties']):
-                        worksheet.write(irow, 1, 'result', label_format )
                             
                         if 'parameter' in iresult:
-                            worksheet.write(irow, 2, 'parameter', label_format )
-                            worksheet.write(irow, 3, iresult['parameter'], value_format )
-                            irow+=1
-                            
-                        if 'unit' in iresult and iresult['unit']!='':
-                            worksheet.write(irow, 2, 'unit', label_format )
-                            worksheet.write(irow, 3, iresult['unit'], value_format )
-                            irow+=1
+                            worksheet.write(irow, 2, iresult['parameter'], label_format )
                             
                         if 'value' in iresult:
-                            worksheet.write(irow, 2, 'value', label_format )
                             worksheet.write(irow, 3, iresult['value'], value_format )
-                            irow+=1
-            
+
+                        if 'unit' in iresult and iresult['unit']!='':
+                            worksheet.write(irow, 4, iresult['unit'], value_format )
+                            
                         if 'p' in iuncertain and iuncertain['p'] > 0:
-                            worksheet.write(irow, 2, 'confidence p', label_format )
-                            worksheet.write(irow, 3, iuncertain['p'], value_format )
+                            worksheet.write(irow, 5, f"conf: {iuncertain['p']}", value_format )
+            
+                        if 'term' in iuncertain and iuncertain['term'] != '':
+                            worksheet.write(irow, 6, iuncertain['term'], value_format )
+                            
+                        irow+=1
+
+                # fallback when the size of parameters and uncertainties don't match (this should never happen)
+                else:
+                    worksheet.write(irow, 1, 'result', label_format )
+                    
+                    for iresult in reitem['values']:
+                            
+                        if 'parameter' in iresult:
+                            worksheet.write(irow, 2, iresult['parameter'], label_format )
+                            
+                        if 'value' in iresult:
+                            worksheet.write(irow, 3, iresult['value'], value_format )
+
+                        if 'unit' in iresult and iresult['unit']!='':
+                            worksheet.write(irow, 4, iresult['unit'], value_format )
+                    
+                        irow+=1
+                            
+                    for iuncertain in reitem['uncertainties']:
+                        if 'p' in iuncertain and iuncertain['p'] > 0:
+                            worksheet.write(irow, 2, 'confidence', value_format )
+                            worksheet.write(irow, 3, f"conf: {iuncertain['p']}", value_format )
                             irow+=1
             
                         if 'term' in iuncertain and iuncertain['term'] != '':
-                            worksheet.write(irow, 2, 'uncertainty', label_format )
+                            worksheet.write(irow, 2, 'uncertainty', value_format )
                             worksheet.write(irow, 3, iuncertain['term'], value_format )
                             irow+=1
+
     
+        if len(reitem['links'])> 0:            
+            worksheet.write(irow, 1, 'links', label_format )
+            for ilink in reitem['links']:
+                worksheet.write(irow, 2, ilink['label'].replace('_',' '), label_format )
+                worksheet.write(irow, 3, ilink['File'], value_format )
+                irow+=1
+
         worksheet.write(irow, 1, 'date', label_format )
         worksheet.write(irow, 3, reitem['date'], value_format )
         irow+=1
@@ -199,6 +230,8 @@ def action_report (raname, report_format):
         }
         with open(reportfile,'w') as f:
             f.write(yaml.dump(dict_temp))
+
+        return True, reportfile
     
     elif report_format == 'excel':
 
