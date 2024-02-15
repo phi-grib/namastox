@@ -60,3 +60,10 @@ def action_note(raname, noteid, out='text'):
     '''
 
     return True, f"get note {noteid} for {raname}. Not implemented"
+
+def action_note_add (raname, note):
+    ''' adds the note given as argument to this raname
+    '''
+    print (note)
+    
+    return False, 'not implemented'
