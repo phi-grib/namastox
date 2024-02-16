@@ -20,14 +20,11 @@
 # You should have received a copy of the GNU General Public License
 # along with NAMASTOX. If not, see <http://www.gnu.org/licenses/>.
 
-from namastox.logger import get_logger
 from namastox.ra import Ra
 import os
 import random
 import string
 from datetime import date
-
-LOG = get_logger(__name__)
 
 def action_notes(raname, step=None, out='json'):
     ''' returns the list of results available for this raname/step
