@@ -304,6 +304,12 @@ class Ra:
         ''' return a list with RA notes
         '''
         return self.notes
+    
+    def addNote(self, note):
+        ''' append the note give as argument to the RA notes
+        '''
+        self.notes.append(note)
+        return True
 
     def getGeneralInfo(self):
         ''' return a dictionary with RA status
@@ -353,6 +359,7 @@ class Ra:
             used when the input_result will apply to a terminal node (active node) and 
             therefore will expand the workflow
         '''
+
         # identify workflow node for which this result is being applied
         input_result_id = input_result['id']
         input_node = self.getNode(input_result_id)

@@ -22,48 +22,62 @@
 
 from namastox.logger import get_logger
 from namastox.ra import Ra
+import os
 
 LOG = get_logger(__name__)
 
-def action_notes(raname, step=None, out='text'):
+def action_notes(raname, step=None, out='json'):
     ''' returns the list of results available for this raname/step
     '''
 
     # instantiate a ra object
     ra = Ra(raname)
     succes, results = ra.load(step)
+
     if not succes:
         return False, results
 
-    # get a dictionary with the ra.yaml contents that can
-    # be passed to the GUI or shown in screen
     notes = ra.getNotes()
 
-    LOG.debug(f'Retrieved notes for {raname}')
-    
-    output = []
-    for inote in notes:
-        if 'id' not in inote or 'author' not in inote or 'date' not in inote:
-            continue
-        oline = f'{inote["id"]} author:{inote["author"]} date: {inote["date"]} '
-        
-        LOG.info(oline)
-        output.append(oline)
+    return True, notes
 
-    if out=='json':
-        return True, output
-    
-    return True, f'{len(output)} notes found for {raname}'
-
-def action_note(raname, noteid, out='text'):
+def action_note(raname, noteid):
     ''' returns a given note for this raname
     '''
 
-    return True, f"get note {noteid} for {raname}. Not implemented"
+    # instantiate a ra object
+    ra = Ra(raname)
+    succes, results = ra.load()
+    
+    if not succes:
+        return False, results
+
+    notes = ra.getNotes()
+
+    for inote in notes:
+        if 'id'in inote and inote['id'] == noteid:
+            return True, inote
+
+    return False, f'no note with id {noteid} found'
 
 def action_note_add (raname, note):
     ''' adds the note given as argument to this raname
     '''
-    print (note)
+
+    # instantiate a ra object
+    ra = Ra(raname)
+    succes, results = ra.load()
+
+    if not succes:
+        return False, results
+
+    # use input dictionary to update RA
+    success = ra.addNote(note)
+
+    if not success:
+        return False, 'note not added'
     
-    return False, 'not implemented'
+    # save new version and replace the previous one
+    ra.save()
+    
+    return True, 'OK'
