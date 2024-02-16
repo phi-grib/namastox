@@ -145,7 +145,7 @@ def report_excel (ra):
                         if 'unit' in iresult and iresult['unit']!='':
                             worksheet.write(irow, 4, iresult['unit'], value_format )
                             
-                        if 'p' in iuncertain and iuncertain['p'] > 0:
+                        if 'p' in iuncertain and iuncertain['p'] != '0':
                             worksheet.write(irow, 5, f"conf: {iuncertain['p']}", value_format )
             
                         if 'term' in iuncertain and iuncertain['term'] != '':
@@ -193,11 +193,22 @@ def report_excel (ra):
         worksheet.write(irow, 3, reitem['date'], value_format )
         irow+=1
 
-        # empty line
+    irow+=1
+
+    # Notes section
+    for noitem in ra.notes:
+        worksheet.write(irow, 0, f"{noitem['title']} ({noitem['id']})", label_format )
+        worksheet.write(irow, 1, 'note', label_format )
+        worksheet.write(irow, 3, noitem['text'], value_format )
+        irow+=1
+        worksheet.write(irow, 1, 'date', label_format )
+        worksheet.write(irow, 3, noitem['date'], value_format )
+        irow+=1
+    
         irow+=1
 
-    #TODO: Notes section
-
+    irow+=1
+        
     # close workbook    
     workbook.close()
 
