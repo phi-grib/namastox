@@ -49,7 +49,8 @@ class Ra:
             'workflow_name': None,
             'step': 0,
             'active_nodes_id': [],
-            # 'node_path': []
+            'tasks_completed': None,
+            'notes': None
         }
         self.general = {
             'endpoint': {},
@@ -187,6 +188,11 @@ class Ra:
     def getStatus(self):
         ''' return a dictionary with RA status
         '''
+
+        # Update the number of tasks completed and the number of notes
+        self.ra['tasks_completed'] = len (self.results)
+        self.ra['notes'] = len (self.notes)
+
         return {'ra':self.ra}
 
     def getActiveNodes (self):
@@ -309,6 +315,7 @@ class Ra:
         ''' append the note give as argument to the RA notes
         '''
         self.notes.append(note)
+        self.ra['notes'] = len (self.notes)
         return True
 
     def getGeneralInfo(self):
@@ -389,6 +396,7 @@ class Ra:
         # advance workflow: step+1, active workflow+1
         step = self.ra['step']
         self.ra['step']=step+1
+        self.ra['tasks_completed'] = len(self.results)
         LOG.info(f'workflow advanced to step: {step+1}')
 
     def edit_result (self, input_result):
