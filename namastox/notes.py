@@ -23,6 +23,9 @@
 from namastox.logger import get_logger
 from namastox.ra import Ra
 import os
+import random
+import string
+
 
 LOG = get_logger(__name__)
 
@@ -60,6 +63,7 @@ def action_note(raname, noteid):
 
     return False, f'no note with id {noteid} found'
 
+
 def action_note_add (raname, note):
     ''' adds the note given as argument to this raname
     '''
@@ -71,13 +75,16 @@ def action_note_add (raname, note):
     if not succes:
         return False, results
 
+    # generate a random ID
+    note['id'] =  ''.join(random.choice(string.ascii_uppercase) for _ in range(4))
+    
     # use input dictionary to update RA
     success = ra.addNote(note)
 
     if not success:
         return False, 'note not added'
     
-    # save new version and replace the previous one
+    # save new version 
     ra.save()
     
     return True, 'OK'
