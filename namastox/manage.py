@@ -215,6 +215,11 @@ def action_steps(raname, out='text'):
 
     steps = []
     for ra_hist_file in os.listdir(rahist):
+
+        # ignore backup files
+        if ra_hist_file.startswith('bk'):
+            continue
+        
         ra_hist_item = os.path.join(rahist, ra_hist_file)
         if os.path.isfile(ra_hist_item):
             idict = {}
