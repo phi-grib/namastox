@@ -25,7 +25,7 @@ from namastox.ra import Ra
 import os
 import random
 import string
-
+from datetime import date
 
 LOG = get_logger(__name__)
 
@@ -78,6 +78,10 @@ def action_note_add (raname, note):
     # generate a random ID
     note['id'] =  ''.join(random.choice(string.ascii_uppercase) for _ in range(4))
     
+    # add current date
+    today = date.today()
+    note['date'] = today.strftime("%d/%m/%Y")
+
     # use input dictionary to update RA
     success = ra.addNote(note)
 
