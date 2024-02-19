@@ -89,3 +89,27 @@ def action_note_add (raname, note):
     ra.save()
     
     return True, 'OK'
+
+
+def action_note_delete(raname, noteid):
+    ''' remove a given note for this raname
+    '''
+
+    # instantiate a ra object
+    ra = Ra(raname)
+    succes, results = ra.load()
+    
+    if not succes:
+        return False, results
+
+    notes = ra.getNotes()
+
+    for inote in notes:
+        if 'id'in inote and inote['id'] == noteid:
+            notes.remove(inote)
+            # save new version 
+            ra.save()
+            return True, 'OK'
+
+
+    return False, f'no note with id {noteid} found'
