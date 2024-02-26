@@ -50,7 +50,12 @@ class Node:
         index_str = self.next_node 
         if index_str is None:
             return []
-        
+
+        # in some cases the index_str is interpreted as an int 
+        if isinstance(index_str, int):
+            return [index_str-1]
+            
+        # generate a list of ints from the text
         index_raw=index_str.strip().split(',')
         index_list=[]
         for i in index_raw:

@@ -183,6 +183,8 @@ class Task:
         ''' returns self.results, removing information for the type of task provided as argument'''
         temp_result = self.result.copy()
         
+        black_keys=[]
+        
         if category == 'TASK':
             black_keys = ['decision', 'justification']
         elif category == 'LOGICAL':
