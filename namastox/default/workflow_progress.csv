@@ -1,12 +1,55 @@
 num	id	label	result_type	name	category	description	method_type	method_link	next_node	next_yes	next_no
-1	A0001	BB001_01	text	NEW Problem formulation	TASK	Enter a description of the problem formulation, including a clear assessment question	expert		2		
+1	A0001	BB001_01	text	Problem formulation	TASK	Enter a description of the problem formulation, including a clear assessment question	expert		2		
 2	A0002	BB002_01	text	Relevant existing data for substance of interest?	TASK	Search for available data about this compound in existing data sources (see suggested links)	expert		3		
 3	A0003	DP01EF_01	bool	Information sufficient?	LOGICAL	Justify if existing data is sufficient for answering the question posed in the Problem Formulation	 			4	7
-4	A0004	BB017_01	value	Derive Point-of-Departure (POD)	TASK	>>> Derive Point-of-Departure (POD)	expert		5		
+4	A0004	BB017_01	value	Derive Point-of-Departure POD	TASK	>>> Derive Point-of-Departure POD	expert		5		
 5	Z0001	EXIT1	text	Risk assessment report	END						
 7	A0004	DP02EF_01	bool	Is read-across applicable?	LOGICAL	Justify in the application of read-accross can answer the question posed in the Problem Formulation				8	11,25,35
-8	A0005	BB019_01	text	Perform read-across using existing data	TASK	>> Perform read-across using existing data			9		
+8	A0005	BB019_01	text	Perform read-across using existing data	TASK	>> Perform read-across using existing data	in silico		9		
 9	A0006	DP01EF_01	bool	Information sufficient?	LOGICAL	Justify if existing data is sufficient for answering the question posed in the Problem Formulation				4	10
-10	A0007	BB020_01	value	Generate NAM data based on read-across hypothesis 	TASK	>> Generate NAM data based on read-across hypothesis (Hazard and ADME)			11		
-11	A0008	BB021_01	text	Integration of results	TASK	>> Analyze and integrate the results obtained in previous steps			12		
-12	A0009	DP01EF_01	bool	Information sufficient?	LOGICAL	Justify if existing data is sufficient for answering the question posed in the Problem Formulation				4	11,25,35
+10	A0007	BB020_01	value	Generate NAM data based on read-across hypothesis 	TASK	>> Generate NAM data based on read-across hypothesis (Hazard and ADME)	in vitro		11		
+11	A0008	BB021_01	text	Integration of results	TASK	>> Analyze and integrate the results obtained in previous steps	expert		12		
+12	A0009	DP01EF_01	bool	Information sufficient?	LOGICAL	Justify if existing data is sufficient for answering the question posed in the Problem Formulation				4	13, 27, 38
+13	H0001	BB008_01	value	Generate in silico predictions of hazard	TASK		in silico		14, 16		
+14	H0002	BB009_01	value	Generate high-thoughput in vitro data	TASK		in vitro		15		
+15	H0003	BB010_01	text	Integration of results	TASK		expert		21		
+16	H0004	DP06EF_01	bool	Alert for genotoxicity, eye irritation, skin irritation or sensitization?	LOGICAL					17	14
+17	H0005	BB011_01	text	Defined approaches and/or dedicated tests to confirm or characterize alert	TASK		in vitro		18		
+18	H0006	BB012_01	text	Integration of results	TASK		expert		19		
+19	H0007	DP07EF_01	bool	Information sufficient?	LOGICAL	 				15	20
+20	H0008	BB013_01	value	Perform dedicated tests for data gap filling	TASK		in vitro		15		
+21	H0009	DP08EF_01	bool	Toxicological alters identified? AOPs triggered?	LOGICAL					22	23
+22	H0010	DP09EF_01	bool	Information sufficient?	LOGICAL					26	23
+23	H0011	BB015_01	value	Generate medium-throughput in vitro toxicity data	TASK		in vitro		24		
+24	H0012	BB016_01	text	Integration of results	TASK		expert		25		
+25	H0013	DP09EF_01	bool	Information sufficient?	LOGICAL					26	35
+26	H0014	BB017_01	value	Derive Point-of-Departure POD	TASK		expert		49		
+27	B0001	DP03EF_01	bool	Are ADME properties known?	LOGICAL					30	29
+28	B0002	BB003_01	value	Generate basic set of in silico and in vitro ADME data	TASK		in silico		29		
+29	B0003	BB004_01	value	Run PBPK model	TASK		in silico		30, 42		
+30	B0004	xxx	bool	Relevant metabolite formed?	LOGICAL					13	31
+31	B0005	DP04EF_01	bool	Prediction of PBPK model acceptable?	LOGICAL					36	32
+32	B0006	BB005_01	value	Generated data for additional ADME parameters	TASK				33		
+33	B0007	BB006_01	value	Run PBK model	TASK				34		
+34	B0008	DP05EF_01	bool	Prediction of PBPK model acceptable?	LOGICAL					36	35
+35	B0009	BB007_01	text	Consider other types of relevant testing	TASK				5		
+36	B0010	BB014_01	value	Derive estimates of relevant test concentrations	TASK				23		
+38	E0001	BB022_01	text	Identify and specify user scenarios	TASK		expert		39		
+39	E0002	DP10EF_01	bool	Is TTC applicable?	LOGICAL					45	40
+40	E0003	BB023_01	value	Estimate external exposure	TASK		expert		41		
+41	E0004	BB024_01	value	Determine maximum exposure Emax	TASK		expert		29, 42		
+42	E0005	BB028_01	value	Calculate internal exposure using Emax	TASK		expert		49		
+43	E0006	BB029_01	value	Refine exposure estimate, for example dominant pathway	TASK		expert		44		
+44	E0007	BB030_01	value	Calculate internal exposure, refined	TASK		expert		49		
+45	E0008	BB023_01	value	Estimate external exposure	TASK		expert		45		
+46	E0009	BB024_01	value	Determine maximum exposure Emax	TASK		expert		47		
+47	E0010	BB025_01	text	Perform TTC approach	TASK		expert		48		
+48	E0011	DP11EF_01	bool	Is Emax lower than TTC?	LOGICAL					5	49
+49	E0012	BB026_01	value	Refine estimation of Emax with further data	TASK		expert		50		
+50	E0010	BB025_01	text	Perform TTC approach	TASK		expert		51		
+51	E0011	DP11EF_01	bool	Is Emax lower than TTC?	LOGICAL					5	40
+53	X0001	DP14EF_01	bool	Is the outcome acceptable?	LOGICAL					5	54
+54	X0002	DP12EF_01	bool 	Is deterministic refinement posible?	LOGICAL					57	55
+55	X0003	DP13EF_01	bool	Is probabilistic refinement posible?	LOGICAL					57	56
+56	X0004	BB032_01	text	Generate or collect data needed for probabilistic approaches	TASK				57		
+57	X0005	BB031_01	value	Calculate internal exposure, further refined	TASK		expert		49		
