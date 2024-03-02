@@ -1,0 +1,6 @@
+id	label	result_type	name	category	description	method_type	method_link	next_node	next_yes	next_no
+A0001	BB001_01	text	Problem formulation	TASK	Enter a description of the problem formulation, including a clear assessment question	expert		A0002		
+A0002	BB002_01	text	Relevant existing data for substance of interest?	TASK	Search for available data about this compound in existing data sources	expert		A0003		
+A0003	DP01EF_01	bool	Information sufficient?	LOGICAL	Justify if existing data is sufficient for answering the question posed in the Problem Formulation	 			A0004	Z0001
+A0004	BB017_01	value	Derive Point-of-Departure POD	TASK	Derive Point-of-Departure POD	expert		Z0001		
+Z0001	EXIT1	text	Risk assessment report	END						

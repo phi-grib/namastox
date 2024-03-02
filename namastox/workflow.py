@@ -46,7 +46,10 @@ class Workflow:
         self.nodes = []
         self.rapath = ra_path(raname)
 
+        # try to load a pickle created previously
         success = self.load()
+
+        # if not found import from the file defined in self.workflow
         if not success:
             success = self.import_table()
 
@@ -55,6 +58,8 @@ class Workflow:
             sys.exit(-1)
 
     def import_table (self):
+        ''' parse a TSV defining the workflow '''
+
         table_path = os.path.join (self.rapath,self.workflow)
         
         LOG.debug (f'import table {table_path}')
@@ -62,22 +67,36 @@ class Workflow:
         table_dataframe = pd.read_csv(table_path, sep='\t').replace(np.nan, None)
         table_dict = table_dataframe.to_dict('list')
 
+        # minimum elements in the TSV
         index_labels = ['id', 'label', 'name', 'category', 'next_node', 'next_yes', 'next_no']
         for i in index_labels:
             if not i in table_dict:
                 return False
 
+        # columns which should be converted to int in case they were floats
+            
+        int_keys = ['next_node', 'next_yes', 'next_no']
+
+        # for every table row...
         for i in range(table_dataframe.shape[0]):
+
+            # create a new node, by creating an empty dictionary
+            # and copying everying inside
             node_content = {}
+
             for key in table_dict:
                 value = table_dict[key][i] 
-                if key in ['next_node', 'next_yes', 'next_no']:
+
+                # apply rules
+                if key in int_keys:
                     if type(value) == float:
                         value = int(value)
+
                 node_content[key]=value   
+
+            # append the node to the list of nodes
             self.nodes.append(Node(node_content))
              
-
         self.save()
 
         return True
@@ -124,10 +143,7 @@ class Workflow:
 
     def logicalNodeList (self, iid, decision):
         inode = self.getNode(iid)
-        index_list = inode.logicalNodeIndex(decision)   
-        # print ('index_list:', index_list)   
-        # print ('selfnodes len:', len(self.nodes))     
-
+        index_list = inode.logicalNodeIndex(decision)    
         return [self.nodes[x].getVal('id') for x in index_list]
     
     def graphNext (self, nodeid, inode, decision=None, visited=False):
