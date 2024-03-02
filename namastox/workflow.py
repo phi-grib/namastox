@@ -43,7 +43,8 @@ class Workflow:
         else:
             self.workflow = 'workflow.csv'
 
-        self.nodes = []
+        self.nodes = {}
+        self.firstNodeId = ''
         self.rapath = ra_path(raname)
 
         # try to load a pickle created previously
@@ -62,7 +63,7 @@ class Workflow:
 
         table_path = os.path.join (self.rapath,self.workflow)
         
-        LOG.debug (f'import table {table_path}')
+        LOG.info (f'import table {table_path}')
 
         table_dataframe = pd.read_csv(table_path, sep='\t').replace(np.nan, None)
         table_dict = table_dataframe.to_dict('list')
@@ -73,30 +74,22 @@ class Workflow:
             if not i in table_dict:
                 return False
 
-        # columns which should be converted to int in case they were floats
-            
-        int_keys = ['next_node', 'next_yes', 'next_no']
-
         # for every table row...
         for i in range(table_dataframe.shape[0]):
 
             # create a new node, by creating an empty dictionary
             # and copying everying inside
             node_content = {}
-
             for key in table_dict:
                 value = table_dict[key][i] 
-
-                # apply rules
-                if key in int_keys:
-                    if type(value) == float:
-                        value = int(value)
-
                 node_content[key]=value   
 
             # append the node to the list of nodes
-            self.nodes.append(Node(node_content))
+            self.nodes[node_content['id']] = Node(node_content)
              
+            if i==0:
+                self.firstNodeId = node_content['id']
+
         self.save()
 
         return True
@@ -111,6 +104,7 @@ class Workflow:
         
         with open(pickl_path,'rb') as f:
             self.nodes = pickle.load(f)
+            self.firstNodeId = pickle.load(f)
             
         return True
 
@@ -120,31 +114,26 @@ class Workflow:
         pickl_path = os.path.join (self.rapath,'workflow.pkl')
         with open(pickl_path,'wb') as f:
             pickle.dump(self.nodes, f, protocol=pickle.HIGHEST_PROTOCOL)
+            pickle.dump(self.firstNodeId, f, protocol=pickle.HIGHEST_PROTOCOL)
 
     def getNode (self, iid):
-        for inode in self.nodes:
-            if inode.getVal('id') == iid:
-                return inode
+        if iid in self.nodes:
+            return self.nodes[iid]
         return None
 
     def getTask (self, iid):
-        for inode in self.nodes:
-            if inode.getVal('id') == iid:
-                return inode.getTask()
+        if iid in self.nodes:
+            return self.nodes[iid].getTask()    
         return None    
             
     def firstNode (self):
-        return self.nodes[0]
+        return self.nodes[self.firstNodeId]
     
-    def nextNodeList (self, iid):
-        inode = self.getNode(iid)
-        index_list = inode.nextNodeIndex()
-        return [self.nodes[x].getVal('id') for x in index_list]
-
-    def logicalNodeList (self, iid, decision):
-        inode = self.getNode(iid)
-        index_list = inode.logicalNodeIndex(decision)    
-        return [self.nodes[x].getVal('id') for x in index_list]
+    def nextNodeList (self, id):
+        return self.nodes[id].nextNodes()
+    
+    def logicalNodeList (self, id, decision):
+        return self.nodes[id].nextLogicalNodes(decision)
     
     def graphNext (self, nodeid, inode, decision=None, visited=False):
         inext = self.getNode(nodeid)
@@ -175,37 +164,29 @@ class Workflow:
         return ibody, istyle, ilinks
         
     def getTaskName (self, id):
-        for inode in self.nodes:
-            if inode.id == id:
-                itask = inode.getTask()
-                return itask.getName()
+        if id in self.nodes:
+            itask = self.nodes[id].getTask()
+            return itask.getName()
+        
         return None
 
-    def recurse (self, iid):
-        for i,inode in enumerate(self.nodes):
-            next_list = inode.nextNodeIndex()
-            if iid in next_list:
-                self.recurse_list.append(i)
-                self.recurse(i)
+    def recurse (self, id):
+        for inode in self.nodes:
+            next_list = inode.nextNodes()
+            if id in next_list:
+                self.recurse_list.append(id)
+                self.recurse(id)
         
     def getUpstreamNodes (self, id):
         upstream_nodes  = []
-        iid = -1
-        
-        for i,inode in enumerate(self.nodes):
-            if inode.id == id:
-                iid = i
-                break
-
-        # nothing found, return an empty string
-        if iid == -1:
+        if not id in self.nodes:
             return upstream_nodes
-        
+                
         self.recurse_list = []
-        self.recurse(iid)
+        self.recurse(id)
 
         for i in self.recurse_list:
-            upstream_nodes.append(self.nodes[i].id)
+            upstream_nodes.append(self.recurse_list)
 
         return upstream_nodes
 

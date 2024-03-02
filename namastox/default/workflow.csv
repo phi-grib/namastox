@@ -1,48 +1,6 @@
-num	id	label	result_type	name	category	description	method_type	method_link	next_node	next_yes	next_no
-1	A0001	BB001_01	text	Problem formulation	TASK	Enter a description of the problem formulation, including a clear assessment question	expert		2		
-2	A0002	BB002_01	text	Relevant existing data	TASK	Search for available data about this compound in existing data sources (see suggested links)	expert		3		
-3	A0003	DP01EF_01	bool	Is the information sufficient?	LOGICAL	Justify if existing data is sufficient for answering the question posed in the Problem Formulation				4	5,14,18
-4	Z0001	EXIT1	text	Risk assessment report	END				4		
-5	B0001	BB014_01	value	Generate in silico predictions of hazard	TASK	Apply a battery of in silico methods for relevant hazard	insilico	local_models	6		
-6	B0002		bool	Alert for genotoxicity, skin irritation or sensitization?	LOGICAL	Search for alerts in the structure associated to skin irritation or sensitization 	insilico	internal		7	9
-7	B0003		text	Defined approaches or dedicated test to confirm or characterize alert	TASK	Alerts detected in the previous step should be confirmed by applying in vitro or in silico approaches, like the ones we suggest in our links	invitro+insilico	internal	8		
-8	B0004		bool	Is the information sufficient?	LOGICAL	Justify if existing data is sufficient for answering the question posed in the Problem Formulation				5	4
-9	B0005		bool	Is read-across applicable?	LOGICAL	Justify in the application of read-accross can answer the question posed in the Problem Formulation				8	10,12
-10	B0006	BB015_01	value	Generate HT in vitro data	TASK	Apply Hight-Throughput transcriptomics	invitro		11		
-11	B0008	BB016_01	text	Integration of results	TASK	Integrate the results obtained so far by different methods, identifying the most important conclusions, related with the Problem Formulation	expert	 	39		
-12	B0007		value	Generate NAM data based on read-across hypothesis	TASK	Use the hypothesis obtained by read-across to design NAM test  	invitro	NAM database	13		
-13	B0009	BB016_01	text	Integration of results	TASK	Analyze and integrate the results obtained in previous steps	expert		4		
-14	C0001		bool	Are ADME properties of substance of interest known?	LOGICAL	Justify if the ADME information about the substance of interest is sufficient	 			4	15
-15	C0002	BB008_01	value	Generate basic set of ADME data	TASK	Apply suitable in vitro methods for estimating the toxico kinetics parameters that can were considered to have the highest priority. 	invitro+insilico	NAM database	16,19		
-16	C0003	BB010_01	value	Run PBK model	TASK	Calculate PK parameters using PBPK	insilico	NAM database	17		
-17	C0004		bool	Is prediction/uncertainty of PBPK model acceptable?	LOGICAL	Justify if the results of the PBPK are acceptable in terms of the prediction and the uncertainty of the parameters				26,37	33
-18	D0001		text	Identify and specify use scenario	TASK	Identify the use scenario of the substance of interest and enter a description	expert		19		
-19	D0002		value	Estimate external exposure Tier 0	TASK	Estimate external exposure Tier 0	expert		20		
-20	D0003	DP02EF_01	bool	Is exposure scenario well defined	LOGICAL	Justify if the exposure scenario is well defined in existing data				21	24
-21	D0004		value	Definition of maximum exposure Emax	TASK	Define the maximum exposure (Emax) value. Document this choice	expert		22		
-22	D0005		bool	Is the TTC applicable?	LOGICAL	Justify if a decision based on the Threshold of Toxicological Concern can be applicable				23	24
-23	D0006		text	Perform the TTC approach	TASK	Perform the TTC approach	expert		4		
-24	D0007		value	Calculate Tier 0 internal dose per use scenario	TASK	Calculate Tier 0 internal dose per use scenario	insilico		25		
-25	D0008		text	Prioritise use scenarios on impact aggregation	TASK	Prioritise use scenarios on impact aggregation	expert		26		
-26	D0009		bool	Dominant pathway?	LOGICAL	Dominant pathway?				29	27
-27	D0010		bool	Deterministic refinement possible	LOGICAL	Deterministic refinement possible			 	29	28
-28	D0011		bool	Probabilistic refinement possible	LOGICAL	Probabilistic refinement possible				29	30
-29	D0012		value	Refine estimate by calculating internal exposure levels	TASK	Refine estimate by calculating internal exposure levels	insilico		31		
-30	D0013		value	Generate data Exposure assessment suffers from high uncertainty?	TASK	Generate data Exposure assessment suffers from high uncertainty?	insilico				
-31	D0014		value	Aggregated internal exposure max	TASK	Aggregated internal exposure max	insilico				
-32	E0001		bool	Is exposure above PoD?	LOGICAL	Is exposure above PoD?			 	4	4
-33	C0005		value	Generate in vitro data for additional ADME parameters	TASK	Generate in vitro data for additional ADME parameters	invitro	NAM database	34		
-34	C0006	BB010_01	value	Run PBK model	TASK	Run PBK model	insilico	NAM database	35		
-35	C0007		bool	Is prediction/uncertainty of PBPK model acceptable?	LOGICAL	Is prediction/uncertainty of PBPK model acceptable?				29,37,45	36
-36	C0008		value	Generate compound specific experimental in vivo ADME data?	TASK	Generate compound specific experimental in vivo ADME data?	invivo				
-37	C0009		value	Generate estimates of relevant test concentrations	TASK	Generate estimates of relevant test concentrations	insilico		41		
-38	B0010		bool	Is the information sufficient?	LOGICAL	Is the information sufficient?				4	47
-39	B0012		bool	Is a toxicological alert identified?	LOGICAL	Is a toxicological alert identified?				41	42
-40	B0013		bool	Is the information sufficient?	LOGICAL	Is the information sufficient?				4	42
-41	B0014	BB018_01	value	Generate medium-throughput in vitro toxicity data	TASK	Generate medium-thruoghput in vitro toxicity data	invitro	NAM database	42		
-42	B0015	BB016_01	text	Integration of results	TASK	Integration of results	expert		43		
-43	B0016	DP06EF_01	bool	Is the information sufficient?	LOGICAL	Is the information sufficient?				44	45
-44	B0017	EXIT2	text	Risk assessment report	END	Risk assessment report					
-45	B0018	BB010_01	value	Generate toxicity data using more complex tests	TASK	Generate toxicity data using more complex tests	invitro	NAM database	47		
-46	B0019	BB016_01	text	Integration of results	TASK	Integration of results	expert		48		
-47	B0020	BB016_01	value	Derivation of PoD	TASK	Derivation of PoD	insilico		32		
+id	label	result_type	name	category	description	method_type	method_link	next_node	next_yes	next_no
+A0001	BB001_01	text	Problem formulation	TASK	Enter a description of the problem formulation, including a clear assessment question	expert		A0002		
+A0002	BB002_01	text	Relevant existing data for substance of interest?	TASK	Search for available data about this compound in existing data sources	expert		A0003		
+A0003	DP01EF_01	bool	Information sufficient?	LOGICAL	Justify if existing data is sufficient for answering the question posed in the Problem Formulation	 			A0004	Z0001
+A0004	BB017_01	value	Derive Point-of-Departure POD	TASK	Derive Point-of-Departure POD	expert		Z0001		
+Z0001	EXIT1	text	Risk assessment report	END						
