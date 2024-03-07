@@ -116,6 +116,12 @@ class Task:
             return None
         return (self.description['name'])
     
+    def getLabel (self):
+        '''returns the task label field'''
+        if not 'label' in self.description:
+            return None
+        return (self.description['label'])
+    
     def getDescriptionText (self):
         '''returns the task description field'''
         if not 'description' in self.description:
@@ -164,6 +170,7 @@ class Task:
         for ikey in self.description:
             if ikey in task_dict:
                 self.description[ikey]=task_dict[ikey]
+                # print ('>>>>>',ikey, self.description[ikey])
 
         for ikey in self.result:
             if ikey in task_dict:

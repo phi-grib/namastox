@@ -30,15 +30,27 @@ class Node:
         This class represents only the *topological aspects* of the node
         All the data is in class Task (results)
     '''
-    # def __init__(self, node_name, node_id, node_type, node_task=None):
     def __init__(self, node_content):
         ''' constructor '''
         self.name = node_content['name']
         self.id = node_content['id']
         self.category = node_content['category']
-        self.next_node = node_content['next_node']
-        self.next_yes = node_content['next_yes']
-        self.next_no = node_content['next_no']
+
+        self.next_node = []
+        if isinstance(node_content['next_node'], str):
+            node_list = node_content['next_node'].strip().split(',')
+            self.next_node = node_list
+
+        self.next_yes = []
+        if isinstance(node_content['next_yes'], str):
+            node_list = node_content['next_yes'].strip().split(',')
+            self.next_yes = node_list
+
+        self.next_no = []
+        if isinstance(node_content['next_no'], str):
+            node_list = node_content['next_no'].strip().split(',')
+            self.next_no = node_list
+
         self.setTask(node_content)
     
     def getVal(self, field):
@@ -46,38 +58,15 @@ class Node:
             return self.__dict__[field]
         return None
     
-    def nextNodeIndex(self):
-        index_str = self.next_node 
-        if index_str is None:
-            return []
-
-        # in some cases the index_str is interpreted as an int 
-        if isinstance(index_str, int):
-            return [index_str-1]
-            
-        # generate a list of ints from the text
-        index_raw=index_str.strip().split(',')
-        index_list=[]
-        for i in index_raw:
-            if i != '':
-                index_list.append(int(i)-1)
-
-        # index_list = [(int(x)-1) for x in index_str.split(',')] 
-        
-        return (index_list)
-
-    def logicalNodeIndex(self, decision):
-        if decision:
-            index_str = str(self.next_yes) 
-        else:
-            index_str = str(self.next_no) 
-        
-        if index_str is None:
-            return []
-
-        index_list = [(int(x)-1) for x in index_str.split(',')] 
-        return (index_list)
+    def nextNodes(self):
+        return self.next_node
     
+    def nextLogicalNodes (self, decision):
+        if decision:
+            return self.next_yes
+        else:
+            return self.next_no
+   
     def setTask(self, node_task):
         self.task = Task(node_task)
 

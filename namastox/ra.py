@@ -208,6 +208,7 @@ class Ra:
             input_node = self.getNode(node_id)
             itask = input_node.getTask()
             olist.append({'id':node_id, 
+                          'label':itask.getLabel(),
                           'name':itask.getName(),
                           'description':itask.getDescriptionText(),
                           'category':itask.getCategoryText()})
@@ -254,6 +255,7 @@ class Ra:
 
             # the name of the node is extracted from the itask description 
             olist.append({'id':node_id, 
+                          'label':itask.getLabel(),
                           'name':itask.getName(),
                           'values':ivalue,
                           'uncertainties':iuncertainties
@@ -343,6 +345,7 @@ class Ra:
                     workflow_pkl = os.path.join(self.rapath,'workflow.pkl')
                     if os.path.isfile(workflow_pkl):
                         os.remove(workflow_pkl)
+                        
                     LOG.info (f'workflow name updated to {workflow_custom}')
 
         self.workflow = Workflow(self.raname, self.ra['workflow_name'])
