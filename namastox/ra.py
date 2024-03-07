@@ -255,6 +255,7 @@ class Ra:
 
             # the name of the node is extracted from the itask description 
             olist.append({'id':node_id, 
+                          'label':itask.getLabel(),
                           'name':itask.getName(),
                           'values':ivalue,
                           'uncertainties':iuncertainties

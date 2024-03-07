@@ -172,23 +172,17 @@ class Workflow:
 
     def recurse (self, id):
         for inode in self.nodes:
-            next_list = inode.nextNodes()
+            next_list = self.nodes[inode].nextNodes()
             if id in next_list:
-                self.recurse_list.append(id)
-                self.recurse(id)
+                self.recurse_list.append(inode)
+                self.recurse(inode)
         
     def getUpstreamNodes (self, id):
-        upstream_nodes  = []
         if not id in self.nodes:
-            return upstream_nodes
-                
+            return []                
         self.recurse_list = []
         self.recurse(id)
-
-        for i in self.recurse_list:
-            upstream_nodes.append(self.recurse_list)
-
-        return upstream_nodes
+        return (self.recurse_list)
 
     def isVisitedNode(self, id, results):
         node_path =[iresult['id'] for iresult in results]
