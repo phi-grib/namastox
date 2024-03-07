@@ -169,8 +169,19 @@ class Task:
         '''
         for ikey in self.description:
             if ikey in task_dict:
-                self.description[ikey]=task_dict[ikey]
-                # print ('>>>>>',ikey, self.description[ikey])
+
+                if ikey == 'method_link':
+                    method_link =[]
+                    
+                    if isinstance(task_dict['method_link'], str):
+                        method_link = task_dict['method_link'].strip().split(',')
+                    
+                    self.description['method_link'] = method_link
+
+                else:
+
+                    self.description[ikey]=task_dict[ikey]
+            
 
         for ikey in self.result:
             if ikey in task_dict:
