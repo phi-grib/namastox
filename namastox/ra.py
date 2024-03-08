@@ -443,6 +443,7 @@ class Ra:
             input_result_id = input_result['id']
             input_node = self.getNode(input_result_id)
             input_node_category = input_node.getVal('category')
+            # input_result['label'] = input_node.getTask().getLabel()
             
             # if node is empty do not process and do not progress in workflow
             if input_node_category == 'LOGICAL':
@@ -468,6 +469,7 @@ class Ra:
                 self.edit_result(input_result)
 
             input_result['date']= time.strftime("%d/%b/%Y %H:%M", time.localtime()) 
+
 
         # DO NOT SAVE HERE! this is called by update.py and it will be saved from there
         # self.save()

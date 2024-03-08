@@ -64,10 +64,15 @@ def action_results(raname, step=None, out='text'):
             else:
                 idate = 'na'
 
+            print (iresult)
             if 'decision' in iresult:
-                odict.append({'id':iresult['id'],'name':iresult['name'],'summary':iresult['summary'],'decision':iresult['decision'], 'date': idate })
+                # odict.append({'id':iresult['id'],'name':iresult['name'], 'label':iresult['label'],
+                odict.append({'id':iresult['id'],'name':iresult['name'],
+                              'summary':iresult['summary'],'decision':iresult['decision'], 'date': idate })
             elif 'values' in iresult:
-                odict.append({'id':iresult['id'],'name':iresult['name'],'summary':iresult['summary'],'values':iresult['values'], 'date': idate })
+                # odict.append({'id':iresult['id'],'name':iresult['name'], 'label': iresult['label'],
+                odict.append({'id':iresult['id'],'name':iresult['name'],
+                              'summary':iresult['summary'],'values':iresult['values'], 'date': idate })
                 
         return True , odict
         
