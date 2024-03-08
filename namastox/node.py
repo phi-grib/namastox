@@ -76,7 +76,6 @@ class Node:
         return task
     
     def style (self, visited=False, future=False):
-
         # next nodes
         if future:
             return_style = f'style {self.id} fill:#e9f5f9,stroke:#a8d5e5\n'
@@ -94,7 +93,6 @@ class Node:
         # standard nodes (TASK or LOGICAL)
         return return_style
         
-    
     def box (self):
         # split labels in half, adding '\\n' betweeen the two middle words
         words = self.name.split()

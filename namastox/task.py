@@ -73,6 +73,7 @@ class Task:
             'id': None,
             'result_type': None,     # text | value | bool
             #########################################################
+            
             # for LOGICAL
             'decision': False,       
             'justification': None,   
@@ -87,10 +88,6 @@ class Task:
                                      #  'value': 0.18,
                                      #  'unit': 'nM',
                                      # }
-
-            # 'uncertainty': [],     
-            # 'uncertainty_term': [],
-            # 'uncertainty_p': [],   
 
             'uncertainties': [],     # list of values {
                                      #  'uncertainty': 'experimental SEM +/- 0.34',
@@ -191,12 +188,6 @@ class Task:
             if ikey not in self.result and ikey not in self.description:
                 self.other[ikey]=task_dict[ikey]
 
-    # def setResult(self, result_dict:dict):
-    #     ''' sets the fields of the results dict provided in argument as fields of self.result'''
-    #     for ikey in self.result:
-    #         if ikey in result_dict:
-    #             self.result[ikey]=result_dict[ikey]
-
     def getResult (self, category):
         ''' returns self.results, removing information for the type of task provided as argument'''
         temp_result = self.result.copy()
@@ -213,30 +204,3 @@ class Task:
                 temp_result.pop (bkey)
 
         return temp_result
-
-    # def valResult(self, task_result:dict):
-    #     ''' makes sure that the task_result dict meets the task requirements
-    #     '''
-    #     if type(task_result) is not dict:
-    #         return False
-
-    #     compulsory_keys = ['summary']
-
-    #     if self.description['category'] == 'LOGICAL':
-    #         compulsory_keys.append ('decision')
-    #         compulsory_keys.append ('justification')
-
-    #     elif self.description['category'] == 'TASK':
-    #         compulsory_keys.append ('report')
-    #         compulsory_keys.append ('values')
-    #         compulsory_keys.append ('uncertainties')
-    #         # compulsory_keys.append ('uncertainty')
-    #         # compulsory_keys.append ('uncertainty_term')
-    #         # compulsory_keys.append ('uncertainty_p')
-
-    #     for ikey in compulsory_keys:
-    #         if ikey not in task_result:
-    #             return False
-
-    #     return True
-        
