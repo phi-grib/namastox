@@ -186,9 +186,11 @@ def report_excel (ra):
                             irow+=1
 
     
-        if len(reitem['links'])> 0:            
+        if len(reitem['links'])> 0:    
             worksheet.write(irow, 1, 'links', label_format )
             for ilink in reitem['links']:
+                if 'include' in ilink and not ilink['include']:
+                    continue 
                 worksheet.write(irow, 2, ilink['label'].replace('_',' '), label_format )
                 worksheet.write(irow, 3, ilink['File'], value_format )
                 irow+=1
