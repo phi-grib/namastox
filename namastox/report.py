@@ -89,8 +89,12 @@ def report_excel (ra):
         idict = itask.getDescriptionDict()
         name = idict['task description']['name']
         description = idict['task description']['description']
+        if 'label' in reitem:
+            label = reitem['label']
+        else:
+            label = ''
 
-        worksheet.write(irow, 0, name+f" ({reitem['id']})", label_format )
+        worksheet.write(irow, 0, name+f" ({label})", label_format )
 
         worksheet.write(irow, 1, 'description', label_format )
         worksheet.write(irow, 3, description, value_format )
