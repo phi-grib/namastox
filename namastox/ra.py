@@ -65,7 +65,7 @@ class Ra:
         }
         self.results = []
         self.notes = []
-        self.assessment = None
+        # self.assessment = None
         self.placehoders = {
             'general_description': 'Descriptive text about this study',
             'background': 'Any relevant information',
@@ -130,7 +130,7 @@ class Ra:
                     return False, 'step not found'                
 
         # validate yaml_dict
-        keylist = ['ra', 'general', 'results', 'notes', 'assessment']
+        keylist = ['ra', 'general', 'results', 'notes']
         for ikey in keylist:
             if yaml_dict[ikey]!=None:
                 self.__dict__[ikey]=yaml_dict[ikey]
@@ -149,8 +149,8 @@ class Ra:
             'ra': self.ra,
             'general': self.general, 
             'results': self.results,
-            'notes': self.notes,
-            'assessment': self.assessment
+            'notes': self.notes
+            # 'assessment': self.assessment
         }
         with open(rafile,'w') as f:
             f.write(yaml.dump(dict_temp))
