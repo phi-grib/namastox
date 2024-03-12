@@ -601,6 +601,9 @@ def getInfoStructure(molname=None, casrn=None):
             return False, ins
         
         if resp.status==200:
-            return True, json.loads(resp.data)
+            result = json.loads(resp.data)
+            if result == []:
+                return False, 'no compound found'
+            return True, result
 
     return False, resp.status
