@@ -33,6 +33,9 @@ from namastox.node import Node
 
 LOG = get_logger(__name__)
 
+SUBGRAPHS_LIST = ['B', 'H', 'E']
+# SUBGRAPHS_LIST = []
+
 class Workflow:
     ''' Class storing all the risk assessment information
     '''
@@ -135,9 +138,20 @@ class Workflow:
     def logicalNodeList (self, id, decision):
         return self.nodes[id].nextLogicalNodes(decision)
     
+    def subgraph_assign (self, nodeA, nodeB):       
+        idA = nodeA.id[0]
+        idB = nodeB.id[0]
+        if idA != idB:
+            return ''
+        else:
+            if idA in SUBGRAPHS_LIST:
+                return idA
+        return ''
+
     def graphNext (self, nodeid, inode, decision=None, visited=False):
         inext = self.getNode(nodeid)
         arrow = '-->'
+        subgraph = None
         if decision is True:
             arrow = '--Y-->'
         elif decision is False:
@@ -146,10 +160,14 @@ class Workflow:
         istyle = inext.style(visited=visited, future=False)
         ilinks = f'click {inext.id} onA\n'
 
+        #TODO subgraph is recognized using only the first couple of nodes, starting with the True
+        # something more sophisticated could be implemented but looks like it is not needed for now
         if inext.category == 'LOGICAL' and not visited:
             next_nodes_true  =self.logicalNodeList(nodeid, True)
             for jid in next_nodes_true:
                 ilog = self.getNode(jid)
+                if subgraph is None:
+                    subgraph = self.subgraph_assign(inode, ilog)
                 ibody += f'{inext.box()}--Y-->{ilog.box()}\n'
                 istyle += ilog.style(True, True)
                 ilinks += f'click {ilog.id} onA\n'
@@ -157,11 +175,16 @@ class Workflow:
             next_nodes_false  =self.logicalNodeList(nodeid, False)
             for jid in next_nodes_false:
                 ilog = self.getNode(jid)
+                if subgraph is None:
+                    subgraph = self.subgraph_assign(inode, ilog)
                 ibody += f'{inext.box()}--N-->{ilog.box()}\n'
                 istyle += ilog.style(True, True)
                 ilinks += f'click {ilog.id} onA\n' 
+        
+        else:
+            subgraph = self.subgraph_assign(inode, inext)
              
-        return ibody, istyle, ilinks
+        return ibody, istyle, ilinks, subgraph
         
     def getTaskName (self, id):
         if id in self.nodes:
@@ -198,6 +221,8 @@ class Workflow:
 
         header = 'graph TD\n'
         body = ''
+        #TODO subgraphs were hardcoded, think a way to make this more flexible
+        subbody = {'H':'subgraph HAZARD\n', 'B':'subgraph ADME\n', 'E':'subgraph EXPOSURE\n'}
         style = ''
         links = ''
         
@@ -229,8 +254,11 @@ class Workflow:
                     next_nodes = self.nextNodeList(iid)
                     for jid in next_nodes:
                         visited = jid in node_path
-                        ibody, istyle, ilinks = self.graphNext(jid, inode, None, visited)
-                        body += ibody
+                        ibody, istyle, ilinks, subgraph = self.graphNext(jid, inode, None, visited)
+                        if subgraph != '':
+                            subbody[subgraph]+=ibody
+                        else:
+                            body += ibody
                         style+= istyle
                         links+= ilinks
 
@@ -241,8 +269,11 @@ class Workflow:
                         next_nodes_true  = self.logicalNodeList(iid, True)
                         for jid in next_nodes_true:
                             visited = jid in node_path
-                            ibody, istyle, ilinks = self.graphNext(jid, inode, True, visited)
-                            body += ibody
+                            ibody, istyle, ilinks, subgraph = self.graphNext(jid, inode, True, visited)
+                            if subgraph != '':
+                                subbody[subgraph]+=ibody
+                            else:
+                                body += ibody
                             style+= istyle
                             links+= ilinks
 
@@ -250,12 +281,26 @@ class Workflow:
                         next_nodes_false =self.logicalNodeList(iid, False)
                         for jid in next_nodes_false:
                             visited = jid in node_path
-                            ibody, istyle, ilinks = self.graphNext(jid, inode, False, visited)
-                            body += ibody
+                            ibody, istyle, ilinks, subgraph = self.graphNext(jid, inode, False, visited)
+                            if subgraph != '':
+                                subbody[subgraph]+=ibody
+                            else:
+                                body += ibody
                             style+= istyle
                             links+= ilinks
 
-        return (header+body+style+links)
+        subgraph_style_catalogue = {'H':"style HAZARD fill:#AADDDD,stroke:#DDDDDD\n",
+                                    'B':"style ADME fill:#DDAADD,stroke:#DDDDDD\n",
+                                    'E':"style EXPOSURE fill:#DDDDAA,stroke:#DDDDDD\n"}
+        subgraph_style = ''
+        for ikey in subbody:
+            if len(subbody[ikey])>20:
+                subbody[ikey]+='end\n'
+                subgraph_style+=subgraph_style_catalogue[ikey]
+            else:
+                subbody[ikey]=''
+
+        return (header+body+subbody['H']+subbody['B']+subbody['E']+style+subgraph_style+links)
 
 
 
