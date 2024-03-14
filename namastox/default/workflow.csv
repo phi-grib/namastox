@@ -24,10 +24,9 @@ H0011	BB015_01	value	Generate medium-throughput in vitro toxicity data	TASK		in 
 H0012	BB016_01	text	Integration of results	TASK		expert		H0013		
 H0013	DP09EF_01	bool	Information sufficient?	LOGICAL	Justify if existing data is sufficient for answering the question posed in the Problem Formulation				H0014	B0009
 H0014	BB017_01	value	Derive Point-of-Departure POD	TASK		expert		X0001		
-B0001	DP03EF_01	bool	Are ADME properties known?	LOGICAL					B0004	B0002
+B0001	DP03EF_01	bool	Are ADME properties known?	LOGICAL					B0003,B0010	B0002
 B0002	BB003_01	value	Generate basic set of in silico and in vitro ADME data	TASK		in silico		B0003		
-B0003	BB004_01	value	Run PBPK model	TASK		in silico		B0004,E0005		
-B0004	BXXX_01	bool	Relevant metabolite formed?	LOGICAL					H0001	B0005
+B0003	BB004_01	value	Run PBPK model	TASK		in silico		B0005,E0005		
 B0005	DP04EF_01	bool	Prediction of PBPK model acceptable?	LOGICAL					B0010	B0006
 B0006	BB005_01	value	Generated data for additional ADME parameters	TASK		in vitro		B0007		
 B0007	BB006_01	value	Run PBK model	TASK		in silico		B0008		
@@ -37,19 +36,19 @@ B0010	BB014_01	value	Derive estimates of relevant test concentrations	TASK		expe
 E0001	BB022_01	text	Identify and specify user scenarios	TASK		expert		E0002		
 E0002	DP10EF_01	bool	Is TTC applicable?	LOGICAL					E0008	E0003
 E0003	BB023_01	value	Estimate external exposure	TASK		expert		E0004		
-E0004	BB024_01	value	Determine maximum exposure Emax	TASK		expert		B0003,E0005		
+E0004	BB024_01	value	Determine maximum exposure Emax	TASK		expert		B0003,E0010		
 E0005	BB028_01	value	Calculate internal exposure using Emax	TASK		expert		X0001		
 E0006	BB029_01	value	Refine exposure estimate, for example dominant pathway	TASK		expert		E0007		
 E0007	BB030_01	value	Calculate internal exposure, refined	TASK		expert		X0001		
-E0008	BB023_01	value	Estimate external exposure	TASK		expert		E0008		
-E0009	BB024_01	value	Determine maximum exposure Emax	TASK		expert		E0010		
+E0008	BB023_01	value	Estimate external exposure	TASK		expert		E0009		
+E0009	BB024_01	value	Determine maximum exposure Emax	TASK		expert		E0005,B0003		
 E0010	BB025_01	text	Perform TTC approach	TASK		expert		E0011		
 E0011	DP11EF_01	bool	Is Emax lower than TTC?	LOGICAL					Z0001	E0012
 E0012	BB026_01	value	Refine estimation of Emax with further data	TASK		expert		E0013		
 E0013	BB025_01	text	Perform TTC approach	TASK		expert		E0014		
 E0014	DP11EF_01	bool	Is Emax lower than TTC?	LOGICAL					Z0001	E0003
 X0001	BB018_01	text	Compare POD with exposure	TASK				X0002		
-X0002	DP14EF_01	bool	Is the outcome acceptable?	LOGICAL					Z0001, E0006	X0003
+X0002	DP14EF_01	bool	Is the outcome acceptable?	LOGICAL					Z0001,E0006	X0003
 X0003	DP12EF_01	bool 	Is deterministic refinement possible?	LOGICAL					X0006	X0004
 X0004	DP13EF_01	bool	Is probabilistic refinement possible?	LOGICAL					X0006	X0005
 X0005	BB032_01	text	Generate or collect data needed for probabilistic approaches	TASK		expert		X0006		
