@@ -1,0 +1,45 @@
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'tertiaryColor': '#aaaaaa'
+    }
+  }
+}%%
+
+
+flowchart TD
+    A0001[Problem formulation ]-->A0002[Relevant existing data for\\nsubstance of interest? ]
+	A0002[Relevant existing data for substance of interest? ]-->A0003{Information sufficient? }
+	A0003{Information sufficient? }--N-->A0005{Is read-across applicable? }
+	A0005{Is read-across\napplicable? }--N-->H0001[Generate in silico\npredictions of hazard ]
+	A0005{Is read-across\napplicable? }--N-->B0001{Are ADME\nproperties known? }
+	A0005{Is read-across\napplicable? }--N-->E0001[Identify and\nspecify user scenarios ]
+    subgraph ADME
+	B0001{Are ADME\nproperties known? }--Y-->B0004{Relevant metabolite\nformed? }
+	B0001{Are ADME\nproperties known? }--N-->B0003[Run PBPK\nmodel ]
+    end
+    subgraph HAZARD
+	H0001[Generate in silico\npredictions of hazard ]-->H0002[Generate high-throughput\nin vitro data ]
+	H0001[Generate in silico\npredictions of hazard ]-->H0004{Alert for genotoxicity, eye\nirritation, skin irritation or sensitization? }
+	H0004{Alert for genotoxicity, eye\nirritation, skin irritation or sensitization? }--Y-->H0005[Defined approaches and/or dedicated tests\nto confirm or characterize alert ]
+	H0004{Alert for genotoxicity, eye\nirritation, skin irritation or sensitization? }--N-->H0002[Generate high-throughput\nin vitro data ]
+	H0002[Generate high-throughput\\nin vitro data ]-->H0003[Integration of\nresults ]
+	H0003[Integration of\nresults ]-->H0009{Toxicological alters\nidentified? AOPs triggered? }
+	H0009{Toxicological alters\nidentified? AOPs triggered? }--N-->H0011[Generate medium-throughput in\nvitro toxicity data ]
+	H0011[Generate medium-throughput in\nvitro toxicity data ]-->H0012[Integration of\nresults ]
+	H0012[Integration of\nresults ]-->H0013{Information\nsufficient? }
+	H0013{Information\nsufficient? }--Y-->H0014[Derive Point-of-Departure\nPOD ]
+    end
+	H0014[Derive Point-of-Departure\\nPOD ]-->X0001[Compare POD\nwith exposure ]
+    subgraph EXPOSURE
+	E0001[Identify and\\nspecify user scenarios ]-->E0002{Is TTC\napplicable? }
+	E0002{Is TTC\napplicable? }--Y-->E0008[Estimate external\nexposure ]
+	E0002{Is TTC\napplicable? }--N-->E0003[Estimate external\nexposure ]
+    end
+	X0001[Compare POD\nwith exposure ]-->X0002{Is the\noutcome acceptable? }
+	X0002{Is the\noutcome acceptable? }--Y-->Z0001[/Risk assessment report/]
+	Z0001[/Risk assessment report/]-->Z999[end]
+    style HAZARD fill:#AADDDD,stroke:#DDDDDD'
+    style ADME fill:#DDAADD,stroke:#DDDDDD'
+    style EXPOSURE fill:#DDDDAA,stroke:#DDDDDD'
