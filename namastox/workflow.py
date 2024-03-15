@@ -236,7 +236,6 @@ class Workflow:
         else:
             # iterate for all visited nodes
             for istep, iresult in enumerate(results):
-
                 # when a step is defined, draw only until this step
                 if step is not None:
                     if (istep+1)>step : 

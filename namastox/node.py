@@ -38,17 +38,17 @@ class Node:
 
         self.next_node = []
         if isinstance(node_content['next_node'], str):
-            node_list = node_content['next_node'].strip().split(',')
+            node_list = node_content['next_node'].replace(' ','').split(',')
             self.next_node = node_list
 
         self.next_yes = []
         if isinstance(node_content['next_yes'], str):
-            node_list = node_content['next_yes'].strip().split(',')
+            node_list = node_content['next_yes'].replace(' ','').split(',')
             self.next_yes = node_list
 
         self.next_no = []
         if isinstance(node_content['next_no'], str):
-            node_list = node_content['next_no'].strip().split(',')
+            node_list = node_content['next_no'].replace(' ','').split(',')
             self.next_no = node_list
 
         self.setTask(node_content)
