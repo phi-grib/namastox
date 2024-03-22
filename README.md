@@ -14,7 +14,7 @@ Then, the NAMASTOX GUI will be accesible from a web browser at address http://lo
 
 Please note that the port of this address is defined in the command line above and can be easily customized.
 
-It is also possible to use an existing local folder for storing the RAs. Let's assume you wish to use 'c:\data' as the local flame repository. Start by creating a folder inside named 'ras'. Then, run the following command: 
+It is also possible to use an existing local folder for storing the RAs. Let's assume you wish to use 'c:\data' as the local NAMASTOX repository. Start by creating a folder inside named 'ras'. Then, run the following command: 
 
 ```bash
 docker run -d -p 5000:5000 -v c:\data:/data mpastorphi/namastox
@@ -88,7 +88,7 @@ After installation is completed, you must run the configuration command to confi
 namastox -c config
 ```
 
-will suggest a default directory structure following the XDG specification in GNU/Linux, %APPDATA% in windows and `~/Library/Application Support/flame_models` in Mac OS X.
+will suggest a default directory structure following the XDG specification in GNU/Linux, %APPDATA% in windows and `~/Library/Application Support/NAMASTOX_RA` in Mac OS X.
 
 To specify a custom path use the `-d` parameter to enter the root folder where the risk assessments will be placed:
 
