@@ -82,7 +82,7 @@ python setup.py develop
 
 ## Configuration
 
-After installation is completed, you must run the configuration command to configure the directory where flame will place the risk assessments. If NAMASTOX has not been configured previously the following command
+After installation is completed, you must run the configuration command to configure the directory where NAMASTOX will place the risk assessments. If NAMASTOX has not been configured previously the following command
 
 ```bash
 namastox -c config
@@ -126,8 +126,6 @@ Command interface synthax
 | -d/ --directory | Use this parameter in action configure to define the RA repositories    |
 | -i/ --infile | Name of the input file used by the command. |
 | -o/ --outfile | Name of the output file used by the command. |
-| -p/ --pdf | Name of the report in PDF format |
-| -w/ --word | Name of the report in Word format |
 | -h/ --help | Shows a help message on the screen |
 
 Command examples and description
