@@ -1,23 +1,23 @@
 id	label	result_type	name	category	description	method_type	method_link	next_node	next_yes	next_no
-A0001	BB001_01	text	Problem formulation	TASK	Enter a description of the problem formulation, including a clear assessment question	expert		A0002		
-A0002	BB002_01	text	Relevant existing data for substance of interest?	TASK	Search for available data about this compound in existing data sources	expert		A0003		
+A0001	BB001_01	text	Problem formulation	TASK	Enter a description of the problem formulation, include the envisaged exposure scenario(s), the regulatory context, the compound definition, etc. Give an indication on the level/uncertainty limits of the desired information. If possible: specify the areas of toxicity (knowledge gap to be filled), the level of need for mechanistic understanding and potential exit points (sufficient information reached)	expert		A0002		
+A0002	BB002_01	text	Relevant existing data for substance of interest?	TASK	Search for available physicochemical, toxicological, mechanistic and toxicokinetic data about this compound in existing data sources. Compile all available data on exposure levels. Provide a transparent information overview, based on these data. 	expert		A0003		
 A0003	DP01EF_01	bool	Information sufficient?	LOGICAL	Justify if existing data is sufficient for answering the question posed in the Problem Formulation	 			A0004	A0005
-A0004	BB017_01	value	Derive Point-of-Departure POD	TASK	Derive Point-of-Departure POD	expert		Z0001		
+A0004	BB017_01	value	Derive Point-of-Departure POD	TASK	Compile all data from assays considered to be predictive of hazard. For each assay, determine concentration dependency of the effect, fit a function through the data points and determine the minimum concentration, at which hazard may be triggered (=BMC or BMCL). Give a rationale why and how this BMC has been chosen. Compile all BMCs and determine which of them is considered most relevant. This one is termed PoD. Give a rationale for the choice and indicate the uncertainty of the decision. Decide (and justify) whether a single PoD is chosen or whether multiple PoD are chosen. In the latter case decide and justify whehter the multiple PoD are collapsed to a a single value (± variance) is chosen, or whether work is continued with a distribution function of PoD	expert		Z0001		
 Z0001	EXIT1	text	Risk assessment report	END						
-A0005	DP02EF_01	bool	Is read-across applicable?	LOGICAL	Justify in the application of read-accross can answer the question posed in the Problem Formulation				A0006	H0001,B0001,E0001
-A0006	BB019_01	text	Perform read-across using existing data	TASK	Make us of existing data (in vivo, in vitro, etc.) to carry out read-acros. Depending on the regulatory framework, it is advisable to follow the official guidelines. For example, for ECHA, the RAAF guidance document, which can be found here: https://echa.europa.eu/documents/10162/13628/raaf_en.pdf/614e5d61-891d-4154-8a47-87efebd1851a 	in silico		A0007		
+A0005	DP02EF_01	bool	Is read-across applicable?	LOGICAL	Justify in the application of read-across can answer the question posed in the Problem Formulation				A0006	H0001,B0001,E0001
+A0006	BB019_01	text	Perform read-across using existing data	TASK	Make use of existing data (in vivo, in vitro, etc.) to carry out read-across, using grouping or analogue approaches. Depending on the regulatory context the following guidelines could be useful (it )	in silico		A0007		
 A0007	DP01EF_01	bool	Information sufficient?	LOGICAL	Justify if existing data is sufficient for answering the question posed in the Problem Formulation				A0004	A0008
-A0008	BB020_01	value	Generate NAM data based on read-across hypothesis 	TASK	Generate NAM data based on read-across hypothesis (Hazard and ADME)	in vitro		A0009		
+A0008	BB020_01	value	Generate NAM data based on read-across hypothesis 	TASK	Consider how much additional information is needed to support the Rax hypothesis, concerning similar (extrapolable) (1) main effect (target-related toxicity); (2) effect on other targets; (3) toxicokinetic behaviour (e.g. metabolite formation, distribution, etc..). Compile NAM that would allow to derive the desired data or to increase the confidence that the Rax hypothesis is correct for this question (1-3). Perform NAM testing of source and target compounds, compile the data and provide a conclusion on whether the RAx hypothesis has been strengthened, confirmed or possibly disproved.	in vitro		A0009		
 A0009	BB021_01	text	Integration of results	TASK	Analyze and integrate the results obtained in previous steps	expert		A0010		
 A0010	DP01EF_01	bool	Information sufficient?	LOGICAL	Justify if existing data is sufficient for answering the question posed in the Problem Formulation				A0004	H0001,B0001,E0001
 H0001	BB008_01	value	Generate in silico predictions of hazard	TASK		in silico	local_models	H0002,H0004		
-H0002	BB009_01	value	Generate high-throughput in vitro data	TASK		in vitro		H0003		
+H0002	BB009_01	value	Generate high-throughput in vitro data	TASK	Use an assembly of assays that broadly characterize bioactivity of the compound at question over a large concentration range. Example for such assays (RH3R version of ASPA) are stress reporter assays, luciferase signal transduction assays, cytotoxicity assays in 3 cell lines (proliferating HepG2, LUHMES, RPTEC), and a transcrptomic assay in HepG2 cells. [Possibly expand the battery by an assay for AChE activity, a MEA assay and a metabolic activation assay (PHH)]. Determine concentration ranges with no effect, potentially specific effects, and of general cytotoxicity. Use various routines to identify relevant modes of action (for toxicity), based on bioactivity data.	in vitro		H0003		
 H0003	BB010_01	text	Integration of results	TASK	Analyze and integrate the results obtained in previous steps	expert		H0009		
 H0004	DP06EF_01	bool	Alert for genotoxicity, eye irritation, skin irritation or sensitization?	LOGICAL	Justify if existing data is sufficient for answering the question posed in the Problem Formulation				H0005	H0002
 H0005	BB011_01	text	Defined approaches and/or dedicated tests to confirm or characterize alert	TASK		in vitro		H0006		
 H0006	BB012_01	text	Integration of results	TASK	Analyze and integrate the results obtained in previous steps	expert		H0007		
 H0007	DP07EF_01	bool	Information sufficient?	LOGICAL	Justify if existing data is sufficient for answering the question posed in the Problem Formulation				H0003	H0008
-H0008	BB013_01	value	Perform dedicated tests for data gap filling	TASK		in vitro		H0009		
+H0008	BB013_01	value	Perform dedicated tests for data gap filling	TASK		in vitro		H0003		
 H0009	DP08EF_01	bool	Toxicological alters identified? AOPs triggered?	LOGICAL					H0010	H0011
 H0010	DP09EF_01	bool	Information sufficient?	LOGICAL	Justify if existing data is sufficient for answering the question posed in the Problem Formulation				H0014	H0011
 H0011	BB015_01	value	Generate medium-throughput in vitro toxicity data	TASK		in vitro		H0012		
@@ -36,19 +36,19 @@ B0010	BB014_01	value	Derive estimates of relevant test concentrations	TASK		expe
 E0001	BB022_01	text	Identify and specify user scenarios	TASK		expert		E0002		
 E0002	DP10EF_01	bool	Is TTC applicable?	LOGICAL					E0008	E0003
 E0003	BB023_01	value	Estimate external exposure	TASK		expert		E0004		
-E0004	BB024_01	value	Determine maximum exposure Emax	TASK		expert		B0003,E0010		
+E0004	BB024_01	value	Determine maximum exposure Emax	TASK		expert		B0003,E0005		
 E0005	BB028_01	value	Calculate internal exposure using Emax	TASK		expert		X0001		
 E0006	BB029_01	value	Refine exposure estimate, for example dominant pathway	TASK		expert		E0007		
 E0007	BB030_01	value	Calculate internal exposure, refined	TASK		expert		X0001		
 E0008	BB023_01	value	Estimate external exposure	TASK		expert		E0009		
-E0009	BB024_01	value	Determine maximum exposure Emax	TASK		expert		E0005,B0003		
+E0009	BB024_01	value	Determine maximum exposure Emax	TASK		expert		E0010		
 E0010	BB025_01	text	Perform TTC approach	TASK		expert		E0011		
 E0011	DP11EF_01	bool	Is Emax lower than TTC?	LOGICAL					Z0001	E0012
 E0012	BB026_01	value	Refine estimation of Emax with further data	TASK		expert		E0013		
 E0013	BB025_01	text	Perform TTC approach	TASK		expert		E0014		
 E0014	DP11EF_01	bool	Is Emax lower than TTC?	LOGICAL					Z0001	E0003
 X0001	BB018_01	text	Compare POD with exposure	TASK				X0002		
-X0002	DP14EF_01	bool	Is the outcome acceptable?	LOGICAL					Z0001,E0006	X0003
+X0002	DP14EF_01	bool	Is the outcome acceptable?	LOGICAL					Z0001	X0003,E0006
 X0003	DP12EF_01	bool 	Is deterministic refinement possible?	LOGICAL					X0006	X0004
 X0004	DP13EF_01	bool	Is probabilistic refinement possible?	LOGICAL					X0006	X0005
 X0005	BB032_01	text	Generate or collect data needed for probabilistic approaches	TASK		expert		X0006		
