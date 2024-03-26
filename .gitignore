@@ -1,7 +1,11 @@
+config.yaml
 src/__pycache__/
 ras/
 *.pyc
 *.log
+*.zip
+*.tgz
 dist/*
 namastox.egg-info/*
-config.yaml
+models/*
+profiles/*
