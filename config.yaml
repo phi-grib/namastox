@@ -3,5 +3,5 @@ admin_name: Admin Name
 config_status: true
 homepage: homepage@domain.org
 provider: My Organization
-ras: C:\Users\mpastor\Documents\soft\NAMASTOX\ras
-root_repository: C:\Users\mpastor\Documents\soft\NAMASTOX
+ras: x:\soft\namastox\ras
+root_repository: x:\soft\namastox
