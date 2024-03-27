@@ -599,3 +599,12 @@ def getInfoStructure(molname=None, casrn=None):
             return True, result
 
     return False, resp.status
+
+def getTableContents (filename):
+
+    # use pandas CVS utility to import and convert to a dictionary
+
+    # return dictionary
+    print ('********************** action table ****************')
+
+    return
