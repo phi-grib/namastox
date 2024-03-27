@@ -329,12 +329,19 @@ class Ra:
     def updateGeneralInfo (self, input):
         ''' process update as GeneralInfo when we are in the first step (step 0)
         '''
-
         if not 'general' in input:
             return False, 'wrong format in input file (no "general" info)'
 
         self.general = input['general']
 
+        # if we are aditing an existing RA, simply return
+        if self.ra['step']>0:
+            LOG.info('Existing general info has been updated')
+            return True, 'Update OK'
+        
+        # if we are defining the General Info for the first time...
+
+        # process any custom workflow
         if 'workflow_custom' in self.general:
             workflow_custom = self.general['workflow_custom']
 
