@@ -481,6 +481,9 @@ def getLocalModelPrediction():
         for ii in results:
             # append model info
             model.append((ii.getMeta("endpoint"),ii.getMeta("version")))
+
+            # round values to two decimal figures and use -99.9 if the
+            # value is not numerical
             try:
                 ival = ii.getVal("values")[0]
                 ival = float(f'{ival:.4f}')
@@ -499,13 +502,13 @@ def getLocalModelPrediction():
 
                     # compose an uncertainty label
                     if   k == 'lower_limit':
-                        uncstr += f'CI {iii[0]:.2f}'
+                        uncstr += f'[{iii[0]:.2f}'
                     elif k == 'upper_limit':
-                        uncstr += f' to {iii[0]:.2f}'
+                        uncstr += f' to {iii[0]:.2f}]'
                     elif k == 'p0' and ival == 0.0:
-                        uncstr = f'{iii[0]:.2f}'
+                        uncstr = f'{iii[0]:.4f}'
                     elif k == 'p1' and ival == 1.0:
-                        uncstr = f'{iii[0]:.2f}'
+                        uncstr = f'{iii[0]:.4f}'
                 else:
                     j.append(-99.9) 
 
@@ -519,19 +522,6 @@ def getLocalModelPrediction():
     else:
         return False, 'unable to retrieve prediction results'
 
-    # success, results = flame_manage.action_profiles_summary('namastox',output="summary")
-    # print (results)
-    # if success:
-    #     # when only a model is selected the profile runs it twice, remove the last one
-    #     models = results['models']
-    #     if len(models)==2:
-    #         if models[0] == models[1]:
-    #             results['models'].pop(1)
-    #             results['results'].pop(1)
-
-    #     return True, results
-    # else:
-    #     return False, 'unable to retrieve prediction results'
 
 def exportRA (raname):
     '''

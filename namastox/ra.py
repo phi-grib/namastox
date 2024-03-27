@@ -468,6 +468,8 @@ class Ra:
                     LOG.info (f'result for node {input_result_id} empty')
                     continue
 
+                # remove empty items from value list and, if present, from
+                # uncertainties list as well
                 if 'uncertainties' in input_result:
                     uncert_list = input_result['uncertainties']
         

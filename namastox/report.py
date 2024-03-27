@@ -104,9 +104,9 @@ def report_excel (ra):
         worksheet.write(irow, 3, reitem['summary'], value_format )
         irow+=1
 
-        if 'decision' in reitem and reitem['decision']:
+        if 'decision' in reitem:
             worksheet.write(irow, 1, 'decision', label_format )
-            worksheet.write(irow, 3, bool_to_text[reitem['report']], value_format )
+            worksheet.write(irow, 3, bool_to_text[reitem['decision']], value_format )
             irow+=1
 
             worksheet.write(irow, 1, 'justification', label_format )
