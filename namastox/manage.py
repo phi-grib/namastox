@@ -479,10 +479,14 @@ def getLocalModelPrediction():
         nam_list = ['lower_limit', 'upper_limit', 'p0', 'p1']
 
         for ii in results:
-
             # append model info
             model.append((ii.getMeta("endpoint"),ii.getMeta("version")))
-            ival = ii.getVal("values")[0]
+            try:
+                ival = ii.getVal("values")[0]
+                ival = float(f'{ival:.4f}')
+            except:
+                ival = -99.9
+            
             x_val.append(ival)
 
             uncstr = ''
@@ -511,8 +515,6 @@ def getLocalModelPrediction():
             else:
                 unc.append(uncstr)
         
-        # print (model, x_val, x_low, x_upp, p_0, p_1)
-
         return True, {'models':model, 'results':x_val, 'lower':x_low, 'upper':x_upp, 'p0': p_0, 'p1': p_1, 'uncertainty': unc}
     else:
         return False, 'unable to retrieve prediction results'

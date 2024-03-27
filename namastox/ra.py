@@ -462,9 +462,24 @@ class Ra:
                 if not 'values' in input_result:
                     continue
                 
-                if len(input_result['values'])==0:
+                values_list = input_result['values']
+
+                if len(values_list)==0:
                     LOG.info (f'result for node {input_result_id} empty')
                     continue
+
+                if 'uncertainties' in input_result:
+                    uncert_list = input_result['uncertainties']
+        
+                    for ival, iunc in zip(values_list, uncert_list):
+                        if ival == {}:
+                            values_list.remove(ival)
+                            uncert_list.remove(iunc)
+                else:
+                    for ival in values_list:
+                        if ival == {}:
+                            values_list.remove(ival)
+
             
             # if this result is for an active node APPEND the information
             if input_result_id in self.ra["active_nodes_id"]:
