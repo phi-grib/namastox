@@ -25,6 +25,8 @@ import yaml
 import json
 import shutil
 import urllib3
+import numpy as np
+import pandas as pd
 from urllib3.util.ssl_ import create_urllib3_context
 import tarfile
 from rdkit import Chem
@@ -602,9 +604,32 @@ def getInfoStructure(molname=None, casrn=None):
 
 def getTableContents (filename):
 
+    LOG.info (f'import table {filename}')
+
     # use pandas CVS utility to import and convert to a dictionary
+    table_dataframe = pd.read_csv(filename, sep='\t').replace(np.nan, None)
+    table_dict = table_dataframe.to_dict('records')
 
-    # return dictionary
-    print ('********************** action table ****************')
+    # split in a values and uncertainties list, each item containing a dictionary with the required keys
+    val_labels = ['parameter', 'value', 'unit']
+    unc_labels = ['uncertainty', 'p', 'term']
 
-    return
+    values = []
+    uncertainties = []
+        
+    for item in table_dict:
+        v_dict = {}
+        u_dict = {}
+        for v_label in val_labels:
+            if v_label in item:
+                v_dict[v_label] = item[v_label]
+        
+        values.append(v_dict)
+    
+        for u_label in unc_labels:
+            if u_label in item:
+                u_dict[u_label] = item[u_label]
+            
+        uncertainties.append(u_dict)
+            
+    return True, values, uncertainties
