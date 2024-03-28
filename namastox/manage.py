@@ -607,12 +607,14 @@ def getTableContents (filename):
     LOG.info (f'import table {filename}')
 
     # use pandas CVS utility to import and convert to a dictionary
-    table_dataframe = pd.read_csv(filename, sep='\t').replace(np.nan, None)
+    table_dataframe = pd.read_csv(filename, sep=None).replace(np.nan, None)
     table_dict = table_dataframe.to_dict('records')
 
     # split in a values and uncertainties list, each item containing a dictionary with the required keys
     val_labels = ['parameter', 'value', 'unit']
     unc_labels = ['uncertainty', 'p', 'term']
+
+    print (table_dict)
 
     values = []
     uncertainties = []
