@@ -141,9 +141,7 @@ class Workflow:
     def subgraph_assign (self, nodeA, nodeB):       
         idA = nodeA.id[0]
         idB = nodeB.id[0]
-        if idA != idB:
-            return ''
-        else:
+        if idA == idB:
             if idA in SUBGRAPHS_LIST:
                 return idA
         return ''
@@ -251,6 +249,7 @@ class Workflow:
                 # for task, show next task (pending task)
                 if inode.category == 'TASK':
                     next_nodes = self.nextNodeList(iid)
+                    subgraph = ''
                     for jid in next_nodes:
                         visited = jid in node_path
                         ibody, istyle, ilinks, subgraph = self.graphNext(jid, inode, None, visited)
@@ -266,6 +265,7 @@ class Workflow:
                     idecision = iresult['decision']
                     if idecision == True:
                         next_nodes_true  = self.logicalNodeList(iid, True)
+                        subgraph=''
                         for jid in next_nodes_true:
                             visited = jid in node_path
                             ibody, istyle, ilinks, subgraph = self.graphNext(jid, inode, True, visited)
@@ -278,6 +278,7 @@ class Workflow:
 
                     else:
                         next_nodes_false =self.logicalNodeList(iid, False)
+                        subgraph=''
                         for jid in next_nodes_false:
                             visited = jid in node_path
                             ibody, istyle, ilinks, subgraph = self.graphNext(jid, inode, False, visited)
