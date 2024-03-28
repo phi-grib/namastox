@@ -614,8 +614,6 @@ def getTableContents (filename):
     val_labels = ['parameter', 'value', 'unit']
     unc_labels = ['uncertainty', 'p', 'term']
 
-    print (table_dict)
-
     values = []
     uncertainties = []
         
@@ -633,5 +631,8 @@ def getTableContents (filename):
                 u_dict[u_label] = item[u_label]
             
         uncertainties.append(u_dict)
-            
+    
+    if len(values)==0:
+        return False, 'No value found', 'Aborted'
+
     return True, values, uncertainties
