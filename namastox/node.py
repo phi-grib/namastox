@@ -92,6 +92,8 @@ class Node:
         elif visited:
             # return_style = f'style {self.id} fill:#DDDDDD,stroke:#DDDDDD\n'
             return_style = f'style {self.id} fill:'+VISITED_FILL+',stroke:'+VISITED_STROKE+'\n'
+
+        # active nodes
         else:
             # return_style = f'style {self.id} fill:#78A4DE,stroke:#6697d9\n'
             return_style = f'style {self.id} fill:'+ACTIVE_FILL+',stroke:'+ACTIVE_STROKE+'\n'
@@ -100,7 +102,6 @@ class Node:
         if self.category == 'END':
             return_style += 'style Z999 fill:#FFFFFF,stroke:#000000\n'
 
-        # standard nodes (TASK or LOGICAL)
         return return_style
         
     def box (self):

@@ -150,7 +150,6 @@ class Ra:
             'general': self.general, 
             'results': self.results,
             'notes': self.notes
-            # 'assessment': self.assessment
         }
         with open(rafile,'w') as f:
             f.write(yaml.dump(dict_temp))
@@ -527,16 +526,13 @@ class Ra:
         ''' returns a mermaid graph for the workflow, util the step given as argument
             if the ra is in step 0 and the workflow is still undefined, return a fallback graph 
         '''
-
         if self.ra['step']>0 : 
             return self.workflow.getWorkflowGraph(self.results, step)     
-        else:
-            return """graph TD
-                      X[workflow undefined]-->Z[...]
-                      style X fill:#548BD4,stroke:#548BD4
-                      style Z fill:#FFFFFF,stroke:#000000
-                      """
-        return w
+        return """graph TD
+                  X[workflow undefined]-->Z[...]
+                  style X fill:#548BD4,stroke:#548BD4
+                  style Z fill:#FFFFFF,stroke:#000000
+                  """
     
     #################################################
     # output section
@@ -558,7 +554,6 @@ class Ra:
 
                 itask = inode.getTask()
                 result_list.append(itask.getTemplateDict()['result'])
-                # iresult= itask.getTemplateDict()
             
             results = result_labels + yaml.dump ({'result':result_list})
 

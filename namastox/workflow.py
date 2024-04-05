@@ -34,9 +34,7 @@ from namastox.node import Node
 LOG = get_logger(__name__)
 
 SUBGRAPHS_LIST = ['B', 'H', 'E']
-# HAZARD_COLOR = '#AADDDD'
-# ADME_COLOR = '#DDAADD'
-# EXPOSURE_COLOR = '#DDDDAA'
+# SUBGRAPHS_LIST = []
 
 HAZARD_FILL = '#E1F7ED'
 HAZARD_STROKE = '#C0D9CA'
@@ -44,8 +42,6 @@ ADME_FILL = '#FFFAEB'
 ADME_STROKE = '#F2E5A5'
 EXPOSURE_FILL = '#EBF5FF'
 EXPOSURE_STROKE = '#C3CDE0'
-
-# SUBGRAPHS_LIST = []
 
 class Workflow:
     ''' Class storing all the risk assessment information
@@ -199,7 +195,6 @@ class Workflow:
         if id in self.nodes:
             itask = self.nodes[id].getTask()
             return itask.getName()
-        
         return None
 
     def recurse (self, id):
@@ -218,18 +213,16 @@ class Workflow:
 
     def isVisitedNode(self, id, results):
         node_path =[iresult['id'] for iresult in results]
-
         if id in node_path:
             return True
-        
         return False
 
     def getWorkflowGraph (self, results, step=None):
-
         node_path =[iresult['id'] for iresult in results]
 
         header = 'graph TD\n'
         body = ''
+        
         #TODO subgraphs were hardcoded, think a way to make this more flexible
         subbody = {'H':'subgraph HAZARD\n', 'B':'subgraph ADME\n', 'E':'subgraph EXPOSURE\n'}
         style = ''
@@ -274,6 +267,7 @@ class Workflow:
                 # for decision, show decision taken in the visited node
                 elif inode.category == 'LOGICAL':
                     idecision = iresult['decision']
+
                     if idecision == True:
                         next_nodes_true  = self.logicalNodeList(iid, True)
                         subgraph=''
@@ -299,10 +293,6 @@ class Workflow:
                                 body += ibody
                             style+= istyle
                             links+= ilinks
-
-        # subgraph_style_catalogue = {'H':"style HAZARD fill:"+HAZARD_COLOR+",stroke:#DDDDDD\n",
-        #                             'B':"style ADME fill:"+ADME_COLOR+",stroke:#DDDDDD\n",
-        #                             'E':"style EXPOSURE fill:"+EXPOSURE_COLOR+",stroke:#DDDDDD\n"}
         
         subgraph_style_catalogue = {'H':"style HAZARD fill:"+HAZARD_FILL+",stroke:"+HAZARD_STROKE+"\n",
                                     'B':"style ADME fill:"+ADME_FILL+",stroke:"+ADME_STROKE+"\n",
