@@ -34,6 +34,17 @@ from namastox.node import Node
 LOG = get_logger(__name__)
 
 SUBGRAPHS_LIST = ['B', 'H', 'E']
+# HAZARD_COLOR = '#AADDDD'
+# ADME_COLOR = '#DDAADD'
+# EXPOSURE_COLOR = '#DDDDAA'
+
+HAZARD_FILL = '#E1F7ED'
+HAZARD_STROKE = '#C0D9CA'
+ADME_FILL = '#FFFAEB'
+ADME_STROKE = '#F2E5A5'
+EXPOSURE_FILL = '#EBF5FF'
+EXPOSURE_STROKE = '#C3CDE0'
+
 # SUBGRAPHS_LIST = []
 
 class Workflow:
@@ -289,9 +300,14 @@ class Workflow:
                             style+= istyle
                             links+= ilinks
 
-        subgraph_style_catalogue = {'H':"style HAZARD fill:#AADDDD,stroke:#DDDDDD\n",
-                                    'B':"style ADME fill:#DDAADD,stroke:#DDDDDD\n",
-                                    'E':"style EXPOSURE fill:#DDDDAA,stroke:#DDDDDD\n"}
+        # subgraph_style_catalogue = {'H':"style HAZARD fill:"+HAZARD_COLOR+",stroke:#DDDDDD\n",
+        #                             'B':"style ADME fill:"+ADME_COLOR+",stroke:#DDDDDD\n",
+        #                             'E':"style EXPOSURE fill:"+EXPOSURE_COLOR+",stroke:#DDDDDD\n"}
+        
+        subgraph_style_catalogue = {'H':"style HAZARD fill:"+HAZARD_FILL+",stroke:"+HAZARD_STROKE+"\n",
+                                    'B':"style ADME fill:"+ADME_FILL+",stroke:"+ADME_STROKE+"\n",
+                                    'E':"style EXPOSURE fill:"+EXPOSURE_FILL+",stroke:"+EXPOSURE_STROKE+"\n"}
+        
         subgraph_style = ''
         for ikey in subbody:
             if len(subbody[ikey])>20:
