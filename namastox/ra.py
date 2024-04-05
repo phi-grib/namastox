@@ -363,7 +363,7 @@ class Ra:
         LOG.info(f'active node updated to: {self.ra["active_nodes_id"]}' )
 
         # advance workflow: we are in step 0, move to step 1
-        LOG.info(f'workflow advanced to step: {1}')
+        LOG.info('workflow advanced to step: 1')
         self.ra['step']=1
 
         # DO NOT SAVE HERE! this is called by update.py and it will be saved from there
