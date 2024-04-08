@@ -45,9 +45,9 @@ class Task:
             'method_link': None,     # link to method repo
 
             'decision': 'Select yes or no to the question posed in the description',       
-            'report': 'Text report with the main conclusions of tasks or justification for decisions',            
+            'report': 'Results obtained of the tasks specified in the description (compulsory field)',            
             'values': 'Enter one or many numerical parameters, consisting in a description, value (as a floating point) and unit',          
-            'justification': 'Text providing a detailed justification of the decision taken', 
+            'justification': 'Justification of the decisions made (compulsory field)', 
             'uncertainties':  'Enter uncertainty information about this task, including a textual description, a probability value and a descriptive term',         
             
             'uncertainty': 'Information about the uncertainty associated to the result',         # DEPRECATED
@@ -62,7 +62,7 @@ class Task:
                                  'Almost impossible (0.00-0.01)'],
             'uncertainty_p': 'Uncertainty of result, as probability of being true, from 0 to 1', # DEPRECATED    
 
-            'summary': 'Short description of the results',
+            'summary': 'Concise description of the results obtained or the decisions made',
             'links': 'Link any relevant document in PDF format'     
         }
 
