@@ -45,9 +45,9 @@ class Task:
             'method_link': None,     # link to method repo
 
             'decision': 'Select yes or no to the question posed in the description',       
-            'report': 'Results obtained of the tasks specified in the description (compulsory field)',            
+            'report': 'Results obtained for the tasks specified in the description (compulsory field)',            
             'values': 'Enter one or many numerical parameters, consisting in a description, value (as a floating point) and unit',          
-            'justification': 'Justification of the decisions made (compulsory field)', 
+            'justification': 'Justification for the decision made (compulsory field)', 
             'uncertainties':  'Enter uncertainty information about this task, including a textual description, a probability value and a descriptive term',         
             
             'uncertainty': 'Information about the uncertainty associated to the result',         # DEPRECATED
