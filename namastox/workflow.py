@@ -145,12 +145,19 @@ class Workflow:
     def logicalNodeList (self, id, decision):
         return self.nodes[id].nextLogicalNodes(decision)
     
-    def subgraph_assign (self, nodeA, nodeB):       
+    def subgraph_assign (self, nodeA, nodeB):  
+        # original criteria: both nodes should belong to the same subgraph
+             
+        # idA = nodeA.id[0]
+        # idB = nodeB.id[0]
+        # if idA == idB:
+        #     if idA in SUBGRAPHS_LIST:
+        #         return idA
+
+        # relaxed criteria: the first node defines the subgraph    
         idA = nodeA.id[0]
-        idB = nodeB.id[0]
-        if idA == idB:
-            if idA in SUBGRAPHS_LIST:
-                return idA
+        if idA in SUBGRAPHS_LIST:
+            return idA
         return ''
 
     def graphNext (self, nodeid, inode, decision=None, visited=False):
@@ -223,11 +230,12 @@ class Workflow:
         header = 'graph TD\n'
         body = ''
         
-        #TODO subgraphs were hardcoded, think a way to make this more flexible
-        subbody = {'H':'subgraph HAZARD\n', 'B':'subgraph ADME\n', 'E':'subgraph EXPOSURE\n'}
         style = ''
         links = ''
         
+        #TODO subgraphs were hardcoded, think a way to make this more flexible
+        subbody = {'H':'subgraph HAZARD\n', 'B':'subgraph ADME\n', 'E':'subgraph EXPOSURE\n'}
+
         # no node visited so far, present the first node in the workflow 
         if len(results) == 0:
             inode = self.firstNode()
@@ -294,19 +302,29 @@ class Workflow:
                             style+= istyle
                             links+= ilinks
         
+
+        # styles of subgraphs
         subgraph_style_catalogue = {'H':"style HAZARD fill:"+HAZARD_FILL+",stroke:"+HAZARD_STROKE+"\n",
                                     'B':"style ADME fill:"+ADME_FILL+",stroke:"+ADME_STROKE+"\n",
                                     'E':"style EXPOSURE fill:"+EXPOSURE_FILL+",stroke:"+EXPOSURE_STROKE+"\n"}
         
+        subgraphs = ''
+        subgraphs_found =0 
+
         subgraph_style = ''
         for ikey in subbody:
             if len(subbody[ikey])>20:
+                subgraphs_found+=1
                 subbody[ikey]+='end\n'
                 subgraph_style+=subgraph_style_catalogue[ikey]
             else:
                 subbody[ikey]=''
 
-        return (header+body+subbody['H']+subbody['B']+subbody['E']+style+subgraph_style+links)
+        if subgraphs_found>0:
+            subgraph_container_style = "style container fill: #ffffff, stroke: #ffffff\n"           
+            subgraphs = 'subgraph container [" "]\n'+subbody['H']+subbody['B']+subbody['E']+'end\n'+subgraph_style+subgraph_container_style
+
+        return (header+body+subgraphs+style+links)
 
 
 
