@@ -239,7 +239,172 @@ def report_word (ra):
     template = os.path.join(path,'generic_word.docx')
     document = Document(template)
 
-    document.add_heading('TESTING TEXT', level=1)
+    # General section
+    document.add_heading(ra.general['title'])
+    document.add_heading('General information')
+    
+    document.add_heading ('General_description', level=2)
+    document.add_paragraph (ra.general['general_description'])
+
+    document.add_heading ('Background', level=2)
+    document.add_paragraph (ra.general['background'])
+
+    document.add_heading ('Regulatory framework', level=2)
+    document.add_paragraph (ra.general['regulatory_framework'])
+
+    document.add_heading ('Endpoint', level=2)
+    document.add_paragraph (ra.general['endpoint'])
+
+    document.add_heading ('Species', level=2)
+    document.add_paragraph (ra.general['species'])
+
+    document.add_heading ('Administration route', level=2)
+    document.add_paragraph (ra.general['administration_route'])
+
+
+    # Results section
+
+    bool_to_text = {True:'Yes', False:'No'}
+    workflow = ra.workflow
+
+    for reitem in ra.results:
+
+        # Name and Description are not in results but in workflow
+        inode = workflow.getNode(reitem['id'])
+        itask = inode.getTask()
+        idict = itask.getDescriptionDict()
+        name = idict['task description']['name']
+        description = idict['task description']['description']
+        if 'label' in reitem:
+            label = reitem['label']
+        else:
+            label = ''
+
+        document.add_heading (name+f" ({label})", level=2)
+        document.add_paragraph (description)
+        
+        document.add_heading ('summary', level=2)
+        document.add_paragraph (reitem['summary'])
+    
+
+        # if 'decision' in reitem:
+        #     worksheet.write(irow, 1, 'decision', label_format )
+        #     worksheet.write(irow, 3, bool_to_text[reitem['decision']], value_format )
+        #     irow+=1
+
+        #     worksheet.write(irow, 1, 'justification', label_format )
+        #     worksheet.write(irow, 3, reitem['justification'], value_format )
+        #     irow+=1
+        
+        # else:
+        #     if reitem['result_type'] == 'text':
+
+        #         for iresult in reitem['values']:
+        #             worksheet.write(irow, 1, 'result', label_format )
+        #             worksheet.write(irow, 3, iresult, value_format )
+        #             irow+=1
+                
+        #         if 'uncertainties' in reitem:
+        #             for iresult in reitem['uncertainties']:
+        #                 if 'p' in iresult and iresult['p'] > 0:
+        #                     worksheet.write(irow, 1, 'confidence p', label_format )
+        #                     worksheet.write(irow, 3, iresult['p'], value_format )
+        #                     irow+=1
+            
+        #                 if 'term' in iresult and iresult['term'] != '':
+        #                     worksheet.write(irow, 1, 'uncertainty', label_format )
+        #                     worksheet.write(irow, 3, iresult['term'], value_format )
+        #                     irow+=1
+
+        #     elif reitem['result_type'] == 'value':
+                        
+        #         if len(reitem['values'])==len(reitem['uncertainties']):
+        #             worksheet.write(irow, 1, 'result', label_format )
+                    
+        #             for iresult,iuncertain in zip(reitem['values'],reitem['uncertainties']):
+                            
+        #                 if 'parameter' in iresult:
+        #                     worksheet.write(irow, 2, iresult['parameter'], label_format )
+                            
+        #                 if 'value' in iresult:
+        #                     worksheet.write(irow, 3, iresult['value'], value_format )
+
+        #                 if 'unit' in iresult and iresult['unit']!='':
+        #                     worksheet.write(irow, 4, iresult['unit'], value_format )
+                            
+        #                 if 'p' in iuncertain and iuncertain['p'] != '0':
+        #                     worksheet.write(irow, 5, f"conf: {iuncertain['p']}", value_format )
+            
+        #                 if 'term' in iuncertain and iuncertain['term'] != '':
+        #                     worksheet.write(irow, 6, iuncertain['term'], value_format )
+                            
+        #                 irow+=1
+
+        #         # fallback when the size of parameters and uncertainties don't match (this should never happen)
+        #         else:
+        #             worksheet.write(irow, 1, 'result', label_format )
+                    
+        #             for iresult in reitem['values']:
+                            
+        #                 if 'parameter' in iresult:
+        #                     worksheet.write(irow, 2, iresult['parameter'], label_format )
+                            
+        #                 if 'value' in iresult:
+        #                     worksheet.write(irow, 3, iresult['value'], value_format )
+
+        #                 if 'unit' in iresult and iresult['unit']!='':
+        #                     worksheet.write(irow, 4, iresult['unit'], value_format )
+                    
+        #                 irow+=1
+                            
+        #             for iuncertain in reitem['uncertainties']:
+        #                 if 'p' in iuncertain and iuncertain['p'] > 0:
+        #                     worksheet.write(irow, 2, 'confidence', value_format )
+        #                     worksheet.write(irow, 3, f"conf: {iuncertain['p']}", value_format )
+        #                     irow+=1
+            
+        #                 if 'term' in iuncertain and iuncertain['term'] != '':
+        #                     worksheet.write(irow, 2, 'uncertainty', value_format )
+        #                     worksheet.write(irow, 3, iuncertain['term'], value_format )
+        #                     irow+=1
+
+    
+        # if len(reitem['links'])> 0:    
+        #     worksheet.write(irow, 1, 'links', label_format )
+        #     for ilink in reitem['links']:
+        #         if 'include' in ilink and not ilink['include']:
+        #             continue 
+        #         worksheet.write(irow, 2, ilink['label'].replace('_',' '), label_format )
+        #         worksheet.write(irow, 3, ilink['File'], value_format )
+        #         irow+=1
+
+
+    # irow =0 
+    # worksheet.write(irow, 0, 'General Information', label_format )
+    # for ilabel in labels:
+    #     if not ilabel in raitem:
+    #         continue
+    #     worksheet.write(irow, 1, ilabel.replace('_',' '), label_format )
+    #     worksheet.write(irow, 3, raitem[ilabel], value_format )
+    #     irow+=1
+
+    # substances_items = ra.general['substances']
+    # substance_keys = ['name', 'casrn', 'id', 'smiles']
+    
+    # for isubstance in substances_items:
+    #     worksheet.write(irow, 1, 'substance', label_format ) 
+    #     for ikey in substance_keys:
+    #         if not ikey in isubstance:
+    #             continue
+    #         worksheet.write(irow, 2, ikey, label_format )
+    #         worksheet.write(irow, 3, isubstance[ikey], value_format )
+    #         irow+=1
+
+    # irow+=1
+
+        
+
+
 
     try:
         document.save(reportfile)
