@@ -360,10 +360,6 @@ def report_word (ra):
     return True, reportfile
 
 
-
-
-
-
 def action_report (raname, report_format):
 
     # instantiate a ra object
