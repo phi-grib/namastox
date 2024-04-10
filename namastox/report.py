@@ -220,10 +220,15 @@ def report_excel (ra):
 
     return True, reportfile
 
-def report_word (ra):
+def addGeneralSection (document, ra, item):
+    if item in ra.general and ra.general[item]!=None and len(ra.general[item])>2:
+        item_title = item.capitalize().replace('_',' ')
+        document.add_heading(item_title, level=1)
+        document.add_paragraph (ra.general[item])
 
+def report_word (ra):
     from docx import Document
-    # from docx.shared import Pt
+    from docx.shared import Pt
     # from docx.shared import RGBColor
 
     reportfile = os.path.join (ra.rapath,'report.docx')
@@ -234,36 +239,48 @@ def report_word (ra):
         except:
             return False, 'Failed! the report file is open or not writtable'
         
-    path = os.path.dirname(os.path.abspath(__file__))
-    path = os.path.join(path,'default')
-    template = os.path.join(path,'generic_word.docx')
+    # path = os.path.dirname(os.path.abspath(__file__))
+    # path = os.path.join(path,'default')
+    # template = os.path.join(path,'generic_word.docx')
     # document = Document(template)
     document = Document()
 
-    # General section
+    ## define style for normal and heading 1
+    # normal_style = document.styles['Normal']
+    # normal_font = normal_style.font
+    # normal_font.name = 'Calibri'
+    # normal_font.size = Pt(10)
+
+    # heading_style = document.styles['heading 1']
+    # heading_font = heading_style.font
+    # heading_font.name = 'Calibri'
+    # heading_font.color.rgb = RGBColor(0x00, 0x00, 0x00)
+    # heading_font.size = Pt(12)
+
+    # Title
     document.add_heading(ra.general['title'], 0)
 
-    document.add_heading('General information', level=1)
-    document.add_paragraph (ra.general['general_description'])
+    # Substance
+    document.add_heading ('Substance', level=1)
+    substances_items = ra.general['substances']
+    substance_keys = ['name', 'casrn', 'id', 'smiles']
+    
+    for isubstance in substances_items:
+        for ikey in substance_keys: 
+            if ikey in isubstance and isubstance[ikey] != None and isubstance[ikey]!='':
+                #TODO: add the structure graph, removing 'smiles' as text
+                document.add_paragraph(ikey + ': '+isubstance[ikey], style='ListBullet')
 
-    document.add_heading ('Background', level=2)
-    document.add_paragraph (ra.general['background'])
+        # add empty line between items
+        if len(substances_items)>1:
+            document.add_paragraph ('')
 
-    document.add_heading ('Regulatory framework', level=2)
-    document.add_paragraph (ra.general['regulatory_framework'])
-
-    document.add_heading ('Endpoint', level=2)
-    document.add_paragraph (ra.general['endpoint'])
-
-    document.add_heading ('Species', level=2)
-    document.add_paragraph (ra.general['species'])
-
-    document.add_heading ('Administration route', level=2)
-    document.add_paragraph (ra.general['administration_route'])
-
+    # General info section
+    items = ['general_description', 'background', 'regulatory_framework', 'endpoint', 'species']
+    for item in items:
+        addGeneralSection (document, ra, item)
 
     # Results section
-
     bool_to_text = {True:'Yes', False:'No'}
     workflow = ra.workflow
 
@@ -287,8 +304,6 @@ def report_word (ra):
         document.add_heading ('Summary', level=2)
         document.add_paragraph(reitem['summary'])
 
-    
-
         if 'decision' in reitem:
             document.add_heading('Decision', level=2)
             document.add_paragraph(bool_to_text[reitem['decision']])
@@ -296,116 +311,47 @@ def report_word (ra):
             document.add_heading('Justification', level=2 )
             document.add_paragraph(reitem['justification'])
         
-        # else:
-        #     if reitem['result_type'] == 'text':
+        else:
+            document.add_heading('Result', level=2 )
 
-        #         for iresult in reitem['values']:
-        #             worksheet.write(irow, 1, 'result', label_format )
-        #             worksheet.write(irow, 3, iresult, value_format )
-        #             irow+=1
-                
-        #         if 'uncertainties' in reitem:
-        #             for iresult in reitem['uncertainties']:
-        #                 if 'p' in iresult and iresult['p'] > 0:
-        #                     worksheet.write(irow, 1, 'confidence p', label_format )
-        #                     worksheet.write(irow, 3, iresult['p'], value_format )
-        #                     irow+=1
-            
-        #                 if 'term' in iresult and iresult['term'] != '':
-        #                     worksheet.write(irow, 1, 'uncertainty', label_format )
-        #                     worksheet.write(irow, 3, iresult['term'], value_format )
-        #                     irow+=1
+            if reitem['result_type'] == 'text':
 
-        #     elif reitem['result_type'] == 'value':
+                for iresult in reitem['values']:
+                    document.add_paragraph(iresult)
+
+            elif reitem['result_type'] == 'value':
                         
-        #         if len(reitem['values'])==len(reitem['uncertainties']):
-        #             worksheet.write(irow, 1, 'result', label_format )
-                    
-        #             for iresult,iuncertain in zip(reitem['values'],reitem['uncertainties']):
+                if len(reitem['values'])==len(reitem['uncertainties']):
+                    t = document.add_table(rows = 1, cols=5)
+                    # t.style = 'Table Grid'
+                    t.style = 'Light Grid Accent 1'
+                    t.autofit = True
+                    hdr_cells = t.rows[0].cells
+                    hdr_cells[0].text = 'Parameter'
+                    hdr_cells[1].text = 'Value'
+                    hdr_cells[2].text = 'Unit'
+                    hdr_cells[3].text = 'p'
+                    hdr_cells[4].text = 'Term'
+
+                    for iresult,iuncertain in zip(reitem['values'],reitem['uncertainties']):
+                        line_cells = t.add_row().cells
+                        if 'parameter' in iresult:
+                            line_cells[0].text = iresult['parameter'] 
+                        if 'value' in iresult:
+                            line_cells[1].text = iresult['value'] 
+                        if 'unit' in iresult and iresult['unit']!='':
+                            line_cells[2].text = iresult['unit'] 
+                        if 'p' in iuncertain and iuncertain['p'] != '0':
+                            line_cells[3].text =str(iuncertain['p']) 
+                        if 'term' in iuncertain and iuncertain['term'] != '':
+                            line_cells[4].text = iuncertain['term'] 
                             
-        #                 if 'parameter' in iresult:
-        #                     worksheet.write(irow, 2, iresult['parameter'], label_format )
-                            
-        #                 if 'value' in iresult:
-        #                     worksheet.write(irow, 3, iresult['value'], value_format )
-
-        #                 if 'unit' in iresult and iresult['unit']!='':
-        #                     worksheet.write(irow, 4, iresult['unit'], value_format )
-                            
-        #                 if 'p' in iuncertain and iuncertain['p'] != '0':
-        #                     worksheet.write(irow, 5, f"conf: {iuncertain['p']}", value_format )
-            
-        #                 if 'term' in iuncertain and iuncertain['term'] != '':
-        #                     worksheet.write(irow, 6, iuncertain['term'], value_format )
-                            
-        #                 irow+=1
-
-        #         # fallback when the size of parameters and uncertainties don't match (this should never happen)
-        #         else:
-        #             worksheet.write(irow, 1, 'result', label_format )
-                    
-        #             for iresult in reitem['values']:
-                            
-        #                 if 'parameter' in iresult:
-        #                     worksheet.write(irow, 2, iresult['parameter'], label_format )
-                            
-        #                 if 'value' in iresult:
-        #                     worksheet.write(irow, 3, iresult['value'], value_format )
-
-        #                 if 'unit' in iresult and iresult['unit']!='':
-        #                     worksheet.write(irow, 4, iresult['unit'], value_format )
-                    
-        #                 irow+=1
-                            
-        #             for iuncertain in reitem['uncertainties']:
-        #                 if 'p' in iuncertain and iuncertain['p'] > 0:
-        #                     worksheet.write(irow, 2, 'confidence', value_format )
-        #                     worksheet.write(irow, 3, f"conf: {iuncertain['p']}", value_format )
-        #                     irow+=1
-            
-        #                 if 'term' in iuncertain and iuncertain['term'] != '':
-        #                     worksheet.write(irow, 2, 'uncertainty', value_format )
-        #                     worksheet.write(irow, 3, iuncertain['term'], value_format )
-        #                     irow+=1
-
-    
-        # if len(reitem['links'])> 0:    
-        #     worksheet.write(irow, 1, 'links', label_format )
-        #     for ilink in reitem['links']:
-        #         if 'include' in ilink and not ilink['include']:
-        #             continue 
-        #         worksheet.write(irow, 2, ilink['label'].replace('_',' '), label_format )
-        #         worksheet.write(irow, 3, ilink['File'], value_format )
-        #         irow+=1
-
-
-    # irow =0 
-    # worksheet.write(irow, 0, 'General Information', label_format )
-    # for ilabel in labels:
-    #     if not ilabel in raitem:
-    #         continue
-    #     worksheet.write(irow, 1, ilabel.replace('_',' '), label_format )
-    #     worksheet.write(irow, 3, raitem[ilabel], value_format )
-    #     irow+=1
-
-    # substances_items = ra.general['substances']
-    # substance_keys = ['name', 'casrn', 'id', 'smiles']
-    
-    # for isubstance in substances_items:
-    #     worksheet.write(irow, 1, 'substance', label_format ) 
-    #     for ikey in substance_keys:
-    #         if not ikey in isubstance:
-    #             continue
-    #         worksheet.write(irow, 2, ikey, label_format )
-    #         worksheet.write(irow, 3, isubstance[ikey], value_format )
-    #         irow+=1
-
-    # irow+=1
-
-        
-
-
-
+        if len(reitem['links'])> 0:    
+            document.add_heading('Supporting documents', level=2 )
+            for ilink in reitem['links']:
+                # if 'include' in ilink and not ilink['include']:
+                #     continue 
+                document.add_paragraph (ilink['label'].replace('_',' ')+' : '+ilink['File'], style='ListBullet')
     try:
         document.save(reportfile)
     except:
@@ -415,126 +361,8 @@ def report_word (ra):
 
 
 
-#         # define style for normal and heading 1
-#         # normal_style = document.styles['Normal']
-#         # normal_font = normal_style.font
-#         # normal_font.name = 'Calibri'
-#         # normal_font.size = Pt(10)
 
-#         # heading_style = document.styles['heading 1']
-#         # heading_font = heading_style.font
-#         # heading_font.name = 'Calibri'
-#         # heading_font.color.rgb = RGBColor(0x00, 0x00, 0x00)
-#         # heading_font.size = Pt(12)
 
-#         # withd of column 1 and 2
-#         wcol1 = 1400000
-#         wcol2 = 4200000
-
-#         # withd of internal columns i and 2
-#         wicol1 = 1200000
-#         wicol2 = 2900000
-
-#         # sections of the document, specifying the document keys which will be listed
-#         sections = [('General model information',['ID', 'Version', 'Model_title', 'Model_description', 'Keywords', 'Contact', 'Institution', 'Date', 'Endpoint',
-#                         'Endpoint_units', 'Interpretation', 'Dependent_variable', 'Species',
-#                         'Limits_applicability', 'Experimental_protocol', 'Model_availability',
-#                         'Data_info']), 
-#                     ('Algorithm and software',['Algorithm', 'Software', 'Descriptors', 'Algorithm_settings',
-#                         'AD_method', 'AD_parameters', 'Goodness_of_fit_statistics',
-#                         'Internal_validation_1', 'Internal_validation_2', 'External_validation',
-#                         'Comments']),
-#                     ('Other information',['Other_related_models', 'Date_of_QMRF', 'Date_of_QMRF_updates',
-#                         'QMRF_updates', 'References', 'QMRF_same_models', 'Mechanistic_basis', 
-#                         'Mechanistic_references', 'Supporting_information', 'Comment_on_the_endpoint',
-#                         'Endpoint_data_quality_and_variability', 'Descriptor_selection'])]
-
-#         for isection in sections:
-#             # heading with the section name
-#             document.add_heading(isection[0], level=1)
-
-#             # table with one row per key 
-#             table = document.add_table(rows=len(isection[1]), cols=2)
-#             table.style = 'Table Grid'
-#             table.autofit = False
-
-#             count = 0
-#             for ik in isection[1]:
-#                 # add a row and format two columns
-#                 row = table.rows[count]
-#                 row.cells[0].width = wcol1
-#                 row.cells[1].width = wcol2
-                
-#                 label_k = ik.replace('_',' ')
-#                 row.cells[0].text = f'{label_k}'
-#                 count = count+1
-                
-#                 # define value
-#                 if ik in self.fields:
-
-#                     # set defaults for value
-#                     ivalue = ''
-
-#                     # v is the selected entry in the documentation dictionary
-#                     v = self.fields[ik]
-
-#                     ## newest parameter formats are extended and contain
-#                     ## rich metainformation for each entry
-#                     if 'value' in v:
-#                         ivalue = v['value']
-                        
-#                         # if ivalue is a dictionary create a nested table and iterate
-#                         # to represent the keys within
-#                         if isinstance(ivalue ,dict):
-
-#                             row.cells[0].text = f'{label_k}'
-#                             itable = row.cells[1].add_table(rows=len(ivalue), cols=2)
-#                             itable.style = 'Table Grid'
-#                             itable.autofit = False
-
-#                             icount = 0
-#                             # iterate keys assuming existence of value and description
-#                             for intk in ivalue:
-
-#                                 label_ik = intk.replace('_',' ')
-#                                 # label_ik = intk.replace('_f', '').replace('_', ' ')
-
-#                                 irow = itable.rows[icount]
-#                                 irow.cells[0].width=wicol1
-#                                 irow.cells[1].width=wicol2
-#                                 icount = icount +1
-                   
-#                                 intv = ivalue[intk]
-#                                 if not isinstance(intv, dict):
-#                                     iivalue = intv
-                                
-#                                 else:
-#                                     intv = ivalue[intk]
-
-#                                     iivalue = ''
-#                                     if "value" in intv:                                
-#                                         iivalue = intv["value"]
-#                                     if isinstance (iivalue, float):
-#                                         iivalue =  f'{iivalue:f}'
-#                                     elif iivalue is None:
-#                                         iivalue = ''
-
-#                                 irow.cells[0].text = f'{label_ik}'
-#                                 irow.cells[1].text = f'{str(iivalue)}'
-
-#                         # if the key is not a dictionary just insert the value inside
-#                         else:
-#                             if ivalue is None: 
-#                                 ivalue = ''
-
-#                             row.cells[1].text = f'{str(ivalue)}'
-
-#         try:
-#             document.save(oname)
-#         except:
-#             return False, f'error saving document as {oname}'
-            
-#         return True, 'OK'
 
 def action_report (raname, report_format):
 
