@@ -237,10 +237,12 @@ def report_word (ra):
     path = os.path.dirname(os.path.abspath(__file__))
     path = os.path.join(path,'default')
     template = os.path.join(path,'generic_word.docx')
-    document = Document(template)
+    # document = Document(template)
+    document = Document()
 
     # General section
-    document.add_heading(ra.general['title'])
+    document.add_heading(ra.general['title'], 0)
+
     document.add_heading('General information', level=1)
     document.add_paragraph (ra.general['general_description'])
 
