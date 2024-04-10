@@ -241,9 +241,7 @@ def report_word (ra):
 
     # General section
     document.add_heading(ra.general['title'])
-    document.add_heading('General information')
-    
-    document.add_heading ('General_description', level=2)
+    document.add_heading('General information', level=1)
     document.add_paragraph (ra.general['general_description'])
 
     document.add_heading ('Background', level=2)
@@ -280,21 +278,21 @@ def report_word (ra):
         else:
             label = ''
 
-        document.add_heading (name+f" ({label})", level=2)
-        document.add_paragraph (description)
+        document.add_heading (name+f" ({label})", level=1)
+        p = document.add_paragraph()
+        p.add_run (description).italic = True
         
-        document.add_heading ('summary', level=2)
-        document.add_paragraph (reitem['summary'])
+        document.add_heading ('Summary', level=2)
+        document.add_paragraph(reitem['summary'])
+
     
 
-        # if 'decision' in reitem:
-        #     worksheet.write(irow, 1, 'decision', label_format )
-        #     worksheet.write(irow, 3, bool_to_text[reitem['decision']], value_format )
-        #     irow+=1
+        if 'decision' in reitem:
+            document.add_heading('Decision', level=2)
+            document.add_paragraph(bool_to_text[reitem['decision']])
 
-        #     worksheet.write(irow, 1, 'justification', label_format )
-        #     worksheet.write(irow, 3, reitem['justification'], value_format )
-        #     irow+=1
+            document.add_heading('Justification', level=2 )
+            document.add_paragraph(reitem['justification'])
         
         # else:
         #     if reitem['result_type'] == 'text':
