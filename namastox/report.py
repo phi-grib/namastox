@@ -353,6 +353,27 @@ def report_word (ra):
                 # if 'include' in ilink and not ilink['include']:
                 #     continue 
                 document.add_paragraph (ilink['label'].replace('_',' ')+' : '+ilink['File'], style='ListBullet')
+
+                # import docx
+                # doc = docx.Document()
+                # p = doc.add_paragraph("Hello World! ")
+
+                # hyperlink = docx.oxml.shared.OxmlElement("w:hyperlink")
+                # hyperlink.set(docx.oxml.shared.qn("w:anchor"), "my_section_id")
+
+                # new_run = docx.oxml.shared.OxmlElement("w:r")
+                # rpr = docx.oxml.shared.OxmlElement("w:rPr")
+
+                # hl = docx.oxml.shared.OxmlElement("w:highlight")
+                # hl.set(docx.oxml.shared.qn("w:val"), "green")
+                # rpr.append(hl)
+
+                # new_run.append(rpr)
+                # new_run.text = "my visible link text"
+
+                # hyperlink.append(new_run)
+                # p._p.append(hyperlink)
+                # doc.save("hyperlink.docx")
     try:
         document.save(reportfile)
     except:
