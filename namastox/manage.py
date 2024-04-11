@@ -527,8 +527,8 @@ def getLocalModelPrediction():
 
 def exportRA (raname):
     '''
-    compresses (as tgz) the ra with the name gives as argument in the ra repository and
-    returns the name of the file
+    compresses (as tgz) the ra with the name of [ra].tgz and
+    returns the file name
     '''
     current_path = os.getcwd()
 
@@ -567,6 +567,21 @@ def importRA (filename):
 
     return True, 'OK'
 
+def attachmentsRA (raname):
+    '''
+    compresses (as tgz) the ra attachments with the name of the [ra]_repo.tgz and
+    returns the file name
+    '''
+    current_path = os.getcwd()
+
+    compressedfile = os.path.join(ra_repository_path(), raname+'_repo.tgz')
+
+    with tarfile.open(compressedfile, 'w:gz') as tar:
+        os.chdir(ra_repository_path())
+        tar.add(os.path.join(raname,'repo'))
+        os.chdir(current_path)
+
+    return True, compressedfile
 
 def getInfoStructure(molname=None, casrn=None):
     ''' 
