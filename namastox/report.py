@@ -298,8 +298,9 @@ def report_word (ra):
             label = ''
 
         document.add_heading (name+f" ({label})", level=1)
-        p = document.add_paragraph()
-        p.add_run (description).italic = True
+        t = document.add_table(rows = 1, cols = 1, style='Table Grid')
+        dparagraph = t.rows[0].cells[0].paragraphs[0]
+        dparagraph.add_run(description).italic = True
         
         document.add_heading ('Summary', level=2)
         document.add_paragraph(reitem['summary'])
