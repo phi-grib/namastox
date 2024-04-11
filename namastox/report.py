@@ -25,8 +25,11 @@ from namastox.ra import Ra
 import os, yaml
 import xlsxwriter
 import docx
-from docx import Document
-from docx.shared import Pt
+from datetime import date
+# from docx import Document
+# from docx.shared import Pt
+# from docx.shared import RGBColor
+
 
 LOG = get_logger(__name__)
 
@@ -226,7 +229,7 @@ def report_excel (ra):
 def addGeneralSection (document, ra, item):
     if item in ra.general and ra.general[item]!=None and len(ra.general[item])>2:
         item_title = item.capitalize().replace('_',' ')
-        document.add_heading(item_title, level=1)
+        document.add_heading(item_title, level=2)
         document.add_paragraph (ra.general[item])
 
 def add_hyperlink(paragraph, url, text):
@@ -263,9 +266,6 @@ def add_hyperlink(paragraph, url, text):
     return hyperlink
 
 def report_word (ra):
-
-    # from docx.shared import RGBColor
-
     reportfile = os.path.join (ra.rapath,'report.docx')
 
     if os.path.isfile(reportfile):
@@ -278,7 +278,7 @@ def report_word (ra):
     # path = os.path.join(path,'default')
     # template = os.path.join(path,'generic_word.docx')
     # document = Document(template)
-    document = Document()
+    document = docx.Document()
 
     ## define style for normal and heading 1
     # normal_style = document.styles['Normal']
@@ -295,8 +295,17 @@ def report_word (ra):
     # Title
     document.add_heading(ra.general['title'], 0)
 
-    # Substance
-    document.add_heading ('Substance', level=1)
+    # Fixed sections
+    document.add_paragraph (f'Report date {date.today().isoformat()}')
+    document.add_paragraph ('Author')
+    document.add_paragraph ('<Disclaimer>')  
+    document.add_paragraph ('<How to use this report>')  
+
+    # General info section
+    document.add_heading ('General information', level=1)
+
+    # -> substance
+    document.add_heading ('Substance', level=2)
     substances_items = ra.general['substances']
     substance_keys = ['name', 'casrn', 'id', 'smiles']
     
@@ -310,7 +319,7 @@ def report_word (ra):
         if len(substances_items)>1:
             document.add_paragraph ('')
 
-    # General info section
+    # -> rest of sub-sections in General Information
     items = ['general_description', 'background', 'regulatory_framework', 'endpoint', 'species']
     for item in items:
         addGeneralSection (document, ra, item)
@@ -389,6 +398,9 @@ def report_word (ra):
                 #     continue 
                 link_p = document.add_paragraph (ilink['label'].replace('_',' ')+' : ', style='ListBullet')
                 add_hyperlink(link_p, ilink['File'], ilink['File'])
+    
+    #TODO Notes
+    
     try:
         document.save(reportfile)
     except:
