@@ -22,16 +22,29 @@
 
 from namastox.logger import get_logger
 from namastox.ra import Ra
-import os, yaml
+import os
+import yaml
+from rdkit import Chem
+from rdkit.Chem import Draw
 import xlsxwriter
 import docx
 from datetime import date
+from namastox.utils import id_generator
+from docx.shared import Cm
 # from docx import Document
 # from docx.shared import Pt
 # from docx.shared import RGBColor
 
-
 LOG = get_logger(__name__)
+
+def generateSubstanceImage (smiles, oname):
+    try:
+        m = Chem.MolFromSmiles(smiles)
+    except:
+        return False
+
+    Draw.MolToFile(m, oname, imageType='png')
+    return True
 
 def report_excel (ra):
     reportfile = os.path.join (ra.rapath,'report.xlsx')
@@ -69,6 +82,11 @@ def report_excel (ra):
         irow+=1
 
     substances_items = ra.general['substances']
+
+    # generate substance image
+    if 'smiles' in substances_items:
+        generateSubstanceImage(ra, substances_items['smiles'])
+
     substance_keys = ['name', 'casrn', 'id', 'smiles']
     
     for isubstance in substances_items:
@@ -265,6 +283,7 @@ def add_hyperlink(paragraph, url, text):
 
     return hyperlink
 
+
 def report_word (ra):
     reportfile = os.path.join (ra.rapath,'report.docx')
 
@@ -307,9 +326,24 @@ def report_word (ra):
     # -> substance
     document.add_heading ('Substance', level=2)
     substances_items = ra.general['substances']
-    substance_keys = ['name', 'casrn', 'id', 'smiles']
+
+
+    substance_keys = ['name', 'casrn', 'id']
+
     
-    for isubstance in substances_items:
+    for i,isubstance in enumerate(substances_items):
+
+        # generate substance image
+        if 'smiles' in isubstance:
+            spath = os.path.join(ra.rapath, f'substance-{str(i)}.png')
+            if os.path.isfile(spath):
+                success = True
+            else:
+                success = generateSubstanceImage(isubstance['smiles'],spath)
+            if success:
+                document.add_picture (spath, width=Cm(4.0))
+
+        # add name, CAS and ID's
         for ikey in substance_keys: 
             if ikey in isubstance and isubstance[ikey] != None and isubstance[ikey]!='':
                 #TODO: add the structure graph, removing 'smiles' as text
