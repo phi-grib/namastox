@@ -413,29 +413,77 @@ def report_word (ra):
             elif reitem['result_type'] == 'value':
                         
                 if len(reitem['values'])==len(reitem['uncertainties']):
-                    t = document.add_table(rows = 1, cols=5)
+
+                    # check if there is at least one element for the three optional columns
+                    iheader = 2
+                    unit_touch = False
+                    for iresult in reitem['values']:
+                        if 'unit' in iresult and iresult['unit']!='':
+                            unit_touch = True
+                            iheader+=1
+                            break
+
+                    p_touch = False
+                    for iuncertain in reitem['uncertainties']:
+                        if 'p' in iuncertain and iuncertain['p'] != 0:
+                            p_touch = True
+                            iheader+=1
+                            break
+
+                    term_touch = False
+                    for iuncertain in reitem['uncertainties']:
+                        if 'term' in iuncertain and iuncertain['term'] != '':
+                            term_touch = True
+                            iheader+=1
+                            break
+
+                    t = document.add_table(rows = 1, cols=iheader)
+
                     # t.style = 'Table Grid'
                     t.style = 'Light Grid Accent 1'
                     t.autofit = True
                     hdr_cells = t.rows[0].cells
                     hdr_cells[0].text = 'Parameter'
                     hdr_cells[1].text = 'Value'
-                    hdr_cells[2].text = 'Unit'
-                    hdr_cells[3].text = 'p'
-                    hdr_cells[4].text = 'Term'
+                    
+                    # add headers for optional columns
+                    iheader = 2
+                    if unit_touch:
+                        hdr_cells[iheader].text = 'Unit'
+                        iheader +=1
+
+                    if p_touch:
+                        hdr_cells[iheader].text = 'p'
+                        iheader +=1
+
+                    if term_touch:
+                        hdr_cells[iheader].text = 'Term'
 
                     for iresult,iuncertain in zip(reitem['values'],reitem['uncertainties']):
                         line_cells = t.add_row().cells
+                        
                         if 'parameter' in iresult:
                             line_cells[0].text = iresult['parameter'] 
                         if 'value' in iresult:
                             line_cells[1].text = iresult['value'] 
-                        if 'unit' in iresult and iresult['unit']!='':
-                            line_cells[2].text = iresult['unit'] 
-                        if 'p' in iuncertain and iuncertain['p'] != '0':
-                            line_cells[3].text =str(iuncertain['p']) 
-                        if 'term' in iuncertain and iuncertain['term'] != '':
-                            line_cells[4].text = iuncertain['term'] 
+
+                        # for the optional columns, add only if the column exist, but even
+                        # so, check if for this particular objetc we must add something
+                        
+                        icol = 2
+                        if unit_touch:
+                            if 'unit' in iresult and iresult['unit']!='':
+                                line_cells[icol].text = iresult['unit'] 
+                            icol+=1
+
+                        if p_touch:
+                            if 'p' in iuncertain and iuncertain['p'] != 0:
+                                line_cells[icol].text =str(iuncertain['p']) 
+                            icol+=1
+
+                        if term_touch:
+                            if 'term' in iuncertain and iuncertain['term'] != '':
+                                line_cells[icol].text = iuncertain['term'] 
                             
         if len(reitem['links'])> 0:    
             document.add_heading('Supporting documents', level=2 )
