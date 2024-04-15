@@ -89,8 +89,22 @@ def report_excel (ra):
 
     substance_keys = ['name', 'casrn', 'id', 'smiles']
     
-    for isubstance in substances_items:
+    for i,isubstance in enumerate(substances_items):
         worksheet.write(irow, 1, 'substance', label_format ) 
+
+        # generate substance image
+        if 'smiles' in isubstance:
+            spath = os.path.join(ra.rapath, f'substance-{str(i)}.png')
+            if os.path.isfile(spath):
+                success = True
+            else:
+                success = generateSubstanceImage(isubstance['smiles'],spath)
+            if success:
+                worksheet.set_row(irow, 60)
+                worksheet.write(irow, 2, 'structure', label_format )
+                worksheet.insert_image (irow, 3, spath, {"x_scale": 0.25, "y_scale": 0.25})
+                irow+=1
+
         for ikey in substance_keys:
             if not ikey in isubstance:
                 continue
@@ -327,9 +341,7 @@ def report_word (ra):
     document.add_heading ('Substance', level=2)
     substances_items = ra.general['substances']
 
-
     substance_keys = ['name', 'casrn', 'id']
-
     
     for i,isubstance in enumerate(substances_items):
 
