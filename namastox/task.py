@@ -25,6 +25,36 @@ import yaml
 
 LOG = get_logger(__name__)
 
+
+# {
+#     'methods' : [
+#                   {'name':'AMES',
+#                   'description': 'detailled description of the method',
+#                   'link': '',
+#                   'reliability': [
+#                             {'term':'sensitivity',
+#                             'value': '0.8'},
+#                             {'term':'specificity',
+#                             'value': '0.9'}
+#                    ]
+#                   }
+#                 ],
+#     'values': [  
+#                 {'method': 'AMES',
+#                 'parameter': 'pKa',
+#                 'value': 0.18,
+#                 'unit': 'nM',
+#                 'reliability': [
+#                             {'term':'sensitivity',
+#                             'value': '0.8'},
+#                             {'term':'specificity',
+#                             'value': '0.9'}
+#                         ] 
+#                 }
+#               ]
+# }
+
+
 class Task:
     ''' Class representing a task associade to a workflow node
         Everything related with the topological aspects of the task is
