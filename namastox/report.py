@@ -300,6 +300,129 @@ def add_hyperlink(paragraph, url, text):
 
     return hyperlink
 
+def addResult (document, ra, reitem, section, order):
+
+    bool_to_text = {True:'Yes', False:'No'}
+    workflow = ra.workflow
+
+    # Name and Description are not in results but in workflow
+    inode = workflow.getNode(reitem['id'])
+    itask = inode.getTask()
+    idict = itask.getDescriptionDict()
+    name = idict['task description']['name']
+    description = idict['task description']['description']
+    if 'label' in reitem:
+        label = reitem['label']
+    else:
+        label = ''
+
+    #TODO add subsection number
+    document.add_heading (f"{str(section)}.{str(order)} {name} ({label})", level=2)
+    t = document.add_table(rows = 1, cols = 1, style='Table Grid')
+    dparagraph = t.rows[0].cells[0].paragraphs[0]
+    dparagraph.add_run(description).italic = True
+    
+    document.add_heading ('Summary', level=3)
+    document.add_paragraph(reitem['summary'])
+
+    if 'decision' in reitem:
+        document.add_heading('Decision', level=3)
+        document.add_paragraph(bool_to_text[reitem['decision']])
+
+        document.add_heading('Justification', level=3 )
+        document.add_paragraph(reitem['justification'])
+    
+    else:
+        document.add_heading('Result', level=3 )
+
+        if reitem['result_type'] == 'text':
+
+            for iresult in reitem['values']:
+                document.add_paragraph(iresult)
+
+        elif reitem['result_type'] == 'value':
+                    
+            if len(reitem['values'])==len(reitem['uncertainties']):
+
+                # check if there is at least one element for the three optional columns
+                iheader = 2
+                unit_touch = False
+                for iresult in reitem['values']:
+                    if 'unit' in iresult and iresult['unit']!='':
+                        unit_touch = True
+                        iheader+=1
+                        break
+
+                p_touch = False
+                for iuncertain in reitem['uncertainties']:
+                    if 'p' in iuncertain and iuncertain['p'] != 0:
+                        p_touch = True
+                        iheader+=1
+                        break
+
+                term_touch = False
+                for iuncertain in reitem['uncertainties']:
+                    if 'term' in iuncertain and iuncertain['term'] != '':
+                        term_touch = True
+                        iheader+=1
+                        break
+
+                t = document.add_table(rows = 1, cols=iheader)
+
+                # t.style = 'Table Grid'
+                t.style = 'Light Grid Accent 1'
+                t.autofit = True
+                hdr_cells = t.rows[0].cells
+                hdr_cells[0].text = 'Parameter'
+                hdr_cells[1].text = 'Value'
+                
+                # add headers for optional columns
+                iheader = 2
+                if unit_touch:
+                    hdr_cells[iheader].text = 'Unit'
+                    iheader +=1
+
+                if p_touch:
+                    hdr_cells[iheader].text = 'p'
+                    iheader +=1
+
+                if term_touch:
+                    hdr_cells[iheader].text = 'Term'
+
+                for iresult,iuncertain in zip(reitem['values'],reitem['uncertainties']):
+                    line_cells = t.add_row().cells
+                    
+                    if 'parameter' in iresult:
+                        line_cells[0].text = iresult['parameter'] 
+                    if 'value' in iresult:
+                        line_cells[1].text = iresult['value'] 
+
+                    # for the optional columns, add only if the column exist, but even
+                    # so, check if for this particular objetc we must add something
+                    
+                    icol = 2
+                    if unit_touch:
+                        if 'unit' in iresult and iresult['unit']!='':
+                            line_cells[icol].text = iresult['unit'] 
+                        icol+=1
+
+                    if p_touch:
+                        if 'p' in iuncertain and iuncertain['p'] != 0:
+                            line_cells[icol].text =str(iuncertain['p']) 
+                        icol+=1
+
+                    if term_touch:
+                        if 'term' in iuncertain and iuncertain['term'] != '':
+                            line_cells[icol].text = iuncertain['term'] 
+                        
+    if len(reitem['links'])> 0:    
+        document.add_heading('Supporting documents', level=3 )
+        for ilink in reitem['links']:
+            # if 'include' in ilink and not ilink['include']:
+            #     continue 
+            link_p = document.add_paragraph (ilink['label'].replace('_',' ')+' : ', style='ListBullet')
+            add_hyperlink(link_p, ilink['File'], ilink['File'])
+
 
 def report_word (ra):
     reportfile = os.path.join (ra.rapath,'report.docx')
@@ -406,130 +529,88 @@ def report_word (ra):
 
     # Results section
 
-    
-    bool_to_text = {True:'Yes', False:'No'}
-    workflow = ra.workflow
+    #TODO Use list to do this task
+    re_preliminary = []
+    re_hazard = []
+    re_adme = []
+    re_exposure = []
+    re_integration = []
+    re_exit = []
 
-    #TODO analize results and group in PRELIMINARY / HAZARD / ADME / EXPOSURE / INTEGRATION
+    assigned = 0
     for reitem in ra.results:
+        id = reitem['id'][0]
 
-        # Name and Description are not in results but in workflow
-        inode = workflow.getNode(reitem['id'])
-        itask = inode.getTask()
-        idict = itask.getDescriptionDict()
-        name = idict['task description']['name']
-        description = idict['task description']['description']
-        if 'label' in reitem:
-            label = reitem['label']
-        else:
-            label = ''
+        if id in ['B', 'H', 'E', 'A', 'Z']:
+            assigned += 1
 
-        #TODO add subsection number
-        document.add_heading (name+f" ({label})", level=2)
-        t = document.add_table(rows = 1, cols = 1, style='Table Grid')
-        dparagraph = t.rows[0].cells[0].paragraphs[0]
-        dparagraph.add_run(description).italic = True
+        if id == 'B':
+            re_adme.append(reitem)
+        elif id == 'H': 
+            re_hazard.append(reitem)
+        elif id == 'E': 
+            re_exposure.append(reitem)
+        elif id == 'A': 
+            re_preliminary.append(reitem)
+        elif id == 'Z': 
+            re_integration.append(reitem)
+        elif id == 'X': 
+            re_exit.append(reitem)
+
+    if assigned < len(ra.results):
+        iorder=1
+        for reitem in ra.results:
+            addResult (document, ra, reitem, 2, iorder)
+            iorder+=1
+    else:
+        isection = 1
+        if len(re_preliminary)>0:
+            isection +=1
+            document.add_heading (f'{isection}. Preliminary',level=1 )
+            iorder = 1
+            for reitem in re_preliminary:
+                addResult (document, ra, reitem, isection, iorder)
+                iorder+=1
         
-        document.add_heading ('Summary', level=3)
-        document.add_paragraph(reitem['summary'])
+        if len(re_hazard)>0:
+            isection +=1
+            document.add_heading (f'{isection}. Hazard',level=1 )
+            iorder = 1
+            for reitem in re_hazard:
+                addResult (document, ra, reitem, isection, iorder)
+                iorder+=1
 
-        if 'decision' in reitem:
-            document.add_heading('Decision', level=3)
-            document.add_paragraph(bool_to_text[reitem['decision']])
-
-            document.add_heading('Justification', level=3 )
-            document.add_paragraph(reitem['justification'])
+        if len(re_adme)>0:      
+            isection +=1
+            document.add_heading (f'{isection}. ADME',level=1 )
+            iorder = 1
+            for reitem in re_adme:
+                addResult (document, ra, reitem, isection, iorder)
+                iorder+=1
         
-        else:
-            document.add_heading('Result', level=3 )
+        if len(re_exposure)>0:
+            isection +=1
+            document.add_heading (f'{isection}. Exposure',level=1 )
+            iorder = 1
+            for reitem in re_exposure:
+                addResult (document, ra, reitem, isection, iorder)
+                iorder+=1
 
-            if reitem['result_type'] == 'text':
+        if len(re_integration)>0:
+            isection +=1
+            document.add_heading (f'{isection}. Integration',level=1 )
+            iorder = 1
+            for reitem in re_integration:
+                addResult (document, ra, reitem, isection, iorder)
+                iorder+=1
 
-                for iresult in reitem['values']:
-                    document.add_paragraph(iresult)
-
-            elif reitem['result_type'] == 'value':
-                        
-                if len(reitem['values'])==len(reitem['uncertainties']):
-
-                    # check if there is at least one element for the three optional columns
-                    iheader = 2
-                    unit_touch = False
-                    for iresult in reitem['values']:
-                        if 'unit' in iresult and iresult['unit']!='':
-                            unit_touch = True
-                            iheader+=1
-                            break
-
-                    p_touch = False
-                    for iuncertain in reitem['uncertainties']:
-                        if 'p' in iuncertain and iuncertain['p'] != 0:
-                            p_touch = True
-                            iheader+=1
-                            break
-
-                    term_touch = False
-                    for iuncertain in reitem['uncertainties']:
-                        if 'term' in iuncertain and iuncertain['term'] != '':
-                            term_touch = True
-                            iheader+=1
-                            break
-
-                    t = document.add_table(rows = 1, cols=iheader)
-
-                    # t.style = 'Table Grid'
-                    t.style = 'Light Grid Accent 1'
-                    t.autofit = True
-                    hdr_cells = t.rows[0].cells
-                    hdr_cells[0].text = 'Parameter'
-                    hdr_cells[1].text = 'Value'
-                    
-                    # add headers for optional columns
-                    iheader = 2
-                    if unit_touch:
-                        hdr_cells[iheader].text = 'Unit'
-                        iheader +=1
-
-                    if p_touch:
-                        hdr_cells[iheader].text = 'p'
-                        iheader +=1
-
-                    if term_touch:
-                        hdr_cells[iheader].text = 'Term'
-
-                    for iresult,iuncertain in zip(reitem['values'],reitem['uncertainties']):
-                        line_cells = t.add_row().cells
-                        
-                        if 'parameter' in iresult:
-                            line_cells[0].text = iresult['parameter'] 
-                        if 'value' in iresult:
-                            line_cells[1].text = iresult['value'] 
-
-                        # for the optional columns, add only if the column exist, but even
-                        # so, check if for this particular objetc we must add something
-                        
-                        icol = 2
-                        if unit_touch:
-                            if 'unit' in iresult and iresult['unit']!='':
-                                line_cells[icol].text = iresult['unit'] 
-                            icol+=1
-
-                        if p_touch:
-                            if 'p' in iuncertain and iuncertain['p'] != 0:
-                                line_cells[icol].text =str(iuncertain['p']) 
-                            icol+=1
-
-                        if term_touch:
-                            if 'term' in iuncertain and iuncertain['term'] != '':
-                                line_cells[icol].text = iuncertain['term'] 
-                            
-        if len(reitem['links'])> 0:    
-            document.add_heading('Supporting documents', level=3 )
-            for ilink in reitem['links']:
-                # if 'include' in ilink and not ilink['include']:
-                #     continue 
-                link_p = document.add_paragraph (ilink['label'].replace('_',' ')+' : ', style='ListBullet')
-                add_hyperlink(link_p, ilink['File'], ilink['File'])
+        if len(re_exit)>0:
+            isection +=1
+            document.add_heading (f'{isection}. Conclusions',level=1 )
+            iorder = 1
+            for reitem in re_exit:
+                addResult (document, ra, reitem, isection, iorder)
+                iorder+=1
     
     #TODO Notes
     
