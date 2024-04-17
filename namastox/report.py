@@ -27,10 +27,13 @@ import yaml
 from rdkit import Chem
 from rdkit.Chem import Draw
 import xlsxwriter
-import docx
 from datetime import date
 from namastox.utils import id_generator
+import docx
 from docx.shared import Cm
+from docx.oxml.ns import qn
+from docx.oxml import OxmlElement
+
 # from docx import Document
 # from docx.shared import Pt
 # from docx.shared import RGBColor
@@ -261,7 +264,7 @@ def report_excel (ra):
 def addGeneralSection (document, ra, item):
     if item in ra.general and ra.general[item]!=None and len(ra.general[item])>2:
         item_title = item.capitalize().replace('_',' ')
-        document.add_heading(item_title, level=2)
+        document.add_heading(item_title, level=3)
         document.add_paragraph (ra.general[item])
 
 def add_hyperlink(paragraph, url, text):
@@ -334,11 +337,42 @@ def report_word (ra):
     document.add_paragraph ('<Disclaimer>')  
     document.add_paragraph ('<How to use this report>')  
 
+    # Code for making Table of Contents
+    document.add_heading ('Table of Contents')
+    paragraph = document.add_paragraph()
+    run = paragraph.add_run()
+
+    fldChar = OxmlElement('w:fldChar')  # creates a new element
+    fldChar.set(qn('w:fldCharType'), 'begin')  # sets attribute on element
+
+    instrText = OxmlElement('w:instrText')
+    instrText.set(qn('xml:space'), 'preserve')  # sets attribute on element
+    instrText.text = 'TOC \\o "1-2" \\h \\z \\u'   # change 1-3 depending on heading levels you need
+
+    fldChar2 = OxmlElement('w:fldChar')
+    fldChar2.set(qn('w:fldCharType'), 'separate')
+
+    fldChar3 = OxmlElement('w:t')
+    fldChar3.text = "<Please right-click to update TOC>"
+
+    fldChar2.append(fldChar3)
+
+    fldChar4 = OxmlElement('w:fldChar')
+    fldChar4.set(qn('w:fldCharType'), 'end')
+
+    r_element = run._r
+    r_element.append(fldChar)
+    r_element.append(instrText)
+    r_element.append(fldChar2)
+    r_element.append(fldChar4)
+
+    # p_element = paragraph._p
+
     # General info section
-    document.add_heading ('General information', level=1)
+    document.add_heading ('1. General information', level=1)
 
     # -> substance
-    document.add_heading ('Substance', level=2)
+    document.add_heading ('Substance', level=3)
     substances_items = ra.general['substances']
 
     substance_keys = ['name', 'casrn', 'id']
@@ -371,9 +405,12 @@ def report_word (ra):
         addGeneralSection (document, ra, item)
 
     # Results section
+
+    
     bool_to_text = {True:'Yes', False:'No'}
     workflow = ra.workflow
 
+    #TODO analize results and group in PRELIMINARY / HAZARD / ADME / EXPOSURE / INTEGRATION
     for reitem in ra.results:
 
         # Name and Description are not in results but in workflow
@@ -387,23 +424,24 @@ def report_word (ra):
         else:
             label = ''
 
-        document.add_heading (name+f" ({label})", level=1)
+        #TODO add subsection number
+        document.add_heading (name+f" ({label})", level=2)
         t = document.add_table(rows = 1, cols = 1, style='Table Grid')
         dparagraph = t.rows[0].cells[0].paragraphs[0]
         dparagraph.add_run(description).italic = True
         
-        document.add_heading ('Summary', level=2)
+        document.add_heading ('Summary', level=3)
         document.add_paragraph(reitem['summary'])
 
         if 'decision' in reitem:
-            document.add_heading('Decision', level=2)
+            document.add_heading('Decision', level=3)
             document.add_paragraph(bool_to_text[reitem['decision']])
 
-            document.add_heading('Justification', level=2 )
+            document.add_heading('Justification', level=3 )
             document.add_paragraph(reitem['justification'])
         
         else:
-            document.add_heading('Result', level=2 )
+            document.add_heading('Result', level=3 )
 
             if reitem['result_type'] == 'text':
 
@@ -486,7 +524,7 @@ def report_word (ra):
                                 line_cells[icol].text = iuncertain['term'] 
                             
         if len(reitem['links'])> 0:    
-            document.add_heading('Supporting documents', level=2 )
+            document.add_heading('Supporting documents', level=3 )
             for ilink in reitem['links']:
                 # if 'include' in ilink and not ilink['include']:
                 #     continue 
