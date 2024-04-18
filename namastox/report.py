@@ -418,7 +418,7 @@ def addResult (document, ra, reitem, section, order):
     if len(reitem['links'])> 0:    
         document.add_heading('Supporting documents', level=3 )
         for ilink in reitem['links']: 
-            link_p = document.add_paragraph (ilink['label'].replace('_',' ')+' : ', style='ListBullet')
+            link_p = document.add_paragraph (ilink['label'].replace('_',' ')+' : ', style='List Bullet')
             addHyperlink(link_p, ilink['File'], ilink['File'])
 
 
@@ -512,7 +512,7 @@ def report_word (ra):
         for ikey in substance_keys: 
             if ikey in isubstance and isubstance[ikey] != None and isubstance[ikey]!='':
                 #TODO: add the structure graph, removing 'smiles' as text
-                document.add_paragraph(ikey + ': '+isubstance[ikey], style='ListBullet')
+                document.add_paragraph(ikey + ': '+isubstance[ikey], style='List Bullet')
 
         # add empty line between items
         if len(substances_items)>1:
@@ -566,7 +566,11 @@ def report_word (ra):
                 addResult (document, ra, reitem, isec, iorder)
                 iorder+=1
     
-    #TODO Notes
+    # Notes section. We decided to avoid numbering this section
+    document.add_heading ('Notes', level=1)
+    for noitem in ra.notes:
+        document.add_heading (f"{noitem['title']} ({noitem['id']})", level=3)
+        document.add_paragraph(noitem['text'])
     
     try:
         document.save(reportfile)
