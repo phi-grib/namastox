@@ -177,7 +177,12 @@ class Ra:
             for ifile in files_to_rename:
                 ipath = os.path.join(rahistpath,ifile)
                 if os.path.isfile(ipath):
-                    os.rename(ipath, os.path.join(rahistpath, 'bk_'+ ifile[3:]))
+                    bk_name = os.path.join(rahistpath, 'bk_'+ ifile[3:])
+                    i=1
+                    while os.path.isfile(bk_name):
+                        bk_name = os.path.join(rahistpath, f'bk_{ifile[3:-5]}_{str(i)}.yaml')
+                        i=i+1
+                    os.rename(ipath, bk_name)
 
         # save in the historic file
         time_label = time.strftime("_%d%b%Y_%H%M%S", time.localtime()) 
