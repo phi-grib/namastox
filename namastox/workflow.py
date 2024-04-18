@@ -232,17 +232,10 @@ class Workflow:
         node_path =[iresult['id'] for iresult in results]
 
         header = 'graph TD\n'
-        # flowchart LR
-        # A:::foo & B:::bar --> C:::foobar
-        # classDef foo stroke:#f00
-        # classDef bar stroke:#0f0
-        # classDef foobar stroke:#00f
-
         body = ''
         
-        # style = ''
         links = ''
-        
+
         styleMember= {'anode':[],
                       'vnode':[],
                       'fnode':[],
@@ -327,18 +320,23 @@ class Workflow:
                                 subbody[subgraph]+=ibody
                             else:
                                 body += ibody
-                            # style+= istyle
                             links+= ilinks
 
         # use the list of nodes assigned to each style        
         for istyle in styleMember:
+            
+            # do not process empty lists
             if len(styleMember[istyle])==0:
                 continue
+
+            # trick to remove duplicates
+            styleMember[istyle] = list(dict.fromkeys(styleMember[istyle]))
+
             styleDef += f'class '
             for ii in styleMember[istyle]:
                 styleDef += ii+','
             styleDef = styleDef[:-1]
-            styleDef += f' {istyle};\n'
+            styleDef += f' {istyle}\n'
 
         # styles of subgraphs
         subgraph_style_catalogue = {'H':"style HAZARD fill:"+HAZARD_FILL+",stroke:"+HAZARD_STROKE+"\n",
