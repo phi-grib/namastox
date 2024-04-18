@@ -529,87 +529,45 @@ def report_word (ra):
 
     # Results section
 
-    #TODO Use list to do this task
-    re_preliminary = []
-    re_hazard = []
-    re_adme = []
-    re_exposure = []
-    re_integration = []
-    re_exit = []
+    ra_sections = [ 
+        {'id':'A', 're': [], 'label': 'Preliminary'},
+        {'id':'H', 're': [], 'label': 'Hazard'},
+        {'id':'B', 're': [], 'label': 'ADME'},
+        {'id':'E', 're': [], 'label': 'Exposure'},
+        {'id':'Z', 're': [], 'label': 'Conclusions'}
+    ]
 
+    # try to assign the results to standard results sections
     assigned = 0
     for reitem in ra.results:
         id = reitem['id'][0]
 
-        if id in ['B', 'H', 'E', 'A', 'Z']:
-            assigned += 1
+        for isection in ra_sections:
+            if id == isection['id']:
+                isection['re'].append(reitem)
+                assigned +=1
 
-        if id == 'B':
-            re_adme.append(reitem)
-        elif id == 'H': 
-            re_hazard.append(reitem)
-        elif id == 'E': 
-            re_exposure.append(reitem)
-        elif id == 'A': 
-            re_preliminary.append(reitem)
-        elif id == 'Z': 
-            re_integration.append(reitem)
-        elif id == 'X': 
-            re_exit.append(reitem)
-
+    # if we failed to assign probably the workflow is custom 
+    # so don't assign sections
     if assigned < len(ra.results):
+        document.add_heading ('2. Results',level=1 )
         iorder=1
         for reitem in ra.results:
             addResult (document, ra, reitem, 2, iorder)
             iorder+=1
     else:
-        isection = 1
-        if len(re_preliminary)>0:
-            isection +=1
-            document.add_heading (f'{isection}. Preliminary',level=1 )
-            iorder = 1
-            for reitem in re_preliminary:
-                addResult (document, ra, reitem, isection, iorder)
-                iorder+=1
-        
-        if len(re_hazard)>0:
-            isection +=1
-            document.add_heading (f'{isection}. Hazard',level=1 )
-            iorder = 1
-            for reitem in re_hazard:
-                addResult (document, ra, reitem, isection, iorder)
-                iorder+=1
+        isec = 1
+        for isection in ra_sections:
+            # skip empty sections
+            if len(isection['re'])==0: 
+                continue
 
-        if len(re_adme)>0:      
-            isection +=1
-            document.add_heading (f'{isection}. ADME',level=1 )
+            # assign section sequential number
+            isec+=1
+            document.add_heading (f'{isec}. {isection["label"]}',level=1 )
             iorder = 1
-            for reitem in re_adme:
-                addResult (document, ra, reitem, isection, iorder)
-                iorder+=1
-        
-        if len(re_exposure)>0:
-            isection +=1
-            document.add_heading (f'{isection}. Exposure',level=1 )
-            iorder = 1
-            for reitem in re_exposure:
-                addResult (document, ra, reitem, isection, iorder)
-                iorder+=1
-
-        if len(re_integration)>0:
-            isection +=1
-            document.add_heading (f'{isection}. Integration',level=1 )
-            iorder = 1
-            for reitem in re_integration:
-                addResult (document, ra, reitem, isection, iorder)
-                iorder+=1
-
-        if len(re_exit)>0:
-            isection +=1
-            document.add_heading (f'{isection}. Conclusions',level=1 )
-            iorder = 1
-            for reitem in re_exit:
-                addResult (document, ra, reitem, isection, iorder)
+            for reitem in isection['re']:
+                addResult (document, ra, reitem, isec, iorder)
                 iorder+=1
     
     #TODO Notes
