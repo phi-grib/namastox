@@ -530,6 +530,7 @@ def report_word (ra):
         {'id':'H', 're': [], 'label': 'Hazard'},
         {'id':'B', 're': [], 'label': 'ADME'},
         {'id':'E', 're': [], 'label': 'Exposure'},
+        {'id':'X', 're': [], 'label': 'Integration'},
         {'id':'Z', 're': [], 'label': 'Conclusions'}
     ]
 
