@@ -160,7 +160,7 @@ class Workflow:
             return idA
         return ''
 
-    def graphNext (self, nodeid, inode, decision=None, visited=False):
+    def graphNext (self, nodeid, inode, styleMember, decision=None, visited=False):
         inext = self.getNode(nodeid)
         arrow = '-->'
         subgraph = None
@@ -169,7 +169,9 @@ class Workflow:
         elif decision is False:
             arrow = '--N-->'
         ibody = f'{inode.box()}{arrow}{inext.box()}\n'
-        istyle = inext.style(visited=visited, future=False)
+        # istyle = inext.style(visited=visited, future=False)
+        styleMember[inode.styleClass(visited, False)].append(nodeid)
+
         ilinks = f'click {inext.id} onA\n'
 
         #TODO subgraph is recognized using only the first couple of nodes, starting with the True
@@ -181,7 +183,8 @@ class Workflow:
                 if subgraph is None:
                     subgraph = self.subgraph_assign(inode, ilog)
                 ibody += f'{inext.box()}--Y-->{ilog.box()}\n'
-                istyle += ilog.style(True, True)
+                # istyle += ilog.style(True, True)
+                styleMember[inode.styleClass(True, True)].append(jid)
                 ilinks += f'click {ilog.id} onA\n'
 
             next_nodes_false  =self.logicalNodeList(nodeid, False)
@@ -190,13 +193,14 @@ class Workflow:
                 if subgraph is None:
                     subgraph = self.subgraph_assign(inode, ilog)
                 ibody += f'{inext.box()}--N-->{ilog.box()}\n'
-                istyle += ilog.style(True, True)
+                # istyle += ilog.style(True, True)
+                styleMember[inode.styleClass(True, True)].append(jid)
                 ilinks += f'click {ilog.id} onA\n' 
         
         else:
             subgraph = self.subgraph_assign(inode, inext)
              
-        return ibody, istyle, ilinks, subgraph
+        return ibody, ilinks, subgraph
         
     def getTaskName (self, id):
         if id in self.nodes:
@@ -228,18 +232,43 @@ class Workflow:
         node_path =[iresult['id'] for iresult in results]
 
         header = 'graph TD\n'
+        # flowchart LR
+        # A:::foo & B:::bar --> C:::foobar
+        # classDef foo stroke:#f00
+        # classDef bar stroke:#0f0
+        # classDef foobar stroke:#00f
+
         body = ''
         
-        style = ''
+        # style = ''
         links = ''
         
+        styleMember= {'anode':[],
+                      'vnode':[],
+                      'fnode':[],
+                      'znode':[]
+                     }
+        
+        ACTIVE_FILL = '#BFC2F0'
+        ACTIVE_STROKE = '#605AA1'
+        VISITED_FILL = '#F5F5F5'
+        VISITED_STROKE = '#AEAEAD'
+        FUTURE_FILL = '#FADFED'
+        FUTURE_STROKE = '#C28FB4'
+
+        styleDef  = f'classDef fnode fill:{FUTURE_FILL} ,stroke:{FUTURE_STROKE}\n'
+        styleDef += f'classDef anode fill:{ACTIVE_FILL} ,stroke:{ACTIVE_STROKE}\n'
+        styleDef += f'classDef vnode fill:{VISITED_FILL} ,stroke:{VISITED_STROKE}\n'
+        styleDef += f'classDef znode fill:{VISITED_FILL} ,stroke:{VISITED_STROKE}\n'
+
         #TODO subgraphs were hardcoded, think a way to make this more flexible
         subbody = {'H':'subgraph HAZARD\n', 'B':'subgraph ADME\n', 'E':'subgraph EXPOSURE\n'}
 
         # no node visited so far, present the first node in the workflow 
         if len(results) == 0:
             inode = self.firstNode()
-            style += inode.style(False, False)
+            styleMember[inode.styleClass(False, False)].append(inode.id)
+
             body += f'{inode.box()}\n'
             links += f'click {inode.id} onA\n'
         
@@ -254,7 +283,8 @@ class Workflow:
                 # this is the visited node, show it greyed out
                 iid = iresult['id']
                 inode = self.getNode(iid)
-                style += inode.style(True, False)
+                styleMember[inode.styleClass(True, False)].append(iid)
+
                 links += f'click {inode.id} onA\n'
 
                 # show all nodes linked to visited nodes
@@ -264,12 +294,11 @@ class Workflow:
                     subgraph = ''
                     for jid in next_nodes:
                         visited = jid in node_path
-                        ibody, istyle, ilinks, subgraph = self.graphNext(jid, inode, None, visited)
+                        ibody, ilinks, subgraph = self.graphNext(jid, inode, styleMember, None, visited)
                         if subgraph != '':
                             subbody[subgraph]+=ibody
                         else:
                             body += ibody
-                        style+= istyle
                         links+= ilinks
 
                 # for decision, show decision taken in the visited node
@@ -281,12 +310,11 @@ class Workflow:
                         subgraph=''
                         for jid in next_nodes_true:
                             visited = jid in node_path
-                            ibody, istyle, ilinks, subgraph = self.graphNext(jid, inode, True, visited)
+                            ibody, ilinks, subgraph = self.graphNext(jid, inode, styleMember, True, visited)
                             if subgraph != '':
                                 subbody[subgraph]+=ibody
                             else:
                                 body += ibody
-                            style+= istyle
                             links+= ilinks
 
                     else:
@@ -294,14 +322,23 @@ class Workflow:
                         subgraph=''
                         for jid in next_nodes_false:
                             visited = jid in node_path
-                            ibody, istyle, ilinks, subgraph = self.graphNext(jid, inode, False, visited)
+                            ibody, ilinks, subgraph = self.graphNext(jid, inode, styleMember, False, visited)
                             if subgraph != '':
                                 subbody[subgraph]+=ibody
                             else:
                                 body += ibody
-                            style+= istyle
+                            # style+= istyle
                             links+= ilinks
-        
+
+        # use the list of nodes assigned to each style        
+        for istyle in styleMember:
+            if len(styleMember[istyle])==0:
+                continue
+            styleDef += f'class '
+            for ii in styleMember[istyle]:
+                styleDef += ii+','
+            styleDef = styleDef[:-1]
+            styleDef += f' {istyle};\n'
 
         # styles of subgraphs
         subgraph_style_catalogue = {'H':"style HAZARD fill:"+HAZARD_FILL+",stroke:"+HAZARD_STROKE+"\n",
@@ -324,7 +361,7 @@ class Workflow:
             subgraph_container_style = "style container fill: #ffffff, stroke: #ffffff\n"           
             subgraphs = 'subgraph container [" "]\n'+subbody['H']+subbody['B']+subbody['E']+'end\n'+subgraph_style+subgraph_container_style
 
-        return (header+body+subgraphs+style+links)
+        return (header+body+subgraphs+styleDef+links)
 
 
 

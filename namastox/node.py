@@ -23,13 +23,6 @@
 from namastox.logger import get_logger
 from namastox.task import Task
 
-ACTIVE_FILL = '#BFC2F0'
-ACTIVE_STROKE = '#605AA1'
-VISITED_FILL = '#F5F5F5'
-VISITED_STROKE = '#AEAEAD'
-FUTURE_FILL = '#FADFED'
-FUTURE_STROKE = '#C28FB4'
-
 LOG = get_logger(__name__)
 
 class Node:
@@ -81,29 +74,25 @@ class Node:
         task = None
         task = self.task
         return task
-    
-    def style (self, visited=False, future=False):
+
+        
+    def styleClass (self, visited=False, future=False):
+        # terminal nodes
+        if self.category == 'END':
+            return ('znode')
+        
         # next nodes
         if future:
-            # return_style = f'style {self.id} fill:#e9f5f9,stroke:#a8d5e5\n'
-            return_style = f'style {self.id} fill:'+FUTURE_FILL+',stroke:'+FUTURE_STROKE+'\n'
+            return('fnode')       
         
         # visited nodes
         elif visited:
-            # return_style = f'style {self.id} fill:#DDDDDD,stroke:#DDDDDD\n'
-            return_style = f'style {self.id} fill:'+VISITED_FILL+',stroke:'+VISITED_STROKE+'\n'
-
+            return('vnode')
+        
         # active nodes
         else:
-            # return_style = f'style {self.id} fill:#78A4DE,stroke:#6697d9\n'
-            return_style = f'style {self.id} fill:'+ACTIVE_FILL+',stroke:'+ACTIVE_STROKE+'\n'
+            return('anode')
 
-        # terminal nodes
-        if self.category == 'END':
-            return_style += 'style Z999 fill:#FFFFFF,stroke:#000000\n'
-
-        return return_style
-        
     def box (self):
         # split labels in half, adding '\\n' betweeen the two middle words
         words = self.name.split()
