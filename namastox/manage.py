@@ -230,7 +230,8 @@ def action_steps(raname, out='text'):
                 if 'ra' in idict:
                     if 'step' in idict['ra']:
                         steps.append(idict['ra']['step'])
-                        LOG.info(f'step: {steps[-1]}')
+                        if out != 'json':
+                            LOG.info(f'step: {steps[-1]}')
     
     LOG.debug(f'Retrieved list of steps from {rahist}')
 
@@ -261,7 +262,8 @@ def action_info(raname, out='text'):
         ielement = info[ikey]
         for jkey in ielement:
             jelement = ielement[jkey]
-            LOG.info(f'{ikey} : {jkey} : {jelement}')
+            if out != 'json':
+                LOG.info(f'{ikey} : {jkey} : {jelement}')
 
     # web-service
     if out=='json':

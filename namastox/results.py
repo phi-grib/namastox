@@ -51,7 +51,8 @@ def action_results(raname, step=None, out='text'):
         else:
             oline = ''
 
-        LOG.info(oline)
+        if out!='json':
+            LOG.info(oline)
         output.append(oline)
 
     # output for WEB
