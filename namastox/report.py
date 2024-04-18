@@ -267,7 +267,7 @@ def addGeneralSection (document, ra, item):
         document.add_heading(item_title, level=3)
         document.add_paragraph (ra.general[item])
 
-def add_hyperlink(paragraph, url, text):
+def addHyperlink(paragraph, url, text):
     """
     A function that places a hyperlink within a paragraph object.
 
@@ -417,11 +417,9 @@ def addResult (document, ra, reitem, section, order):
                         
     if len(reitem['links'])> 0:    
         document.add_heading('Supporting documents', level=3 )
-        for ilink in reitem['links']:
-            # if 'include' in ilink and not ilink['include']:
-            #     continue 
+        for ilink in reitem['links']: 
             link_p = document.add_paragraph (ilink['label'].replace('_',' ')+' : ', style='ListBullet')
-            add_hyperlink(link_p, ilink['File'], ilink['File'])
+            addHyperlink(link_p, ilink['File'], ilink['File'])
 
 
 def report_word (ra):
@@ -460,7 +458,7 @@ def report_word (ra):
     document.add_paragraph ('<Disclaimer>')  
     document.add_paragraph ('<How to use this report>')  
 
-    # Code for making Table of Contents
+    # Table of Contents
     document.add_heading ('Table of Contents')
     paragraph = document.add_paragraph()
     run = paragraph.add_run()
@@ -488,8 +486,6 @@ def report_word (ra):
     r_element.append(instrText)
     r_element.append(fldChar2)
     r_element.append(fldChar4)
-
-    # p_element = paragraph._p
 
     # General info section
     document.add_heading ('1. General information', level=1)
