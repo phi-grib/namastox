@@ -41,20 +41,6 @@ def action_status(raname, step=None, ofile=None, out='text'):
 
     LOG.debug(f'Retrieved status for {raname}')
     
-    # info = ra.getGeneralInfo()
-
-    for ikey in status:
-        ielement = status[ikey]
-        for jkey in ielement:
-            jelement = ielement[jkey]
-            LOG.info(f'{ikey} : {jkey} : {jelement}')
-
-    # for ikey in info:
-    #     ielement = info[ikey]
-    #     for jkey in ielement:
-    #         jelement = ielement[jkey]
-    #         LOG.info(f'{ikey} : {jkey} : {jelement}')
-
     if ofile is not None:
         # get a template to get required data
         template = ra.getTemplate()
@@ -65,5 +51,11 @@ def action_status(raname, step=None, ofile=None, out='text'):
 
     if out=='json':
         return True, status
+
+    for ikey in status:
+        ielement = status[ikey]
+        for jkey in ielement:
+            jelement = ielement[jkey]
+            LOG.info(f'{ikey} : {jkey} : {jelement}')
     
     return True, f'completed status for {raname}'

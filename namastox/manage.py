@@ -187,15 +187,20 @@ def action_list(out='text'):
 
     output = []
     num_ranames = 0
-    LOG.info('Risk assessment(s) found in repository:')
+    if out != 'json':
+        LOG.info('Risk assessment(s) found in repository:')
+        
     for x in os.listdir(rdir):
         xpath = os.path.join(rdir,x) 
+
         # discard if the item is not a directory
         if not os.path.isdir(xpath):
             continue
 
         num_ranames += 1
-        LOG.info('\t'+x)
+        if out != 'json':
+            LOG.info('\t'+x)
+
         output.append(x)
 
     LOG.debug(f'Retrieved list of risk assessments from {rdir}')
