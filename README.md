@@ -82,8 +82,13 @@ python setup.py develop
 
 ## Documentation (for the GUI)
 
-We prepared a series of instructional videos:
-(in preparation)
+We prepared a series of short (1 to 2 minutes) videos explaining how to carry out common tasks:
+- create a new RA [here]
+- executing a task [here](https://drive.google.com/file/d/1BmYVSXgdWJBrWXWlbxBrIL41Xm1pEMJu/view?usp=share_link)
+- making decisions [here]
+- review results and decisions [here]
+- generating reports [here]
+- project management [here]
 
 Here is also the link to a quickstarting guide:
 (in preparation)
