@@ -349,6 +349,13 @@ def addResult (document, ra, reitem, section, order):
 
                 # check if there is at least one element for the three optional columns
                 iheader = 2
+                method_touch = False
+                for iresult in reitem['values']:
+                    if 'method' in iresult and iresult['method']!='':
+                        method_touch = True
+                        iheader+=1
+                        break
+
                 unit_touch = False
                 for iresult in reitem['values']:
                     if 'unit' in iresult and iresult['unit']!='':
@@ -381,6 +388,10 @@ def addResult (document, ra, reitem, section, order):
                 
                 # add headers for optional columns
                 iheader = 2
+                if method_touch:
+                    hdr_cells[iheader].text = 'Method'
+                    iheader +=1 
+
                 if unit_touch:
                     hdr_cells[iheader].text = 'Unit'
                     iheader +=1
@@ -405,6 +416,11 @@ def addResult (document, ra, reitem, section, order):
                     # so, check if for this particular objetc we must add something
                     
                     icol = 2
+                    if method_touch:
+                        if 'method' in iresult and iresult['method']!='':
+                            insertText(line_cells[icol], iresult['method'])
+                        icol+=1
+                    
                     if unit_touch:
                         if 'unit' in iresult and iresult['unit']!='':
                             insertText(line_cells[icol], iresult['unit'])
