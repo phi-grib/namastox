@@ -80,6 +80,14 @@ or
 python setup.py develop
 ```
 
+## Documentation (for the GUI)
+
+We prepared a series of instructional videos:
+(in preparation)
+
+Here is also the link to a quickstarting guide:
+(in preparation)
+
 ## Configuration
 
 After installation is completed, you must run the configuration command to configure the directory where NAMASTOX will place the risk assessments. If NAMASTOX has not been configured previously the following command
@@ -170,7 +178,7 @@ List all the risk assessments present in the current repository
 
 ## Acknowledgments
 
-Part of the project RISKHUNT3R (https://www.risk-hunt3r.eu/)
+NAMASTOX has been developed for the project RISKHUNT3R (https://www.risk-hunt3r.eu/)
 
 ![Alt text](images/risk-hunt3r-logo.png?raw=true "RISKHUNT3R-logo") 
 
