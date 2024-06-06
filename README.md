@@ -8,7 +8,7 @@ Software tool for supporting the implementation of New Assessment Methods (NAMs)
 A docker container (https://www.docker.com/), fully configured can be downloaded from DockerHub and installed using:
 
 ```bash
-docker run -d -p 5000:5000 mpastorphi/namastox
+docker run -d -p 5000:5000 acabrera809/namastox:latest
 ```
 Then, the NAMASTOX GUI will be accesible from a web browser at address http://localhost:5000
 
@@ -17,7 +17,7 @@ Please note that the port of this address is defined in the command line above a
 It is also possible to use an existing local folder for storing the RAs. Let's assume you wish to use 'c:\data' as the local NAMASTOX repository. Start by creating a folder inside named 'ras'. Then, run the following command: 
 
 ```bash
-docker run -d -p 5000:5000 -v c:\data:/data mpastorphi/namastox
+docker run -d -p 5000:5000 -v c:\data:/data acabrera809/namastox:latest
 ```
 Then, as in the previous example, you can acces the NAMASTOX GUI from a web broser at http://localhost:5000
 
