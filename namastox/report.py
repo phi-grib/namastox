@@ -300,6 +300,9 @@ def addHyperlink(paragraph, url, text):
 
     return hyperlink
 
+def insertText (cell, val):
+    cell.text = str(val) 
+
 def addResult (document, ra, reitem, section, order):
 
     bool_to_text = {True:'Yes', False:'No'}
@@ -391,11 +394,12 @@ def addResult (document, ra, reitem, section, order):
 
                 for iresult,iuncertain in zip(reitem['values'],reitem['uncertainties']):
                     line_cells = t.add_row().cells
-                    
+
                     if 'parameter' in iresult:
-                        line_cells[0].text = iresult['parameter'] 
+                        insertText(line_cells[0], iresult['parameter'])
+
                     if 'value' in iresult:
-                        line_cells[1].text = iresult['value'] 
+                        insertText(line_cells[1], iresult['value'])
 
                     # for the optional columns, add only if the column exist, but even
                     # so, check if for this particular objetc we must add something
@@ -403,17 +407,17 @@ def addResult (document, ra, reitem, section, order):
                     icol = 2
                     if unit_touch:
                         if 'unit' in iresult and iresult['unit']!='':
-                            line_cells[icol].text = iresult['unit'] 
+                            insertText(line_cells[icol], iresult['unit'])
                         icol+=1
 
                     if p_touch:
                         if 'p' in iuncertain and iuncertain['p'] != 0:
-                            line_cells[icol].text =str(iuncertain['p']) 
+                            insertText(line_cells[icol], iuncertain['p'])
                         icol+=1
 
                     if term_touch:
                         if 'term' in iuncertain and iuncertain['term'] != '':
-                            line_cells[icol].text = iuncertain['term'] 
+                            insertText(line_cells[icol], iuncertain['term'])
                         
     if len(reitem['links'])> 0:    
         document.add_heading('Supporting documents', level=3 )
