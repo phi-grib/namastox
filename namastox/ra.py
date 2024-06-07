@@ -389,23 +389,29 @@ class Ra:
         self.results.append(input_result)
 
         active_nodes_list = self.ra['active_nodes_id']
+
+        # remove current node from the list of actives
         active_nodes_list.pop(active_nodes_list.index(input_result_id))
 
+        # get new nodes which will become active afther this action
+        new_nodes_list = []
         if input_node_category == 'LOGICAL':
             new_nodes_list = self.workflow.logicalNodeList(input_result_id, input_result['decision'])
-            self.ra['active_nodes_id'] = active_nodes_list + new_nodes_list
-            LOG.info(f'active node updated to: {self.ra["active_nodes_id"]}, based on decision {input_result["decision"]}' )
-
         elif input_node_category == 'TASK':
             new_nodes_list = self.workflow.nextNodeList(input_result_id)
 
-            # clean visited nodes
-            for inew_node in new_nodes_list:
-                if self.workflow.isVisitedNode(inew_node, self.results):
-                    new_nodes_list.pop(new_nodes_list.index(inew_node))
+        # clean visited nodes
+        for inew_node in new_nodes_list:
+            if self.workflow.isVisitedNode(inew_node, self.results):
+                new_nodes_list.pop(new_nodes_list.index(inew_node))
 
-            self.ra['active_nodes_id'] = active_nodes_list + new_nodes_list
-            LOG.info(f'active node updated to: {self.ra["active_nodes_id"]}' )
+        # remove duplicates
+        new_active_nodes_list = list (set(active_nodes_list + new_nodes_list))
+
+        # update the active nodes list
+        self.ra['active_nodes_id'] = new_active_nodes_list
+
+        LOG.info(f'active node updated to: {self.ra["active_nodes_id"]}' )
 
         # advance workflow: step+1, active workflow+1
         step = self.ra['step']
