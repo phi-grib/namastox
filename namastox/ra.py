@@ -405,8 +405,8 @@ class Ra:
             if self.workflow.isVisitedNode(inew_node, self.results):
                 new_nodes_list.pop(new_nodes_list.index(inew_node))
 
-        # remove duplicates
-        new_active_nodes_list = list (set(active_nodes_list + new_nodes_list))
+        # merge, remove duplicates and sort to present the list in an ordered and reproducible way
+        new_active_nodes_list = sorted(list(set(active_nodes_list + new_nodes_list)))
 
         # update the active nodes list
         self.ra['active_nodes_id'] = new_active_nodes_list
