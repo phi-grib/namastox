@@ -65,7 +65,7 @@ def report_excel (ra):
     worksheet.set_column(0,0,width=40)
     worksheet.set_column(1,2,width=25)
     worksheet.set_column(3,3,width=60)
-    worksheet.set_column(4,6,width=25)
+    worksheet.set_column(4,7,width=25)
 
 
     label_format = workbook.add_format({'align':'top', 'text_wrap': True, 'bold': True})
@@ -174,6 +174,7 @@ def report_excel (ra):
                             worksheet.write(irow, 3, iresult['term'], value_format )
                             irow+=1
 
+
             elif reitem['result_type'] == 'value':
                         
                 if len(reitem['values'])==len(reitem['uncertainties']):
@@ -189,12 +190,15 @@ def report_excel (ra):
 
                         if 'unit' in iresult and iresult['unit']!='':
                             worksheet.write(irow, 4, iresult['unit'], value_format )
-                            
+                        
                         if 'p' in iuncertain and iuncertain['p'] != '0':
                             worksheet.write(irow, 5, f"conf: {iuncertain['p']}", value_format )
             
                         if 'term' in iuncertain and iuncertain['term'] != '':
                             worksheet.write(irow, 6, iuncertain['term'], value_format )
+
+                        if 'method' in iresult and iresult['method'] != '':
+                            worksheet.write(irow, 7, f"method: {iresult['method']}", value_format )
                             
                         irow+=1
 
