@@ -90,8 +90,7 @@ We prepared a series of short (1 to 2 minutes) videos explaining how to carry ou
 - generating reports [here](https://drive.google.com/file/d/1Y5dfElFdavgh5JqWUpmr0KbRrtDuf-Hp/view?usp=sharing)
 - project management [here](https://drive.google.com/file/d/1AKXig2ASWMTS5iLqF-n2LQ865ZRzGilQ/view?usp=sharing)
 
-Here is also the link to a quickstarting guide:
-(in preparation)
+Here is also the link to a quickstarting guide: [here](documentation/quickstarting.pdf)
 
 ## Configuration
 
