@@ -5,14 +5,14 @@ channels:
   - conda-forge 
   - chembl
 dependencies:
-  - pip
   - python=3.10
-  - numpy
+  - numpy=1.26.*
+  - scikit-learn=1.4.*
+  - rdkit=2023.09.*
+  - imbalanced-learn=0.12.*
+  - pip
   - setuptools
-  - scikit-learn
-  - imbalanced-learn
   - chembl_structure_pipeline
-  - rdkit
   - requests
   - flask
   - flask_cors
