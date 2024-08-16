@@ -552,7 +552,7 @@ def getLocalModelPrediction():
         # print ({'models':model, 'results':x_val, 'uncertainty': unc})
         return True, {'models':model, 'results':x_val, 'uncertainty': unc, 'parameters': parameters, 'units': units, 'interpretations': interpretations}
     else:
-        return False, 'unable to retrieve prediction results'
+        return False, f'unable to retrieve prediction results with error: {results}'
 
 
 def exportRA (raname):
