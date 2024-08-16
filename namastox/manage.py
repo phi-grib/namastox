@@ -473,6 +473,9 @@ def getLocalModelPrediction():
         # initialize list of results 
         model=[]
         x_val=[]
+        units=[]
+        parameters=[]
+        interpretations=[]
         unc  =[]
 
         # when only one model is selected we predict twice as a workaround. Here we clean the duplicate
@@ -480,16 +483,39 @@ def getLocalModelPrediction():
             results.pop(1)
 
         for ii in results:
-            # append model info
-            model.append((ii.getMeta("endpoint"),ii.getMeta("version")))
 
-            #TODO get the real confidence value
-            confidence = 80
-            
-            ival = ii.getVal("values")[0]            
+            # variables for facilitating access to key information
+            iendpoint = ii.getMeta("endpoint")
+            iversion = ii.getMeta("version")
+            iquantitative = ii.getMeta("quantitative")
+
+            # defaults
+            confidence = 0
+            unit = ''
+            parameter = iendpoint
+            interpretation = ''
             uncstr = ''
-            
-            if ii.getMeta("quantitative"):
+
+            # extract model information from the documentation
+            success, documentation = getModelDocumentation(iendpoint,iversion)
+            if success:
+                if 'AD_parameters' in documentation:
+                    if 'confidence' in documentation['AD_parameters']:
+                        confidence = documentation['AD_parameters']['confidence'] * 100.0
+
+                if iquantitative:
+                    if 'Endpoint_units' in documentation:
+                        unit = documentation['Endpoint_units']
+    
+                if 'Endpoint' in documentation:
+                    parameter = documentation['Endpoint']
+    
+                if 'Interpretation' in documentation:
+                    interpretation = documentation['Interpretation']
+
+            ival = ii.getVal("values")[0]      
+
+            if iquantitative:
                 try:
                     ival = f'{ival:.4f}'
                 except:
@@ -502,7 +528,6 @@ def getLocalModelPrediction():
                     if cilow !=None and ciup != None:
                         cilow = float(cilow)
                         ciup = float(ciup)
-                        print (cilow, ciup)
                         uncstr = f'{cilow:.4f} to {ciup:.4f} (%{confidence} conf.)'
 
             else:
@@ -516,11 +541,15 @@ def getLocalModelPrediction():
                 if confidence != None:
                     uncstr = f'(%{confidence} conf.)'
           
+            model.append((iendpoint, iversion))
             x_val.append(ival)
             unc.append(uncstr)
+            units.append(unit)
+            parameters.append(parameter)
+            interpretations.append(interpretation)
         
-        print ({'models':model, 'results':x_val, 'uncertainty': unc})
-        return True, {'models':model, 'results':x_val, 'uncertainty': unc}
+        # print ({'models':model, 'results':x_val, 'uncertainty': unc})
+        return True, {'models':model, 'results':x_val, 'uncertainty': unc, 'parameters': parameters, 'units': units, 'interpretations': interpretations}
     else:
         return False, 'unable to retrieve prediction results'
 
