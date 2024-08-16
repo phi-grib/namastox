@@ -508,7 +508,8 @@ def getLocalModelPrediction():
                         unit = documentation['Endpoint_units']
     
                 if 'Endpoint' in documentation:
-                    parameter = documentation['Endpoint']
+                    if documentation['Endpoint'] != 'None':
+                        parameter = documentation['Endpoint']
     
                 if 'Interpretation' in documentation:
                     interpretation = documentation['Interpretation']
