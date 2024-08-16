@@ -473,61 +473,54 @@ def getLocalModelPrediction():
         # initialize list of results 
         model=[]
         x_val=[]
-        x_upp=[]
-        x_low=[]
-        p_0  =[]
-        p_1  =[]
         unc  =[]
 
         # when only one model is selected we predict twice as a workaround. Here we clean the duplicate
         if len (results) == 2 and results[0].getMeta('modelID') == results[1].getMeta('modelID'):
             results.pop(1)
 
-        # valiables to extract
-        var_list = [x_low, x_upp, p_0, p_1]
-        nam_list = ['lower_limit', 'upper_limit', 'p0', 'p1']
-
         for ii in results:
             # append model info
             model.append((ii.getMeta("endpoint"),ii.getMeta("version")))
 
-            # round values to two decimal figures and use -99.9 if the
-            # value is not numerical
-            try:
-                ival = ii.getVal("values")[0]
-                ival = float(f'{ival:.4f}')
-            except:
-                ival = -99.9
+            #TODO get the real confidence value
+            confidence = 80
             
-            x_val.append(ival)
-
+            ival = ii.getVal("values")[0]            
             uncstr = ''
             
-            # extract available results, making sure that the field exist, and adding -99.9 as a missing value
-            for j,k in zip(var_list,nam_list): 
-                iii = ii.getVal(k)
-                if  iii != None:
-                    j.append(iii[0])
+            if ii.getMeta("quantitative"):
+                try:
+                    ival = f'{ival:.4f}'
+                except:
+                    None
 
-                    # compose an uncertainty label
-                    if   k == 'lower_limit':
-                        uncstr += f'[{iii[0]:.2f}'
-                    elif k == 'upper_limit':
-                        uncstr += f' to {iii[0]:.2f}]'
-                    elif k == 'p0' and ival == 0.0:
-                        uncstr = f'{iii[0]:.4f}'
-                    elif k == 'p1' and ival == 1.0:
-                        uncstr = f'{iii[0]:.4f}'
-                else:
-                    j.append(-99.9) 
+                if confidence != None:
+                    cilow = ii.getVal('lower_limit')
+                    ciup  = ii.getVal('upper_limit')
 
-            # fill unc with the uncertainty label
-            if uncstr=='':
-                unc.append ("na")
+                    if cilow !=None and ciup != None:
+                        cilow = float(cilow)
+                        ciup = float(ciup)
+                        print (cilow, ciup)
+                        uncstr = f'{cilow:.4f} to {ciup:.4f} (%{confidence} conf.)'
+
             else:
-                unc.append(uncstr)
+                if ival == 0:
+                    ival = 'negative'
+                elif ival == 1:
+                    ival = 'positive'
+                else:
+                    ival = 'uncertain'
+
+                if confidence != None:
+                    uncstr = f'(%{confidence} conf.)'
+          
+            x_val.append(ival)
+            unc.append(uncstr)
         
-        return True, {'models':model, 'results':x_val, 'lower':x_low, 'upper':x_upp, 'p0': p_0, 'p1': p_1, 'uncertainty': unc}
+        print ({'models':model, 'results':x_val, 'uncertainty': unc})
+        return True, {'models':model, 'results':x_val, 'uncertainty': unc}
     else:
         return False, 'unable to retrieve prediction results'
 
