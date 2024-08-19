@@ -526,8 +526,10 @@ def getLocalModelPrediction(raname):
                 success, docfile = saveModelDocumentation(iendpoint,iversion)
                 if success:
                     destpath = os.path.join (ra_path(raname), 'repo', docfile)
-                    os.remove(destpath)
-                    shutil.move(docfile, destpath)
+                    if os.path.isfile(destpath):
+                        os.remove(destpath)
+                    if os.path.isfile(docfile):
+                        shutil.move(docfile, destpath)
 
             ival = ii.getVal("values")[0]      
 
@@ -564,7 +566,7 @@ def getLocalModelPrediction(raname):
             parameters.append(parameter)
             interpretations.append(interpretation)
         
-        print (parameters)
+        # print (parameters)
         return True, {'models':model, 'results':x_val, 'uncertainty': unc, 'parameters': parameters, 'units': units, 'interpretations': interpretations}
     else:
         return False, f'unable to retrieve prediction results with error: {results}'

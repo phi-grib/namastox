@@ -366,12 +366,12 @@ def addResult (document, ra, reitem, section, order):
                         iheader+=1
                         break
 
-                # p_touch = False
-                # for iuncertain in reitem['uncertainties']:
-                #     if 'p' in iuncertain and iuncertain['p'] != 0:
-                #         p_touch = True
-                #         iheader+=1
-                #         break
+                uncertainty_touch = False
+                for iuncertain in reitem['uncertainties']:
+                    if 'uncertainty' in iuncertain and iuncertain['uncertainty'] != 0:
+                        uncertainty_touch = True
+                        iheader+=1
+                        break
 
                 term_touch = False
                 for iuncertain in reitem['uncertainties']:
@@ -399,9 +399,9 @@ def addResult (document, ra, reitem, section, order):
                     hdr_cells[iheader].text = 'Unit'
                     iheader +=1
 
-                # if p_touch:
-                #     hdr_cells[iheader].text = 'p'
-                #     iheader +=1
+                if uncertainty_touch:
+                    hdr_cells[iheader].text = 'Uncertainty'
+                    iheader +=1
 
                 if term_touch:
                     hdr_cells[iheader].text = 'Term'
@@ -429,10 +429,10 @@ def addResult (document, ra, reitem, section, order):
                             insertText(line_cells[icol], iresult['unit'])
                         icol+=1
 
-                    # if p_touch:
-                    #     if 'p' in iuncertain and iuncertain['p'] != 0:
-                    #         insertText(line_cells[icol], iuncertain['p'])
-                    #     icol+=1
+                    if uncertainty_touch:
+                        if 'uncertainty' in iuncertain and iuncertain['uncertainty'] != '':
+                            insertText(line_cells[icol], iuncertain['uncertainty'])
+                        icol+=1
 
                     if term_touch:
                         if 'term' in iuncertain and iuncertain['term'] != '':
