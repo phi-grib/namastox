@@ -439,6 +439,7 @@ def predictLocalModels (raname, models, versions):
     generalInfo = generalInfo['general']
     try:
         # extract SMILES and write a SDFile in RA repository
+        #TODO  generalize for more than 1 molecule
         smiles = generalInfo['substances'][0]['smiles']
     except:
         return False, f'no substance defined in {raname}'

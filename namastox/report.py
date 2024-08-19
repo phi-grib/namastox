@@ -164,13 +164,13 @@ def report_excel (ra):
                 
                 if 'uncertainties' in reitem:
                     for iresult in reitem['uncertainties']:
-                        if 'p' in iresult and iresult['p'] > 0:
-                            worksheet.write(irow, 1, 'confidence p', label_format )
-                            worksheet.write(irow, 3, iresult['p'], value_format )
+                        if 'uncertainty' in iresult and iresult['uncertainty'] != '':
+                            worksheet.write(irow, 1, 'uncertainty', label_format )
+                            worksheet.write(irow, 3, iresult['uncertainty'], value_format )
                             irow+=1
             
                         if 'term' in iresult and iresult['term'] != '':
-                            worksheet.write(irow, 1, 'uncertainty', label_format )
+                            worksheet.write(irow, 1, 'term', label_format )
                             worksheet.write(irow, 3, iresult['term'], value_format )
                             irow+=1
 
@@ -191,8 +191,8 @@ def report_excel (ra):
                         if 'unit' in iresult and iresult['unit']!='':
                             worksheet.write(irow, 4, iresult['unit'], value_format )
                         
-                        if 'p' in iuncertain and iuncertain['p'] != '0':
-                            worksheet.write(irow, 5, f"conf: {iuncertain['p']}", value_format )
+                        if 'uncertainty' in iuncertain and iuncertain['uncertainty'] != '':
+                            worksheet.write(irow, 5, iuncertain['uncertainty'], value_format )
             
                         if 'term' in iuncertain and iuncertain['term'] != '':
                             worksheet.write(irow, 6, iuncertain['term'], value_format )
@@ -220,13 +220,13 @@ def report_excel (ra):
                         irow+=1
                             
                     for iuncertain in reitem['uncertainties']:
-                        if 'p' in iuncertain and iuncertain['p'] > 0:
-                            worksheet.write(irow, 2, 'confidence', value_format )
-                            worksheet.write(irow, 3, f"conf: {iuncertain['p']}", value_format )
+                        if 'uncertainty' in iuncertain and iuncertain['uncertainty'] != '':
+                            worksheet.write(irow, 2, 'uncertainty', value_format )
+                            worksheet.write(irow, 3, iuncertain['uncertainty'], value_format )
                             irow+=1
             
                         if 'term' in iuncertain and iuncertain['term'] != '':
-                            worksheet.write(irow, 2, 'uncertainty', value_format )
+                            worksheet.write(irow, 2, 'term', value_format )
                             worksheet.write(irow, 3, iuncertain['term'], value_format )
                             irow+=1
 
@@ -339,6 +339,33 @@ def addResult (document, ra, reitem, section, order):
         document.add_paragraph(reitem['justification'])
     
     else:
+        # Table with methods
+        if 'methods' in reitem:
+            methods = reitem['methods']
+            if len(methods)>0:
+
+                document.add_heading('Methods', level=3 )
+        
+                t = document.add_table(rows = 1, cols=6)
+                t.style = 'Light Grid Accent 1'
+                t.autofit = True
+                hdr_cells = t.rows[0].cells
+                hdr_cells[0].text = 'Name'
+                hdr_cells[1].text = 'Description'
+                hdr_cells[2].text = 'Link'
+                hdr_cells[3].text = 'Sensit.'
+                hdr_cells[4].text = 'Spec.'
+                hdr_cells[5].text = 'SD'
+        
+                for iresult in methods:
+                    line_cells = t.add_row().cells
+                    insertText(line_cells[0], iresult['name'])
+                    insertText(line_cells[1], iresult['description'])
+                    insertText(line_cells[2], iresult['link'])
+                    insertText(line_cells[3], iresult['sensitivity'])
+                    insertText(line_cells[4], iresult['specificity'])
+                    insertText(line_cells[5], iresult['sd'])
+
         document.add_heading('Result', level=3 )
 
         if reitem['result_type'] == 'text':
@@ -348,6 +375,9 @@ def addResult (document, ra, reitem, section, order):
 
         elif reitem['result_type'] == 'value':
                     
+
+
+            # Table with values and uncertainties
             if len(reitem['values'])==len(reitem['uncertainties']):
 
                 # check if there is at least one element for the three optional columns
