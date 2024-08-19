@@ -485,6 +485,7 @@ def getLocalModelPrediction(raname):
         parameters=[]
         interpretations=[]
         unc  =[]
+        methods = []
 
         # when only one model is selected we predict twice as a workaround. Here we clean the duplicate
         if len (results) == 2 and results[0].getMeta('modelID') == results[1].getMeta('modelID'):
@@ -503,6 +504,7 @@ def getLocalModelPrediction(raname):
             parameter = iendpoint
             interpretation = ''
             uncstr = ''
+            imethod = {}
 
             # extract model information from the documentation
             success, documentation = getModelDocumentation(iendpoint,iversion)
@@ -532,6 +534,12 @@ def getLocalModelPrediction(raname):
                     if os.path.isfile(docfile):
                         shutil.move(docfile, destpath)
 
+            # Generate pseudo-method:
+
+            imethod['name'] = iendpoint
+            imethod['description'] = interpretation
+            imethod['link'] = ''
+
             ival = ii.getVal("values")[0]      
 
             if iquantitative:
@@ -539,6 +547,8 @@ def getLocalModelPrediction(raname):
                     ival = f'{ival:.4f}'
                 except:
                     None
+
+                imethod['sd'] = documentation['Internal_validation_1']['SDEP']
 
                 if confidence != None:
                     cilow = ii.getVal('lower_limit')
@@ -557,6 +567,9 @@ def getLocalModelPrediction(raname):
                 else:
                     ival = 'uncertain'
 
+                imethod['specificity'] = documentation['Internal_validation_1']['Specificity']
+                imethod['sensitivity'] = documentation['Internal_validation_1']['Specificity']
+
                 if confidence != None:
                     uncstr = f'(%{confidence} conf.)'
           
@@ -566,9 +579,10 @@ def getLocalModelPrediction(raname):
             units.append(unit)
             parameters.append(parameter)
             interpretations.append(interpretation)
+            methods.append(imethod)
         
         # print (parameters)
-        return True, {'models':model, 'results':x_val, 'uncertainty': unc, 'parameters': parameters, 'units': units, 'interpretations': interpretations}
+        return True, {'models':model, 'results':x_val, 'uncertainty': unc, 'parameters': parameters, 'units': units, 'interpretations': interpretations, 'methods': methods}
     else:
         return False, f'unable to retrieve prediction results with error: {results}'
 

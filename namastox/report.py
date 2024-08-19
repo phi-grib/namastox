@@ -176,6 +176,30 @@ def report_excel (ra):
 
 
             elif reitem['result_type'] == 'value':
+
+                if 'methods' in reitem:
+                    if len(reitem['methods'])>0:
+                        worksheet.write(irow, 1, 'method', label_format )
+
+                        for iresult in reitem['methods']:
+                            worksheet.write(irow, 2, iresult['name'], label_format )
+
+                            if 'description' in iresult:
+                                worksheet.write(irow, 3, iresult['description'], value_format )
+
+                            if 'link' in iresult:
+                                worksheet.write(irow, 4, iresult['link'], value_format )
+
+                            if 'sensitivity' in iresult:
+                                worksheet.write(irow, 5, f"sens.:{iresult['sensitivity']}", value_format )
+
+                            if 'specificity' in iresult:
+                                worksheet.write(irow, 6, f"spec.:{iresult['specificity']}", value_format )
+
+                            if 'sd' in iresult:
+                                worksheet.write(irow, 7, f"sd:{iresult['sd']}", value_format )
+
+                            irow+=1
                         
                 if len(reitem['values'])==len(reitem['uncertainties']):
                     worksheet.write(irow, 1, 'result', label_format )
@@ -360,11 +384,16 @@ def addResult (document, ra, reitem, section, order):
                 for iresult in methods:
                     line_cells = t.add_row().cells
                     insertText(line_cells[0], iresult['name'])
-                    insertText(line_cells[1], iresult['description'])
-                    insertText(line_cells[2], iresult['link'])
-                    insertText(line_cells[3], iresult['sensitivity'])
-                    insertText(line_cells[4], iresult['specificity'])
-                    insertText(line_cells[5], iresult['sd'])
+                    if 'description' in iresult:
+                        insertText(line_cells[1], iresult['description'])
+                    if 'link' in iresult:
+                        insertText(line_cells[2], iresult['link'])
+                    if 'sensitivity' in iresult:
+                        insertText(line_cells[3], iresult['sensitivity'])
+                    if 'specificity' in iresult:
+                        insertText(line_cells[4], iresult['specificity'])
+                    if 'sd' in iresult:
+                        insertText(line_cells[5], iresult['sd'])
 
         document.add_heading('Result', level=3 )
 
