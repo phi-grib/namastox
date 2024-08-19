@@ -79,6 +79,7 @@ class Task:
             'values': 'Enter one or many numerical parameters, consisting in a description, value (as a floating point) and unit',          
             'justification': 'Justification for the decision made (compulsory field)', 
             'uncertainties':  'Enter uncertainty information about this task, including a textual description, a probability value and a descriptive term',         
+            'methods':  'Enter a description of the methods which can be used in this task',         
             
             'uncertainty': 'Information about the uncertainty associated to the result',         # DEPRECATED
             'uncertainty_term': ['Almost certain (0.99-1.00)',                                   # DEPRECATED
@@ -123,6 +124,15 @@ class Task:
                                      #  'uncertainty': 'experimental SEM +/- 0.34',
                                      #  'p' : 0.99
                                      #  'term' : 'Very likely'
+                                     # }
+            
+            'methods': [],           # list of methods {
+                                     #     "name": "PCR",
+                                     #     "description": "Polimerase Chain Reaction methods",
+                                     #     "link": "http://riskhunt3r.methods.com/PCR",
+                                     #     "sensitivity": 0.9,
+                                     #     "specificity": 0.8,
+                                     #     "sd": 23
                                      # }
             
             # for ALL
@@ -227,7 +237,7 @@ class Task:
         if category == 'TASK':
             black_keys = ['decision', 'justification']
         elif category == 'LOGICAL':
-            black_keys = ['values']
+            black_keys = ['values', 'methods', 'uncertainties']
 
         for bkey in black_keys:
             if bkey in temp_result:
