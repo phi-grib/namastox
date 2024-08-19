@@ -308,7 +308,6 @@ def insertText (cell, val):
     cell.text = str(val) 
 
 def addResult (document, ra, reitem, section, order):
-
     bool_to_text = {True:'Yes', False:'No'}
     workflow = ra.workflow
 
@@ -367,12 +366,12 @@ def addResult (document, ra, reitem, section, order):
                         iheader+=1
                         break
 
-                p_touch = False
-                for iuncertain in reitem['uncertainties']:
-                    if 'p' in iuncertain and iuncertain['p'] != 0:
-                        p_touch = True
-                        iheader+=1
-                        break
+                # p_touch = False
+                # for iuncertain in reitem['uncertainties']:
+                #     if 'p' in iuncertain and iuncertain['p'] != 0:
+                #         p_touch = True
+                #         iheader+=1
+                #         break
 
                 term_touch = False
                 for iuncertain in reitem['uncertainties']:
@@ -400,9 +399,9 @@ def addResult (document, ra, reitem, section, order):
                     hdr_cells[iheader].text = 'Unit'
                     iheader +=1
 
-                if p_touch:
-                    hdr_cells[iheader].text = 'p'
-                    iheader +=1
+                # if p_touch:
+                #     hdr_cells[iheader].text = 'p'
+                #     iheader +=1
 
                 if term_touch:
                     hdr_cells[iheader].text = 'Term'
@@ -430,10 +429,10 @@ def addResult (document, ra, reitem, section, order):
                             insertText(line_cells[icol], iresult['unit'])
                         icol+=1
 
-                    if p_touch:
-                        if 'p' in iuncertain and iuncertain['p'] != 0:
-                            insertText(line_cells[icol], iuncertain['p'])
-                        icol+=1
+                    # if p_touch:
+                    #     if 'p' in iuncertain and iuncertain['p'] != 0:
+                    #         insertText(line_cells[icol], iuncertain['p'])
+                    #     icol+=1
 
                     if term_touch:
                         if 'term' in iuncertain and iuncertain['term'] != '':

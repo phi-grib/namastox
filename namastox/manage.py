@@ -525,7 +525,9 @@ def getLocalModelPrediction(raname):
 
                 success, docfile = saveModelDocumentation(iendpoint,iversion)
                 if success:
-                    shutil.move(docfile, os.path.join (ra_path(raname), 'repo'))
+                    destpath = os.path.join (ra_path(raname), 'repo', docfile)
+                    os.remove(destpath)
+                    shutil.move(docfile, destpath)
 
             ival = ii.getVal("values")[0]      
 

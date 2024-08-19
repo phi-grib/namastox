@@ -26,35 +26,6 @@ import yaml
 LOG = get_logger(__name__)
 
 
-# {
-#     'methods' : [
-#                   {'name':'AMES',
-#                   'description': 'detailled description of the method',
-#                   'link': '',
-#                   'reliability': [
-#                             {'term':'sensitivity',
-#                             'value': '0.8'},
-#                             {'term':'specificity',
-#                             'value': '0.9'}
-#                    ]
-#                   }
-#                 ],
-#     'values': [  
-#                 {'method': 'AMES',
-#                 'parameter': 'pKa',
-#                 'value': 0.18,
-#                 'unit': 'nM',
-#                 'reliability': [
-#                             {'term':'sensitivity',
-#                             'value': '0.8'},
-#                             {'term':'specificity',
-#                             'value': '0.9'}
-#                         ] 
-#                 }
-#               ]
-# }
-
-
 class Task:
     ''' Class representing a task associade to a workflow node
         Everything related with the topological aspects of the task is
@@ -110,7 +81,6 @@ class Task:
             'justification': None,   
             
             # for TASK
-
             'report': False,         # for result_type = text
 
             'values': [],            # for result_type = report
@@ -122,17 +92,16 @@ class Task:
 
             'uncertainties': [],     # list of values {
                                      #  'uncertainty': 'experimental SEM +/- 0.34',
-                                     #  'p' : 0.99
                                      #  'term' : 'Very likely'
                                      # }
             
             'methods': [],           # list of methods {
-                                     #     "name": "PCR",
-                                     #     "description": "Polimerase Chain Reaction methods",
-                                     #     "link": "http://riskhunt3r.methods.com/PCR",
-                                     #     "sensitivity": 0.9,
-                                     #     "specificity": 0.8,
-                                     #     "sd": 23
+                                     #  "name": "PCR",
+                                     #  "description": "Polimerase Chain Reaction methods",
+                                     #  "link": "http://riskhunt3r.methods.com/PCR",
+                                     #  "sensitivity": 0.9,
+                                     #  "specificity": 0.8,
+                                     #  "sd": 23
                                      # }
             
             # for ALL
