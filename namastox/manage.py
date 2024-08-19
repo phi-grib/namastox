@@ -34,6 +34,7 @@ from namastox.logger import get_logger
 from namastox.ra import Ra
 from namastox.utils import ra_repository_path, ra_path, id_generator
 
+
 LOG = get_logger(__name__)
 
 def action_new(raname, outfile=None):
@@ -414,6 +415,12 @@ def getModelDocumentation (model_name, model_ver):
 
     return True, documentation_dict
 
+def saveModelDocumentation (model_name, model_ver,  oformat='WORD'):
+    from flame import manage as flame_manage
+    success, results = flame_manage.action_documentation(model_name, model_ver, oformat=oformat)
+    # results will contains errors if success and the output filename otherwise
+    return success, results
+
 def predictLocalModels (raname, models, versions):
     ''' returns a prediction using the substance defined in the ra, using the list of local models and versions specified
     '''
@@ -460,7 +467,7 @@ def predictLocalModels (raname, models, versions):
     success, results = context.profile_cmd(arguments)
     return success, results
 
-def getLocalModelPrediction():
+def getLocalModelPrediction(raname):
     ''' 
     returns the profile result produced by Flame in summary format 
     '''
@@ -498,6 +505,7 @@ def getLocalModelPrediction():
 
             # extract model information from the documentation
             success, documentation = getModelDocumentation(iendpoint,iversion)
+
             if success:
                 if 'AD_parameters' in documentation:
                     if 'confidence' in documentation['AD_parameters']:
@@ -505,7 +513,8 @@ def getLocalModelPrediction():
 
                 if iquantitative:
                     if 'Endpoint_units' in documentation:
-                        unit = documentation['Endpoint_units']
+                        if documentation['Endpoint_units'] != 'None':
+                            unit = documentation['Endpoint_units']
     
                 if 'Endpoint' in documentation:
                     if documentation['Endpoint'] != 'None':
@@ -513,6 +522,10 @@ def getLocalModelPrediction():
     
                 if 'Interpretation' in documentation:
                     interpretation = documentation['Interpretation']
+
+                success, docfile = saveModelDocumentation(iendpoint,iversion)
+                if success:
+                    shutil.move(docfile, os.path.join (ra_path(raname), 'repo'))
 
             ival = ii.getVal("values")[0]      
 
@@ -549,7 +562,7 @@ def getLocalModelPrediction():
             parameters.append(parameter)
             interpretations.append(interpretation)
         
-        # print ({'models':model, 'results':x_val, 'uncertainty': unc})
+        print (parameters)
         return True, {'models':model, 'results':x_val, 'uncertainty': unc, 'parameters': parameters, 'units': units, 'interpretations': interpretations}
     else:
         return False, f'unable to retrieve prediction results with error: {results}'
