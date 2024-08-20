@@ -437,20 +437,40 @@ def predictLocalModels (raname, models, versions):
 
     generalInfo = ra.getGeneralInfo()
     generalInfo = generalInfo['general']
-    try:
-        # extract SMILES and write a SDFile in RA repository
-        #TODO  generalize for more than 1 molecule
-        smiles = generalInfo['substances'][0]['smiles']
-    except:
-        return False, f'no substance defined in {raname}'
+    if 'substances' in generalInfo:
+        generalSubst = generalInfo['substances']
+    else:
+        return False, 'no substance defined in {raname}'
+    smiles = []
+    names = []
 
-    try:
-        mol = Chem.MolFromSmiles(smiles)
-    except:
-        return False, f'incorrect SMILES format: {smiles}'
+    # extract SMILES and write a SDFile in RA repository
+    for isubst in generalSubst:
+        if 'smiles' in isubst: 
+            smiles.append(isubst['smiles'])
+        if 'name' in isubst:
+            names.append(isubst['name'])
     
+    if len(smiles) == 0:
+        return False, f'no substance defined in {raname}'
+    
+    if len(smiles) != len (names):
+        return False, f'every substance should have an SMILES and a name defined in {raname}'
+
     writer = Chem.SDWriter(structure_sdf)
-    writer.write(mol)
+    n = 0
+    for ismiles,iname in zip(smiles, names):
+        try:
+            mol = Chem.MolFromSmiles(ismiles)
+        except:
+            writer.close()
+            return False, f'incorrect SMILES format: {ismiles}'
+        
+        mol.SetProp("name",iname)
+        mol.SetProp("_Name",iname)
+        writer.write(mol)
+        n+=1
+
     writer.close()
 
     # profile requires more than one model selected
@@ -476,16 +496,21 @@ def getLocalModelPrediction(raname):
     from flame import manage as flame_manage
 
     success, results = flame_manage.action_profiles_summary('namastox',output=None)
+
     if success:
 
         # initialize list of results 
         model=[]
-        x_val=[]
         units=[]
         parameters=[]
         interpretations=[]
-        unc  =[]
         methods = []
+
+        nmol =  results[0].getVal('obj_num')
+        mol_names =  results[0].getVal('obj_nam')
+
+        x_val = [[] for _ in range(nmol)] 
+        unc = [[] for _ in range(nmol)]
 
         # when only one model is selected we predict twice as a workaround. Here we clean the duplicate
         if len (results) == 2 and results[0].getMeta('modelID') == results[1].getMeta('modelID'):
@@ -540,49 +565,89 @@ def getLocalModelPrediction(raname):
             imethod['description'] = interpretation
             imethod['link'] = ''
 
-            ival = ii.getVal("values")[0]      
 
-            if iquantitative:
-                try:
-                    ival = f'{ival:.4f}'
-                except:
-                    None
+            mollist = ii.getVal("values")
 
-                imethod['sd'] = documentation['Internal_validation_1']['SDEP']
+            for j, ival in enumerate(mollist):
 
-                if confidence != None:
-                    cilow = ii.getVal('lower_limit')
-                    ciup  = ii.getVal('upper_limit')
+                if iquantitative:
+                    try:
+                        ival = f'{ival:.4f}'
+                    except:
+                        None
 
-                    if cilow !=None and ciup != None:
-                        cilow = float(cilow)
-                        ciup = float(ciup)
-                        uncstr = f'{cilow:.4f} to {ciup:.4f} (%{confidence} conf.)'
+                    imethod['sd'] = documentation['Internal_validation_1']['SDEP']
 
-            else:
-                if ival == 0:
-                    ival = 'negative'
-                elif ival == 1:
-                    ival = 'positive'
+                    if confidence != None:
+                        cilow = ii.getVal('lower_limit')[j]
+                        ciup  = ii.getVal('upper_limit')[j]
+
+                        if cilow !=None and ciup != None:
+                            cilow = float(cilow)
+                            ciup = float(ciup)
+                            uncstr = f'{cilow:.4f} to {ciup:.4f} (%{confidence} conf.)'
+
                 else:
-                    ival = 'uncertain'
+                    if ival == 0:
+                        ival = 'negative'
+                    elif ival == 1:
+                        ival = 'positive'
+                    else:
+                        ival = 'uncertain'
 
-                imethod['specificity'] = documentation['Internal_validation_1']['Specificity']
-                imethod['sensitivity'] = documentation['Internal_validation_1']['Specificity']
+                    imethod['specificity'] = documentation['Internal_validation_1']['Specificity']
+                    imethod['sensitivity'] = documentation['Internal_validation_1']['Specificity']
 
-                if confidence != None:
-                    uncstr = f'(%{confidence} conf.)'
+                    if confidence != None:
+                        uncstr = f'(%{confidence} conf.)'
+
+                x_val[j].append(ival)
+                unc[j].append(uncstr)
+
           
             model.append((iendpoint, iversion))
-            x_val.append(ival)
-            unc.append(uncstr)
             units.append(unit)
             parameters.append(parameter)
             interpretations.append(interpretation)
             methods.append(imethod)
         
-        # print (parameters)
-        return True, {'models':model, 'results':x_val, 'uncertainty': unc, 'parameters': parameters, 'units': units, 'interpretations': interpretations, 'methods': methods}
+        # print ('>>>>>>', x_val)
+        # print ('>>>>>>', unc)
+        # print ('>>>>>>', mol_names)
+        
+        # reformat list
+        extmodel = []
+        extparameters = []
+        extunits = []
+        extinterpretations = []
+        extmethods = []
+
+        extval = []
+        extunc = []
+
+        extmolnames = []
+
+        for i in range(nmol):
+
+            for j in range(len(model)):
+                extmolnames.append(mol_names[i])
+                extval.append(x_val[i][j])
+                extunc.append(unc[i][j])
+
+            for iitem in model:
+                extmodel.append(iitem)
+            for iitem in parameters:
+                extparameters.append(iitem)
+            for iitem in units:
+                extunits.append(iitem)
+            for iitem in interpretations:
+                extinterpretations.append(iitem)
+            for iitem in methods:
+                extmethods.append(iitem)
+
+        # print ({'molnames': extmolnames, 'models':extmodel, 'results':extval, 'uncertainty': extunc, 
+        #         'parameters': extparameters, 'units': extunits, 'interpretations': extinterpretations, 'methods': extmethods})
+        return True, {'molnames': extmolnames, 'models':extmodel, 'results':extval, 'uncertainty': extunc, 'parameters': extparameters, 'units': extunits, 'interpretations': extinterpretations, 'methods': extmethods}
     else:
         return False, f'unable to retrieve prediction results with error: {results}'
 
