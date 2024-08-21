@@ -757,8 +757,8 @@ def getTableContents (filename):
     table_dict = table_dataframe.to_dict('records')
 
     # split in a values and uncertainties list, each item containing a dictionary with the required keys
-    val_labels = ['parameter', 'value', 'unit']
-    unc_labels = ['uncertainty', 'p', 'term']
+    val_labels = ['substance', 'method', 'parameter', 'value', 'unit']
+    unc_labels = ['uncertainty', 'term']
 
     values = []
     uncertainties = []
