@@ -466,9 +466,11 @@ def predictLocalModels (raname, models, versions):
             writer.close()
             return False, f'incorrect SMILES format: {ismiles}'
         
-        mol.SetProp("name",iname)
-        mol.SetProp("_Name",iname)
-        writer.write(mol)
+        if mol != None:
+            mol.SetProp("name",iname)
+            mol.SetProp("_Name",iname)
+            writer.write(mol)
+        
         n+=1
 
     writer.close()
@@ -496,7 +498,6 @@ def getLocalModelPrediction(raname):
     from flame import manage as flame_manage
 
     success, results = flame_manage.action_profiles_summary('namastox',output=None)
-
     if success:
 
         # initialize list of results 
@@ -560,14 +561,12 @@ def getLocalModelPrediction(raname):
                         shutil.move(docfile, destpath)
 
             # Generate pseudo-method:
-
             imethod['name'] = iendpoint
             imethod['description'] = interpretation
-            imethod['link'] = ''
+            imethod['link'] = f'documentation_{iendpoint}v{iversion}.docx'
 
-
+            # Iterate for every substance j
             mollist = ii.getVal("values")
-
             for j, ival in enumerate(mollist):
 
                 if iquantitative:
@@ -601,10 +600,10 @@ def getLocalModelPrediction(raname):
                     if confidence != None:
                         uncstr = f'(%{confidence} conf.)'
 
+
                 x_val[j].append(ival)
                 unc[j].append(uncstr)
 
-          
             model.append((iendpoint, iversion))
             units.append(unit)
             parameters.append(parameter)
@@ -615,7 +614,7 @@ def getLocalModelPrediction(raname):
         # print ('>>>>>>', unc)
         # print ('>>>>>>', mol_names)
         
-        # reformat list
+        # reformat list so they can be easily presented
         extmodel = []
         extparameters = []
         extunits = []

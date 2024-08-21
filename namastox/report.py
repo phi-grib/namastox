@@ -387,13 +387,24 @@ def addResult (document, ra, reitem, section, order):
                     if 'description' in iresult:
                         insertText(line_cells[1], iresult['description'])
                     if 'link' in iresult:
-                        insertText(line_cells[2], iresult['link'])
+                        link = iresult['link']
+                        insertText(line_cells[2], link)
+
+                        # model documentation in included in the zip with attachements and 
+                        # can be linked
+                        if link.startswith('documentation_'):
+                            link_p = document.add_paragraph (link+' : ', style='List Bullet')
+                            addHyperlink(link_p, link, link)
+
                     if 'sensitivity' in iresult:
                         insertText(line_cells[3], iresult['sensitivity'])
                     if 'specificity' in iresult:
                         insertText(line_cells[4], iresult['specificity'])
                     if 'sd' in iresult:
                         insertText(line_cells[5], iresult['sd'])
+
+                    
+                    
 
         document.add_heading('Result', level=3 )
 
@@ -403,14 +414,13 @@ def addResult (document, ra, reitem, section, order):
                 document.add_paragraph(iresult)
 
         elif reitem['result_type'] == 'value':
-                    
-
+                
 
             # Table with values and uncertainties
             if len(reitem['values'])==len(reitem['uncertainties']):
 
                 # check if there is at least one element for the three optional columns
-                iheader = 2
+                iheader = 3
                 method_touch = False
                 for iresult in reitem['values']:
                     if 'method' in iresult and iresult['method']!='':
@@ -445,11 +455,12 @@ def addResult (document, ra, reitem, section, order):
                 t.style = 'Light Grid Accent 1'
                 t.autofit = True
                 hdr_cells = t.rows[0].cells
-                hdr_cells[0].text = 'Parameter'
-                hdr_cells[1].text = 'Value'
+                hdr_cells[0].text = 'Substance'
+                hdr_cells[1].text = 'Parameter'
+                hdr_cells[2].text = 'Value'
                 
                 # add headers for optional columns
-                iheader = 2
+                iheader = 3
                 if method_touch:
                     hdr_cells[iheader].text = 'Method'
                     iheader +=1 
@@ -467,17 +478,19 @@ def addResult (document, ra, reitem, section, order):
 
                 for iresult,iuncertain in zip(reitem['values'],reitem['uncertainties']):
                     line_cells = t.add_row().cells
+                    if 'substance' in iresult:
+                        insertText(line_cells[0], iresult['substance'])
 
                     if 'parameter' in iresult:
-                        insertText(line_cells[0], iresult['parameter'])
+                        insertText(line_cells[1], iresult['parameter'])
 
                     if 'value' in iresult:
-                        insertText(line_cells[1], iresult['value'])
+                        insertText(line_cells[2], iresult['value'])
 
                     # for the optional columns, add only if the column exist, but even
                     # so, check if for this particular objetc we must add something
                     
-                    icol = 2
+                    icol = 3
                     if method_touch:
                         if 'method' in iresult and iresult['method']!='':
                             insertText(line_cells[icol], iresult['method'])
