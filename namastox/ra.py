@@ -251,10 +251,13 @@ class Ra:
             # from self.results
             ivalue = []
             iuncertainties = []
+            imethods = []
             for iresult in self.results:
                 if iresult['id'] == node_id:
                     ivalue = iresult['values']
                     iuncertainties = iresult['uncertainties']
+                    if 'methods' in iresult:
+                        imethods = iresult['methods']
                     break
 
             # the name of the node is extracted from the itask description 
@@ -262,7 +265,8 @@ class Ra:
                           'label':itask.getLabel(),
                           'name':itask.getName(),
                           'values':ivalue,
-                          'uncertainties':iuncertainties
+                          'uncertainties':iuncertainties,
+                          'methods':imethods
                           })
         return olist
 
