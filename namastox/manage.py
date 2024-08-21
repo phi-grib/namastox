@@ -33,6 +33,7 @@ from rdkit import Chem
 from namastox.logger import get_logger
 from namastox.ra import Ra
 from namastox.utils import ra_repository_path, ra_path, id_generator
+from flame.util.utils import profiles_repository_path
 
 
 LOG = get_logger(__name__)
@@ -481,23 +482,28 @@ def predictLocalModels (raname, models, versions):
         models.append(models[0])
         versions.append(versions[0])
 
-    arguments = {'label' : 'namastox',
+    label = f'namastox_{id_generator()}'    
+
+    arguments = {'label' : label,
                  'infile': structure_sdf,
                  'multi' : {'endpoints': models, 
                             'versions': versions}
                 }
     
     success, results = context.profile_cmd(arguments)
+    if success:
+        return True, label
+    
     return success, results
 
-def getLocalModelPrediction(raname):
+def getLocalModelPrediction(raname, prediction_label):
     ''' 
     returns the profile result produced by Flame in summary format 
     '''
     # TODO: uses the label 'namastox', this does not allow concurrent use (colliding predictions)
     from flame import manage as flame_manage
 
-    success, results = flame_manage.action_profiles_summary('namastox',output=None)
+    success, results = flame_manage.action_profiles_summary(prediction_label,output=None)
     if success:
 
         # initialize list of results 
@@ -595,10 +601,10 @@ def getLocalModelPrediction(raname):
                         ival = 'uncertain'
 
                     imethod['specificity'] = documentation['Internal_validation_1']['Specificity']
-                    imethod['sensitivity'] = documentation['Internal_validation_1']['Specificity']
+                    imethod['sensitivity'] = documentation['Internal_validation_1']['Sensitivity']
 
                     if confidence != None:
-                        uncstr = f'(%{confidence} conf.)'
+                        uncstr = f'%{confidence} conf.'
 
 
                 x_val[j].append(ival)
@@ -646,6 +652,9 @@ def getLocalModelPrediction(raname):
 
         # print ({'molnames': extmolnames, 'models':extmodel, 'results':extval, 'uncertainty': extunc, 
         #         'parameters': extparameters, 'units': extunits, 'interpretations': extinterpretations, 'methods': extmethods})
+        
+        shutil.rmtree(os.path.join(profiles_repository_path(), prediction_label))
+        
         return True, {'molnames': extmolnames, 'models':extmodel, 'results':extval, 'uncertainty': extunc, 'parameters': extparameters, 'units': extunits, 'interpretations': extinterpretations, 'methods': extmethods}
     else:
         return False, f'unable to retrieve prediction results with error: {results}'
