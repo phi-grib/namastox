@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 setup(
     name='namastox',
-    version='0.0.2',
+    version='0.3.0',
     license='GNU GPLv3 or posterior',
     description='',
     url='https://github.com/phi-grib/namastox',

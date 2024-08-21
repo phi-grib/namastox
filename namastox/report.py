@@ -65,8 +65,7 @@ def report_excel (ra):
     worksheet.set_column(0,0,width=40)
     worksheet.set_column(1,2,width=25)
     worksheet.set_column(3,3,width=60)
-    worksheet.set_column(4,7,width=25)
-
+    worksheet.set_column(4,9,width=25)
 
     label_format = workbook.add_format({'align':'top', 'text_wrap': True, 'bold': True})
     value_format = workbook.add_format({'align':'top', 'text_wrap': True, 'font_color':'#3465A4'})
@@ -206,23 +205,26 @@ def report_excel (ra):
                     
                     for iresult,iuncertain in zip(reitem['values'],reitem['uncertainties']):
                             
+                        if 'substance' in iresult:
+                            worksheet.write(irow, 2, iresult['substance'], label_format )
+
                         if 'parameter' in iresult:
-                            worksheet.write(irow, 2, iresult['parameter'], label_format )
+                            worksheet.write(irow, 3, iresult['parameter'], value_format )
                             
                         if 'value' in iresult:
-                            worksheet.write(irow, 3, iresult['value'], value_format )
+                            worksheet.write(irow, 4, iresult['value'], value_format )
 
                         if 'unit' in iresult and iresult['unit']!='':
-                            worksheet.write(irow, 4, iresult['unit'], value_format )
+                            worksheet.write(irow, 5, iresult['unit'], value_format )
                         
                         if 'uncertainty' in iuncertain and iuncertain['uncertainty'] != '':
-                            worksheet.write(irow, 5, iuncertain['uncertainty'], value_format )
+                            worksheet.write(irow, 6, iuncertain['uncertainty'], value_format )
             
                         if 'term' in iuncertain and iuncertain['term'] != '':
-                            worksheet.write(irow, 6, iuncertain['term'], value_format )
+                            worksheet.write(irow, 7, iuncertain['term'], value_format )
 
                         if 'method' in iresult and iresult['method'] != '':
-                            worksheet.write(irow, 7, f"method: {iresult['method']}", value_format )
+                            worksheet.write(irow, 8, f"method: {iresult['method']}", value_format )
                             
                         irow+=1
 
@@ -232,14 +234,17 @@ def report_excel (ra):
                     
                     for iresult in reitem['values']:
                             
+                        if 'substance' in iresult:
+                            worksheet.write(irow, 2, iresult['substance'], label_format )
+
                         if 'parameter' in iresult:
-                            worksheet.write(irow, 2, iresult['parameter'], label_format )
+                            worksheet.write(irow, 3, iresult['parameter'], label_format )
                             
                         if 'value' in iresult:
-                            worksheet.write(irow, 3, iresult['value'], value_format )
+                            worksheet.write(irow, 4, iresult['value'], value_format )
 
                         if 'unit' in iresult and iresult['unit']!='':
-                            worksheet.write(irow, 4, iresult['unit'], value_format )
+                            worksheet.write(irow, 5, iresult['unit'], value_format )
                     
                         irow+=1
                             
@@ -403,8 +408,6 @@ def addResult (document, ra, reitem, section, order):
                     if 'sd' in iresult:
                         insertText(line_cells[5], iresult['sd'])
 
-                    
-                    
 
         document.add_heading('Result', level=3 )
 

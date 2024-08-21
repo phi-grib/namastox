@@ -616,10 +616,6 @@ def getLocalModelPrediction(raname, prediction_label):
             interpretations.append(interpretation)
             methods.append(imethod)
         
-        # print ('>>>>>>', x_val)
-        # print ('>>>>>>', unc)
-        # print ('>>>>>>', mol_names)
-        
         # reformat list so they can be easily presented
         extmodel = []
         extparameters = []
