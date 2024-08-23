@@ -33,7 +33,7 @@ from rdkit import Chem
 from namastox.logger import get_logger
 from namastox.ra import Ra
 from namastox.utils import ra_repository_path, ra_path, id_generator
-from flame.util.utils import profiles_repository_path
+from flame.util.utils import profiles_repository_path, model_repository_path
 
 
 LOG = get_logger(__name__)
@@ -304,6 +304,9 @@ def getRepositoryPath(raname):
     
     repo_path = os.path.join(ra.rapath, 'repo')
     return True, repo_path
+
+def getModelPath():
+    return model_repository_path()
 
 def getWorkflow(raname, step=None):
     '''
