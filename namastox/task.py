@@ -205,11 +205,17 @@ class Task:
         
         if category == 'TASK':
             black_keys = ['decision', 'justification']
+
+            # back-compatibility patch
+            if not 'methods' in temp_result:
+                temp_result['methods'] = []
+
         elif category == 'LOGICAL':
             black_keys = ['values', 'methods', 'uncertainties']
 
         for bkey in black_keys:
             if bkey in temp_result:
                 temp_result.pop (bkey)
+
 
         return temp_result
