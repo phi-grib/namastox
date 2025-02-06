@@ -92,6 +92,8 @@ We prepared a series of short (1 to 2 minutes) videos explaining how to carry ou
 
 Here is also the link to a quickstarting guide: [here](documentation/quickstarting.pdf)
 
+The workflow used by NAMASTOX is defined in a simple TSV file. It is possible to create customized workflows using the instructions provided [here](documentation/NAMASTOX WORKFLOW DEFINITION FORMAT.pdf)
+
 ## Configuration
 
 After installation is completed, you must run the configuration command to configure the directory where NAMASTOX will place the risk assessments. If NAMASTOX has not been configured previously the following command
