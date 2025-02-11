@@ -35,12 +35,12 @@ LOG = get_logger(__name__)
 class Ra:
     ''' Class storing all the risk assessment information
     '''
-    def __init__(self, raname):
+    def __init__(self, raname, user_name=''):
         ''' constructor '''
 
         # internal data
         self.raname = raname
-        self.rapath = ra_path(raname)
+        self.rapath = ra_path(raname, user_name)
         self.workflow = None  
         
         # default, these are loaded from a YAML file

@@ -38,7 +38,7 @@ from flame.util.utils import profiles_repository_path, model_repository_path
 
 LOG = get_logger(__name__)
 
-def action_new(raname, outfile=None):
+def action_new(raname, user_name='', outfile=None):
     '''
     Create a new risk assessment tree, using the given name.
     This creates the development version "dev",
@@ -54,11 +54,12 @@ def action_new(raname, outfile=None):
         return False, 'the name "test" is disallowed, please use any other name'
 
     # raname directory with /dev (default) level
-    ndir = ra_path(raname)
+    ndir = ra_path(raname, user_name)
+
     if os.path.isdir(ndir):
         return False, f'Risk assessment {raname} already exists'
     try:
-        os.mkdir(ndir)
+        os.makedirs(ndir)
         os.mkdir(os.path.join(ndir,'hist'))
         os.mkdir(os.path.join(ndir,'repo'))
         LOG.debug(f'{ndir}, {ndir}/hist and {ndir}/repo created')
@@ -79,7 +80,7 @@ def action_new(raname, outfile=None):
     LOG.debug(f'copied risk assessment templates from {src_path} to {ndir}')
 
     # Instantiate Ra
-    ra = Ra(raname)
+    ra = Ra(raname, user_name)
     success, results = ra.load()
     if not success:
         return False, results

@@ -43,11 +43,15 @@ def ra_repository_path():
     if success: 
         return config['ras']
 
-def ra_path(raname):
+def ra_path(raname, user_name=''):
     '''
     Returns the path to the raname given as argumen, containg all versions
     '''
-    return os.path.join(ra_repository_path(), raname)
+    if user_name == '':
+        return os.path.join(ra_repository_path(), raname)
+    else:
+        return os.path.join(ra_repository_path(), user_name, raname)
+
 
 # def ra_path(raname, version):
 #     '''
