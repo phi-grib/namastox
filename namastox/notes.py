@@ -26,12 +26,12 @@ import random
 import string
 from datetime import date
 
-def action_notes(raname, step=None, out='json'):
+def action_notes(raname, user_name, step=None, out='json'):
     ''' returns the list of results available for this raname/step
     '''
 
     # instantiate a ra object
-    ra = Ra(raname)
+    ra = Ra(raname, user_name)
     succes, results = ra.load(step)
 
     if not succes:
@@ -41,12 +41,12 @@ def action_notes(raname, step=None, out='json'):
 
     return True, notes
 
-def action_note(raname, noteid):
+def action_note(raname, user_name, noteid):
     ''' returns a given note for this raname
     '''
 
     # instantiate a ra object
-    ra = Ra(raname)
+    ra = Ra(raname, user_name)
     succes, results = ra.load()
     
     if not succes:
@@ -61,12 +61,12 @@ def action_note(raname, noteid):
     return False, f'no note with id {noteid} found'
 
 
-def action_note_add (raname, note):
+def action_note_add (raname, user_name,  note):
     ''' adds the note given as argument to this raname
     '''
 
     # instantiate a ra object
-    ra = Ra(raname)
+    ra = Ra(raname, user_name)
     succes, results = ra.load()
 
     if not succes:
@@ -91,12 +91,12 @@ def action_note_add (raname, note):
     return True, 'OK'
 
 
-def action_note_delete(raname, noteid):
+def action_note_delete(raname, user_name, noteid):
     ''' remove a given note for this raname
     '''
 
     # instantiate a ra object
-    ra = Ra(raname)
+    ra = Ra(raname, user_name)
     succes, results = ra.load()
     
     if not succes:

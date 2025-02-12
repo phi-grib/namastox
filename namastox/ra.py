@@ -35,11 +35,12 @@ LOG = get_logger(__name__)
 class Ra:
     ''' Class storing all the risk assessment information
     '''
-    def __init__(self, raname, user_name=''):
+    def __init__(self, raname, user_name):
         ''' constructor '''
 
         # internal data
         self.raname = raname
+        self.username = user_name
         self.rapath = ra_path(raname, user_name)
         self.workflow = None  
         
@@ -137,7 +138,7 @@ class Ra:
 
         # load workflow
         if self.ra['step']>0 : 
-            self.workflow = Workflow(self.raname, self.ra['workflow_name'])
+            self.workflow = Workflow(self.raname, self.username, self.ra['workflow_name'])
 
         return True, 'OK'
 
@@ -363,7 +364,7 @@ class Ra:
                         
                     LOG.info (f'workflow name updated to {workflow_custom}')
 
-        self.workflow = Workflow(self.raname, self.ra['workflow_name'])
+        self.workflow = Workflow(self.raname, self.username, self.ra['workflow_name'])
 
         # set firstnode as active node
         active_node = self.workflow.firstNode()

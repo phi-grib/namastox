@@ -46,7 +46,7 @@ EXPOSURE_STROKE = '#C3CDE0'
 class Workflow:
     ''' Class storing all the risk assessment information
     '''
-    def __init__(self, raname, workflow=None):
+    def __init__(self, raname, user_name, workflow=None):
         ''' constructor '''
         if workflow is not None:
             self.workflow = workflow
@@ -55,7 +55,7 @@ class Workflow:
 
         self.nodes = {}
         self.firstNodeId = ''
-        self.rapath = ra_path(raname)
+        self.rapath = ra_path(raname, user_name)
 
         # try to load a pickle created previously
         success = self.load()

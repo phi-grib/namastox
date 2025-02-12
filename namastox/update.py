@@ -64,12 +64,12 @@ def action_update(raname, ifile, ofile=None):
 
     return True, f'{raname} updated'
 
-def action_update_general_info (raname, input_dict):
+def action_update_general_info (raname, user_name, input_dict):
     ''' use the input dictionary with General Info to update RA. The updated RA version is stored in the repository and copied
         in the historic archive 
     '''
     # instantiate a ra object
-    ra = Ra(raname)
+    ra = Ra(raname, user_name)
     succes, results = ra.load()
     if not succes:
         return False, results
@@ -85,12 +85,12 @@ def action_update_general_info (raname, input_dict):
 
     return True, f'{raname} General Info updated'
 
-def action_update_result (raname, step, input_dict):
+def action_update_result (raname, user_name, step, input_dict):
     ''' use the input dictionary with Result to update RA. The updated RA version is stored in the repository and copied
         in the historic archive 
     '''
      # instantiate a ra object
-    ra = Ra(raname)
+    ra = Ra(raname, user_name)
     succes, results = ra.load(step)
     if not succes:
         return False, results

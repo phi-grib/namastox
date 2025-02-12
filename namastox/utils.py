@@ -47,12 +47,15 @@ def ra_repository_path(user_name):
 
     return None
 
-def ra_path(raname, user_name=''):
+def ra_path(raname, user_name):
     '''
     Returns the path to the raname given as argumen, containg all versions
     '''
-
-    return os.path.join(ra_repository_path(user_name), raname)
+    user_path = ra_repository_path(user_name)
+    if os.path.isdir(user_path):
+        return os.path.join(user_path, raname)
+    
+    return None
 
 
 # def ra_path(raname, version):
