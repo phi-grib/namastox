@@ -42,9 +42,10 @@ def ra_repository_path(user_name):
     success, config = read_config()
     if success: 
         repository_path = os.path.join(config['ras'], user_name)
-        if os.path.isdir(repository_path):
-            return repository_path
-
+        if not os.path.isdir(repository_path):
+            os.makedirs(repository_path)
+        return repository_path
+        
     return None
 
 def ra_path(raname, user_name):
@@ -54,6 +55,7 @@ def ra_path(raname, user_name):
     user_path = ra_repository_path(user_name)
     if os.path.isdir(user_path):
         return os.path.join(user_path, raname)
+    
     
     return None
 
