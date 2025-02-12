@@ -100,10 +100,10 @@ def action_new(raname, user_name='', outfile=None):
 
     return True, f'New risk assessment {raname} created'
 
-def getRaHistoric (raname, step):
+def getRaHistoric (raname, user_name, step):
     ''' retrieves from the historical record the item corresponding to the step given as argument
     '''
-    radir = ra_path(raname)
+    radir = ra_path(raname, user_name)
     rahist = os.path.join(radir,'hist')
     if not os.path.isdir(rahist):
         return False, f'Historic repository for risk assessment {raname} not found'
@@ -154,7 +154,7 @@ def action_kill(raname, user_name, step=None):
     new_step = step-1
 
     # load RA
-    ra = Ra(raname)
+    ra = Ra(raname, user_name)
     success, results = ra.load()
     if not success:
         return False, results
@@ -164,14 +164,14 @@ def action_kill(raname, user_name, step=None):
         return False, 'only the last step can be removed'
 
     # find the previous step in the repo and copy as ra.yaml overwriting existing file
-    success, ra_new = getRaHistoric(raname, new_step)
+    success, ra_new = getRaHistoric(raname, user_name, new_step)
     if not success:
         return False, f'unable to retrieve file {ra_new} from the historic repository'
 
     shutil.copy(ra_new, os.path.join(ndir,'ra.yaml'))
     
     # remove the ra to delete 
-    success, ra_delete = getRaHistoric(raname, step)
+    success, ra_delete = getRaHistoric(raname, user_name, step)
     if not success:
         return False, f'unable to remove file {ra_delete}'
 

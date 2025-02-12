@@ -27,13 +27,13 @@ from namastox.ra import Ra
 
 LOG = get_logger(__name__)
 
-def action_update(raname, ifile, ofile=None):
+def action_update(raname, user_name,  ifile, ofile=None):
     ''' use the input file to update RA. The udpated RA version is stored in the repository and copied
         in the historic archive 
     '''
 
     # instantiate a ra object
-    ra = Ra(raname)
+    ra = Ra(raname, user_name)
     succes, results = ra.load()
     if not succes:
         return False, results
