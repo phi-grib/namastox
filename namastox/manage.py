@@ -38,6 +38,16 @@ from flame.util.utils import profiles_repository_path, model_repository_path
 
 LOG = get_logger(__name__)
 
+def action_privileges(raname, user_name):
+    ra = Ra(raname, user_name)
+    results = []
+    if user_name in ra.users_read:
+        results.append('read')
+    if user_name in ra.users_write:
+        results.append('write')
+    print ('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', results)
+    return results
+
 def action_new(raname, user_name='', outfile=None):
     '''
     Create a new risk assessment tree, using the given name.

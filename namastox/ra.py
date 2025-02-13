@@ -84,6 +84,17 @@ class Ra:
                 'casrn': ' Substance CAS-RN or CAS-RNs separated by a colon',
             }
         }
+        users_dict = None
+        self.users_read = []
+        self.users_write = []
+
+        if os.path.isdir (self.rapath):
+            users_file = os.path.join (self.rapath,'users.pkl')
+            with open (users_file,'rb') as handle:
+                users_dict = pickle.load(handle)
+            if users_dict!=None:
+                self.users_read = users_dict['read']
+                self.users_write = users_dict['write']
 
     def load(self, step=None):       
         ''' load the Ra object from a YAML file
