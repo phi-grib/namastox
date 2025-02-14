@@ -5,7 +5,9 @@ ras/
 *.log
 *.zip
 *.tgz
+*.log
 dist/*
 namastox.egg-info/*
 models/*
 profiles/*
+spaces/*

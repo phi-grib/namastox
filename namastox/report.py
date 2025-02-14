@@ -679,10 +679,10 @@ def report_word (ra):
     return True, reportfile
 
 
-def action_report (raname, user_name, report_format):
+def action_report (raname, report_format):
 
     # instantiate a ra object
-    ra = Ra(raname, user_name)
+    ra = Ra(raname)
     succes, results = ra.load()
 
     if not succes:

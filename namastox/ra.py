@@ -35,13 +35,12 @@ LOG = get_logger(__name__)
 class Ra:
     ''' Class storing all the risk assessment information
     '''
-    def __init__(self, raname, user_name):
+    def __init__(self, raname):
         ''' constructor '''
 
         # internal data
         self.raname = raname
-        self.username = user_name
-        self.rapath = ra_path(raname, user_name)
+        self.rapath = ra_path(raname)
         self.workflow = None  
         
         # default, these are loaded from a YAML file
@@ -84,18 +83,46 @@ class Ra:
                 'casrn': ' Substance CAS-RN or CAS-RNs separated by a colon',
             }
         }
-        users_dict = None
-        self.users_read = []
-        self.users_write = []
+        self.getUsers()
 
+
+    def privileges(self, username):
+        priv = ''
+        if username in self.users_read:
+            priv+='r'
+        elif '*' in self.users_read:
+            priv+='r'
+        if username in self.users_write:
+            priv+='w'
+        elif '*' in self.users_write:
+            priv+='w'
+
+        return priv
+    
+    def setUsers(self, username_read, username_write):
+        self.username_read = username_read
+        self.username_write = username_write
         if os.path.isdir (self.rapath):
             users_file = os.path.join (self.rapath,'users.pkl')
-            with open (users_file,'rb') as handle:
-                users_dict = pickle.load(handle)
-            if users_dict!=None:
-                self.users_read = users_dict['read']
-                self.users_write = users_dict['write']
+            with open (users_file,'wb') as handle:
+                pickle.dump({'read':self.username_read, 'write': self.username_write}, handle)
 
+    def getUsers(self):
+        self.users_read = []
+        self.users_write = []
+        if os.path.isdir (self.rapath):
+            users_file = os.path.join (self.rapath,'users.pkl')
+            if os.path.isfile (users_file):
+                with open (users_file,'rb') as handle:
+                    users_dict = pickle.load(handle)
+                    self.users_read = users_dict['read']
+                    self.users_write = users_dict['write']
+            # else:
+            #     with open (users_file,'wb') as handle:
+            #         pickle.dump({'read':["*"], 'write': ["*"]}, handle)
+            #         self.users_read = '*'
+            #         self.users_write = '*'
+    
     def load(self, step=None):       
         ''' load the Ra object from a YAML file
         '''
@@ -149,7 +176,7 @@ class Ra:
 
         # load workflow
         if self.ra['step']>0 : 
-            self.workflow = Workflow(self.raname, self.username, self.ra['workflow_name'])
+            self.workflow = Workflow(self.raname, self.ra['workflow_name'])
 
         return True, 'OK'
 
@@ -375,7 +402,7 @@ class Ra:
                         
                     LOG.info (f'workflow name updated to {workflow_custom}')
 
-        self.workflow = Workflow(self.raname, self.username, self.ra['workflow_name'])
+        self.workflow = Workflow(self.raname, self.ra['workflow_name'])
 
         # set firstnode as active node
         active_node = self.workflow.firstNode()

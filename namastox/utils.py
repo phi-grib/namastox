@@ -34,28 +34,27 @@ import random
 #     else:
 #         return os.path.join(path, 'ver%0.6d' % (version))
 
-def ra_repository_path(user_name):
+def ra_repository_path():
     '''
     Returns the path to the root of the raname repository,
     containing all ranames and versions
     '''
     success, config = read_config()
     if success: 
-        repository_path = os.path.join(config['ras'], user_name)
+        repository_path = config['ras']
         if not os.path.isdir(repository_path):
             os.makedirs(repository_path)
         return repository_path
         
     return None
 
-def ra_path(raname, user_name):
+def ra_path(raname):
     '''
     Returns the path to the raname given as argumen, containg all versions
     '''
-    user_path = ra_repository_path(user_name)
-    if os.path.isdir(user_path):
-        return os.path.join(user_path, raname)
-    
+    base_path = ra_repository_path()
+    if os.path.isdir(base_path):
+        return os.path.join(base_path, raname)
     
     return None
 

@@ -39,16 +39,9 @@ from flame.util.utils import profiles_repository_path, model_repository_path
 LOG = get_logger(__name__)
 
 def action_privileges(raname, user_name):
-    ra = Ra(raname, user_name)
-    results = []
-    if user_name in ra.users_read:
-        results.append('read')
-    if user_name in ra.users_write:
-        results.append('write')
-    print ('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', results)
-    return results
+    return Ra(raname).privileges(user_name)
 
-def action_new(raname, user_name='', outfile=None):
+def action_new(raname, outfile=None):
     '''
     Create a new risk assessment tree, using the given name.
     This creates the development version "dev",
@@ -64,7 +57,7 @@ def action_new(raname, user_name='', outfile=None):
         return False, 'the name "test" is disallowed, please use any other name'
 
     # raname directory with /dev (default) level
-    ndir = ra_path(raname, user_name)
+    ndir = ra_path(raname)
 
     if os.path.isdir(ndir):
         return False, f'Risk assessment {raname} already exists'
@@ -90,10 +83,15 @@ def action_new(raname, user_name='', outfile=None):
     LOG.debug(f'copied risk assessment templates from {src_path} to {ndir}')
 
     # Instantiate Ra
-    ra = Ra(raname, user_name)
+    ra = Ra(raname)
+    
+    # Default to universal read/write access
+    ra.setUsers(['*'],['*'])
+
     success, results = ra.load()
     if not success:
         return False, results
+    
 
     # Include RA information 
     ra.setVal('ID', id_generator() )
@@ -110,10 +108,10 @@ def action_new(raname, user_name='', outfile=None):
 
     return True, f'New risk assessment {raname} created'
 
-def getRaHistoric (raname, user_name, step):
+def getRaHistoric (raname, step):
     ''' retrieves from the historical record the item corresponding to the step given as argument
     '''
-    radir = ra_path(raname, user_name)
+    radir = ra_path(raname)
     rahist = os.path.join(radir,'hist')
     if not os.path.isdir(rahist):
         return False, f'Historic repository for risk assessment {raname} not found'
@@ -135,14 +133,14 @@ def getRaHistoric (raname, user_name, step):
             
     return False, 'file not found'
 
-def action_kill(raname, user_name, step=None):
+def action_kill(raname, step=None):
     '''
     removes the last step from the ra tree or the whole tree if no step is specified
     '''
     if not raname:
         return False, 'Empty risk assessment name'
 
-    ndir = ra_path(raname, user_name)
+    ndir = ra_path(raname)
 
     if not os.path.isdir(ndir):
         return False, f'Risk assessment {raname} not found'
@@ -164,7 +162,7 @@ def action_kill(raname, user_name, step=None):
     new_step = step-1
 
     # load RA
-    ra = Ra(raname, user_name)
+    ra = Ra(raname)
     success, results = ra.load()
     if not success:
         return False, results
@@ -174,14 +172,14 @@ def action_kill(raname, user_name, step=None):
         return False, 'only the last step can be removed'
 
     # find the previous step in the repo and copy as ra.yaml overwriting existing file
-    success, ra_new = getRaHistoric(raname, user_name, new_step)
+    success, ra_new = getRaHistoric(raname, new_step)
     if not success:
         return False, f'unable to retrieve file {ra_new} from the historic repository'
 
     shutil.copy(ra_new, os.path.join(ndir,'ra.yaml'))
     
     # remove the ra to delete 
-    success, ra_delete = getRaHistoric(raname, user_name, step)
+    success, ra_delete = getRaHistoric(raname, step)
     if not success:
         return False, f'unable to remove file {ra_delete}'
 
@@ -189,12 +187,12 @@ def action_kill(raname, user_name, step=None):
 
     return True, 'OK'
 
-def action_list(user_name='',out='text'):
+def action_list(user_name,out='text'):
     '''
     if no argument is provided lists all ranames present at the repository 
     otherwyse lists all versions for the raname provided as argument
     '''
-    rdir = ra_repository_path(user_name)
+    rdir = ra_repository_path()
     if os.path.isdir(rdir) is False:
         return False, 'The risk assessment name repository path does not exist. Please run "namastox -c config".'
 
@@ -203,18 +201,21 @@ def action_list(user_name='',out='text'):
     if out != 'json':
         LOG.info('Risk assessment(s) found in repository:')
         
-    for x in os.listdir(rdir):
-        xpath = os.path.join(rdir,x) 
+    for ra_name in os.listdir(rdir):
+        ra_path = os.path.join(rdir,ra_name) 
 
         # discard if the item is not a directory
-        if not os.path.isdir(xpath):
+        if not os.path.isdir(ra_path):
             continue
+
+        # discard if we don't have privileges
+        # TODO
 
         num_ranames += 1
         if out != 'json':
-            LOG.info('\t'+x)
+            LOG.info('\t'+ra_name)
 
-        output.append(x)
+        output.append(ra_name)
 
     LOG.debug(f'Retrieved list of risk assessments from {rdir}')
     
@@ -224,11 +225,11 @@ def action_list(user_name='',out='text'):
 
     return True, f'{num_ranames} risk assessment(s) found'
 
-def action_steps(raname, user_name='', out='text'):
+def action_steps(raname, out='text'):
     '''
     provides a list with all steps for ranames present at the repository 
     '''
-    radir = ra_path(raname, user_name)
+    radir = ra_path(raname)
     rahist = os.path.join(radir,'hist')
     if not os.path.isdir(rahist):
         return False, f'Historic repository for risk assessment {raname} not found'
@@ -259,12 +260,12 @@ def action_steps(raname, user_name='', out='text'):
 
     return True, f'{len(steps)} steps found'
 
-def action_info(raname, user_name='', out='text'):
+def action_info(raname, out='text'):
     '''
     provides a list with all steps for ranames present at the repository 
     '''
     # instantiate a ra object
-    ra = Ra(raname, user_name)
+    ra = Ra(raname)
 
     succes, results = ra.load()
     if not succes:
@@ -289,12 +290,12 @@ def action_info(raname, user_name='', out='text'):
 
     return True, f'completed info for {raname}'
 
-def getPath(raname, user_name=''):
+def getPath(raname):
     '''
     returns the path to the RA folder for ra raname
     '''
     # instantiate a ra object
-    ra = Ra(raname, user_name)
+    ra = Ra(raname)
 
     succes, results = ra.load()
     if not succes:
@@ -302,12 +303,12 @@ def getPath(raname, user_name=''):
     
     return True, ra.rapath
 
-def getRepositoryPath(raname, user_name):
+def getRepositoryPath(raname):
     '''
     returns the path to the repository folder for ra raname
     '''
     # instantiate a ra object
-    ra = Ra(raname, user_name)
+    ra = Ra(raname)
 
     succes, results = ra.load()
     if not succes:
@@ -319,13 +320,13 @@ def getRepositoryPath(raname, user_name):
 def getModelPath():
     return model_repository_path()
 
-def getWorkflow(raname, user_name='', step=None):
+def getWorkflow(raname, step=None):
     '''
     returns a marmaid string describing the "visible workflow"
     '''
 
     # instantiate a ra object
-    ra = Ra(raname, user_name)
+    ra = Ra(raname)
     succes, results = ra.load()
     if not succes:
         return False, results
@@ -334,12 +335,12 @@ def getWorkflow(raname, user_name='', step=None):
     return (workflow_graph is not None), workflow_graph
 
 
-def setCustomWorkflow (raname, user_name, file):
+def setCustomWorkflow (raname, file):
     '''
     defines the file provided as argument as a custom workflow
     '''
     # instantiate a ra object
-    ra = Ra(raname, user_name)
+    ra = Ra(raname)
 
     success, result = ra.updateWorkflow (file)
     return success, result
@@ -436,18 +437,18 @@ def saveModelDocumentation (model_name, model_ver,  oformat='WORD'):
     # results will contains errors if success and the output filename otherwise
     return success, results
 
-def predictLocalModels (raname, user_name, models, versions):
+def predictLocalModels (raname, models, versions):
     ''' returns a prediction using the substance defined in the ra, using the list of local models and versions specified
     '''
     from flame import context
 
     # instantiate a ra object
-    ra = Ra(raname, user_name)
+    ra = Ra(raname)
     succes, results = ra.load()
     if not succes:
         return False, results
     
-    success, ra_repo_path = getRepositoryPath (raname, user_name)
+    success, ra_repo_path = getRepositoryPath (raname)
     structure_sdf = os.path.join(ra_repo_path,'structure.sdf')
 
     generalInfo = ra.getGeneralInfo()
@@ -510,7 +511,7 @@ def predictLocalModels (raname, user_name, models, versions):
     
     return success, results
 
-def getLocalModelPrediction(raname, user_name, prediction_label):
+def getLocalModelPrediction(raname, prediction_label):
     ''' 
     returns the profile result produced by Flame in summary format 
     '''
@@ -670,14 +671,14 @@ def getLocalModelPrediction(raname, user_name, prediction_label):
         return False, f'unable to retrieve prediction results with error: {results}'
 
 
-def exportRA (raname, user_name=''):
+def exportRA (raname):
     '''
     compresses (as tgz) the ra with the name of [ra].tgz and
     returns the file name
     '''
     current_path = os.getcwd()
 
-    root_path = ra_repository_path(user_name)
+    root_path = ra_repository_path()
     compressedfile = os.path.join(root_path, raname+'.tgz')
 
     with tarfile.open(compressedfile, 'w:gz') as tar:
@@ -687,12 +688,12 @@ def exportRA (raname, user_name=''):
 
     return True, compressedfile
 
-def importRA (user_name, filename):
+def importRA (filename):
     '''
     imports the tgz file generated by the command export and decompresses it 
     in the ra repository creating a new funcional ra 
     '''
-    root_path = ra_repository_path(user_name)
+    root_path = ra_repository_path()
     raname = os.path.splitext(os.path.basename(filename))[0]
     base_path = os.path.join(root_path, raname)
 
@@ -712,17 +713,17 @@ def importRA (user_name, filename):
 
     return True, 'OK'
 
-def attachmentsRA (raname, user_name):
+def attachmentsRA (raname):
     '''
     compresses (as tgz) the ra attachments with the name of the [ra]_repo.tgz and
     returns the file name
     '''
     current_path = os.getcwd()
 
-    compressedfile = os.path.join(ra_repository_path(user_name), raname+'_repo.tgz')
+    compressedfile = os.path.join(ra_repository_path(), raname+'_repo.tgz')
 
     with tarfile.open(compressedfile, 'w:gz') as tar:
-        os.chdir(ra_repository_path(user_name))
+        os.chdir(ra_repository_path())
         tar.add(os.path.join(raname,'repo'))
         os.chdir(current_path)
 

@@ -25,12 +25,12 @@ from namastox.ra import Ra
 
 LOG = get_logger(__name__)
 
-def action_results(raname, user_name, step=None, out='text'):
+def action_results(raname, step=None, out='text'):
     ''' returns the list of results available for this raname/step
     '''
 
     # instantiate a ra object
-    ra = Ra(raname, user_name)
+    ra = Ra(raname)
     succes, results = ra.load(step)
     if not succes:
         return False, results
@@ -81,11 +81,11 @@ def action_results(raname, user_name, step=None, out='text'):
         
     return True, f'{len(output)} results found for {raname}'
 
-def action_result(raname, user_name, resultid, out='text'):
+def action_result(raname, resultid, out='text'):
     ''' returns the a given results this raname
     '''
     # instantiate a ra object
-    ra = Ra(raname, user_name)
+    ra = Ra(raname)
     succes, results = ra.load()
     if not succes:
         return False, results
@@ -107,11 +107,11 @@ def action_result(raname, user_name, resultid, out='text'):
     
     return True, 'result found'
     
-def action_task(raname, user_name, resultid):
+def action_task(raname, resultid):
     ''' returns the task resultid
     '''
     # instantiate a ra object
-    ra = Ra(raname, user_name)
+    ra = Ra(raname)
     succes, results = ra.load()
     if not succes:
         return False, results
@@ -122,10 +122,10 @@ def action_task(raname, user_name, resultid):
     
     return True, itask
 
-def action_pendingTasks(raname, user_name):
+def action_pendingTasks(raname):
     ''' returns a list of dictionaries with a short description of the pending tasks
     '''
-    ra = Ra(raname, user_name)
+    ra = Ra(raname)
     succes, results = ra.load()
     if not succes:
         return False, results
@@ -137,10 +137,10 @@ def action_pendingTasks(raname, user_name):
     else:
         return False, 'no active nodes'
 
-def action_pendingTask(raname, user_name, resultid):
+def action_pendingTask(raname, resultid):
     ''' returns a dictionary with a template of the pending task resultid
     '''
-    ra = Ra(raname, user_name)
+    ra = Ra(raname)
     succes, results = ra.load()
     if not succes:
         return False, results
@@ -152,10 +152,10 @@ def action_pendingTask(raname, user_name, resultid):
     else:
         return False, f'active node {resultid} not found'
     
-def action_upstreamTasks(raname, user_name, resultid):
+def action_upstreamTasks(raname, resultid):
     ''' returns a dictionary with a list of selected fields of upstream tasks for the resultid task
     '''
-    ra = Ra(raname, user_name)
+    ra = Ra(raname)
     succes, results = ra.load()
     if not succes:
         return False, results
