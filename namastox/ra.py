@@ -117,11 +117,13 @@ class Ra:
                     users_dict = pickle.load(handle)
                     self.users_read = users_dict['read']
                     self.users_write = users_dict['write']
-            # else:
-            #     with open (users_file,'wb') as handle:
-            #         pickle.dump({'read':["*"], 'write': ["*"]}, handle)
-            #         self.users_read = '*'
-            #         self.users_write = '*'
+
+            # for legacy compatibility
+            else:
+                with open (users_file,'wb') as handle:
+                    pickle.dump({'read':["*"], 'write': ["*"]}, handle)
+                    self.users_read = '*'
+                    self.users_write = '*'
     
     def load(self, step=None):       
         ''' load the Ra object from a YAML file
