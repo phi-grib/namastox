@@ -83,6 +83,9 @@ class Ra:
                 'casrn': ' Substance CAS-RN or CAS-RNs separated by a colon',
             }
         }
+        self.users_read = []
+        self.users_write = []
+        
         self.loadUsers()
 
 
@@ -98,18 +101,25 @@ class Ra:
             priv+='w'
 
         return priv
+
+    def getUsers(self):
+        ''' get the 
+        '''
+        return {'read':self.users_read, 'write':self.users_write}
     
     def setUsers(self, username_read, username_write):
-        self.username_read = username_read
-        self.username_write = username_write
+        ''' sets the RA list of users and save it to a users.pkl file
+        '''
+        self.users_read = username_read
+        self.users_write = username_write
         if os.path.isdir (self.rapath):
             users_file = os.path.join (self.rapath,'users.pkl')
             with open (users_file,'wb') as handle:
-                pickle.dump({'read':self.username_read, 'write': self.username_write}, handle)
+                pickle.dump(self.getUsers(), handle)
 
     def loadUsers(self):
-        self.users_read = []
-        self.users_write = []
+        ''' load user information from users.pkl file
+        '''
         if os.path.isdir (self.rapath):
             users_file = os.path.join (self.rapath,'users.pkl')
             if os.path.isfile (users_file):
@@ -118,17 +128,16 @@ class Ra:
                     self.users_read = users_dict['read']
                     self.users_write = users_dict['write']
 
-            # for legacy compatibility
+            # for legacy compatibilit, when no users.pkl file is found
             else:
                 LOG.info(f'applying legacy user patch for RA {self.raname}')
+
                 with open (users_file,'wb') as handle:
                     pickle.dump({'read':["*"], 'write': ["*"]}, handle)
                     self.users_read = '*'
                     self.users_write = '*'
     
-    def getUsers(self):
-        return {'read':self.users_read, 'write':self.users_write}
-    
+
     def load(self, step=None):       
         ''' load the Ra object from a YAML file
         '''
