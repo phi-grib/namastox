@@ -210,6 +210,9 @@ def action_list(user_name,out='text'):
 
         # discard if we don't have privileges
         # TODO
+        ra = Ra(ra_name)
+        if not 'r' in ra.privileges(user_name):
+            continue
 
         num_ranames += 1
         if out != 'json':
@@ -224,6 +227,14 @@ def action_list(user_name,out='text'):
         return True, output
 
     return True, f'{num_ranames} risk assessment(s) found'
+
+def action_setusers(raname, users_read, users_write):
+    ra = Ra(raname)
+    ra.setUsers(users_read, users_write)
+
+def action_getusers(raname):
+    ra = Ra(raname)
+    return ra.getUsers()
 
 def action_steps(raname, out='text'):
     '''

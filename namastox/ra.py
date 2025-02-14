@@ -83,7 +83,7 @@ class Ra:
                 'casrn': ' Substance CAS-RN or CAS-RNs separated by a colon',
             }
         }
-        self.getUsers()
+        self.loadUsers()
 
 
     def privileges(self, username):
@@ -107,7 +107,7 @@ class Ra:
             with open (users_file,'wb') as handle:
                 pickle.dump({'read':self.username_read, 'write': self.username_write}, handle)
 
-    def getUsers(self):
+    def loadUsers(self):
         self.users_read = []
         self.users_write = []
         if os.path.isdir (self.rapath):
@@ -120,10 +120,14 @@ class Ra:
 
             # for legacy compatibility
             else:
+                LOG.info(f'applying legacy user patch for RA {self.raname}')
                 with open (users_file,'wb') as handle:
                     pickle.dump({'read':["*"], 'write': ["*"]}, handle)
                     self.users_read = '*'
                     self.users_write = '*'
+    
+    def getUsers(self):
+        return {'read':self.users_read, 'write':self.users_write}
     
     def load(self, step=None):       
         ''' load the Ra object from a YAML file
