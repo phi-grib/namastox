@@ -108,6 +108,52 @@ def action_new(raname, outfile=None):
 
     return True, f'New risk assessment {raname} created'
 
+def action_clone(source_raname):
+    '''
+    Clone an existing risk assessment tree, using the given name.
+    '''
+    if not source_raname:
+        return False, 'empty risk assessment name'
+
+    # importlib does not allow using 'test' and issues a misterious error when we
+    # try to use this name. This is a simple workaround to prevent creating ranames 
+    # with this name 
+
+    # raname directory with /dev (default) level
+    source_rapath = ra_path(source_raname)
+
+    # raname directory with /dev (default) level
+    seq_count = 0
+    while True:
+        raname = source_raname+f'({seq_count})'
+        rapath = os.path.join(source_rapath+f'({seq_count})')
+        if os.path.isdir(rapath):
+            seq_count+=1
+        else:
+            break
+
+    shutil.copytree(source_rapath, rapath)
+
+    LOG.debug(f'cloned RA {source_raname} to {raname}')
+
+    # Instantiate Ra
+    ra = Ra(raname)
+    
+    # # Default to universal read/write access
+    # ra.setUsers(['*'],['*'])
+
+    success, results = ra.load()
+    if not success:
+        return False, results
+
+    # Include RA information 
+    ra.setVal('ID', id_generator() )
+
+    # Save
+    ra.save()
+
+    return True, f'New risk assessment {raname} cloned from {source_raname}'
+
 def getRaHistoric (raname, step):
     ''' retrieves from the historical record the item corresponding to the step given as argument
     '''
