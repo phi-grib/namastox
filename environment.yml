@@ -16,6 +16,8 @@ dependencies:
   - requests
   - flask
   - flask_cors
+  - python-dotenv
+  - pyjwt
   - pyyaml
   - pytest
   - psycopg2

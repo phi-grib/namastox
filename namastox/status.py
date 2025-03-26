@@ -25,7 +25,7 @@ from namastox.ra import Ra
 
 LOG = get_logger(__name__)
 
-def action_status(raname, step=None, ofile=None, out='text'):
+def action_status(raname,  step=None, ofile=None, out='text'):
     ''' return status of RA "raname", at step "step"
     '''
 

@@ -38,6 +38,9 @@ from flame.util.utils import profiles_repository_path, model_repository_path
 
 LOG = get_logger(__name__)
 
+def action_privileges(raname, user_name):
+    return Ra(raname).privileges(user_name)
+
 def action_new(raname, outfile=None):
     '''
     Create a new risk assessment tree, using the given name.
@@ -55,10 +58,11 @@ def action_new(raname, outfile=None):
 
     # raname directory with /dev (default) level
     ndir = ra_path(raname)
+
     if os.path.isdir(ndir):
         return False, f'Risk assessment {raname} already exists'
     try:
-        os.mkdir(ndir)
+        os.makedirs(ndir)
         os.mkdir(os.path.join(ndir,'hist'))
         os.mkdir(os.path.join(ndir,'repo'))
         LOG.debug(f'{ndir}, {ndir}/hist and {ndir}/repo created')
@@ -80,9 +84,14 @@ def action_new(raname, outfile=None):
 
     # Instantiate Ra
     ra = Ra(raname)
+    
+    # Default to universal read/write access
+    ra.setUsers(['*'],['*'])
+
     success, results = ra.load()
     if not success:
         return False, results
+    
 
     # Include RA information 
     ra.setVal('ID', id_generator() )
@@ -98,6 +107,52 @@ def action_new(raname, outfile=None):
             f.write(yaml)
 
     return True, f'New risk assessment {raname} created'
+
+def action_clone(source_raname):
+    '''
+    Clone an existing risk assessment tree, using the given name.
+    '''
+    if not source_raname:
+        return False, 'empty risk assessment name'
+
+    # importlib does not allow using 'test' and issues a misterious error when we
+    # try to use this name. This is a simple workaround to prevent creating ranames 
+    # with this name 
+
+    # raname directory with /dev (default) level
+    source_rapath = ra_path(source_raname)
+
+    # raname directory with /dev (default) level
+    seq_count = 0
+    while True:
+        raname = source_raname+f'({seq_count})'
+        rapath = os.path.join(source_rapath+f'({seq_count})')
+        if os.path.isdir(rapath):
+            seq_count+=1
+        else:
+            break
+
+    shutil.copytree(source_rapath, rapath)
+
+    LOG.debug(f'cloned RA {source_raname} to {raname}')
+
+    # Instantiate Ra
+    ra = Ra(raname)
+    
+    # # Default to universal read/write access
+    # ra.setUsers(['*'],['*'])
+
+    success, results = ra.load()
+    if not success:
+        return False, results
+
+    # Include RA information 
+    ra.setVal('ID', id_generator() )
+
+    # Save
+    ra.save()
+
+    return True, f'New risk assessment {raname} cloned from {source_raname}'
 
 def getRaHistoric (raname, step):
     ''' retrieves from the historical record the item corresponding to the step given as argument
@@ -178,7 +233,7 @@ def action_kill(raname, step=None):
 
     return True, 'OK'
 
-def action_list(out='text'):
+def action_list(user_name,out='text'):
     '''
     if no argument is provided lists all ranames present at the repository 
     otherwyse lists all versions for the raname provided as argument
@@ -192,18 +247,24 @@ def action_list(out='text'):
     if out != 'json':
         LOG.info('Risk assessment(s) found in repository:')
         
-    for x in os.listdir(rdir):
-        xpath = os.path.join(rdir,x) 
+    for ra_name in os.listdir(rdir):
+        ra_path = os.path.join(rdir,ra_name) 
 
         # discard if the item is not a directory
-        if not os.path.isdir(xpath):
+        if not os.path.isdir(ra_path):
+            continue
+
+        # discard if we don't have privileges
+        # TODO
+        ra = Ra(ra_name)
+        if not 'r' in ra.privileges(user_name):
             continue
 
         num_ranames += 1
         if out != 'json':
-            LOG.info('\t'+x)
+            LOG.info('\t'+ra_name)
 
-        output.append(x)
+        output.append(ra_name)
 
     LOG.debug(f'Retrieved list of risk assessments from {rdir}')
     
@@ -212,6 +273,14 @@ def action_list(out='text'):
         return True, output
 
     return True, f'{num_ranames} risk assessment(s) found'
+
+def action_setusers(raname, users_read, users_write):
+    ra = Ra(raname)
+    ra.setUsers(users_read, users_write)
+
+def action_getusers(raname):
+    ra = Ra(raname)
+    return ra.getUsers()
 
 def action_steps(raname, out='text'):
     '''

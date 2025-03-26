@@ -61,7 +61,7 @@ def action_note(raname, noteid):
     return False, f'no note with id {noteid} found'
 
 
-def action_note_add (raname, note):
+def action_note_add (raname,  note):
     ''' adds the note given as argument to this raname
     '''
 
@@ -89,7 +89,6 @@ def action_note_add (raname, note):
     ra.save()
     
     return True, 'OK'
-
 
 def action_note_delete(raname, noteid):
     ''' remove a given note for this raname
