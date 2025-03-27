@@ -156,7 +156,7 @@ def action_clone(source_raname):
 
 def action_rename(ra_name, ra_newname):
     '''
-    Clone an existing risk assessment tree, using the given name.
+    Rename an existing risk assessment tree, using the given name.
     '''
     if not ra_name:
         return False, 'empty risk assessment name'
