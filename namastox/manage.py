@@ -154,6 +154,30 @@ def action_clone(source_raname):
 
     return True, f'New risk assessment {raname} cloned from {source_raname}'
 
+def action_rename(ra_name, ra_newname):
+    '''
+    Clone an existing risk assessment tree, using the given name.
+    '''
+    if not ra_name:
+        return False, 'empty risk assessment name'
+    
+    rapath = ra_path(ra_name)
+    ranewpath = os.path.join(os.path.dirname(rapath), ra_newname)
+    
+    if not os.path.isdir(rapath):
+        return False, f'{rapath} folder not found in the repository'
+
+    # importlib does not allow using 'test' and issues a misterious error when we
+    # try to use this name. This is a simple workaround to prevent creating ranames 
+    # with this name 
+
+    shutil.move(rapath, ranewpath)
+
+    LOG.debug(f'renamed RA {rapath} to {ranewpath}')
+
+    return True, f'RA {rapath} renamed to {ranewpath}'
+
+
 def getRaHistoric (raname, step):
     ''' retrieves from the historical record the item corresponding to the step given as argument
     '''
