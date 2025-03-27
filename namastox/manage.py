@@ -161,16 +161,21 @@ def action_rename(ra_name, ra_newname):
     if not ra_name:
         return False, 'empty risk assessment name'
     
+    # importlib does not allow using 'test' and issues a misterious error when we
+    # try to use this name. This is a simple workaround to prevent creating ranames 
+    # with this name 
+    if ra_name == 'test':
+        return False, 'the name "test" is disallowed, please use any other name'
+    
     rapath = ra_path(ra_name)
     ranewpath = os.path.join(os.path.dirname(rapath), ra_newname)
     
     if not os.path.isdir(rapath):
         return False, f'{rapath} folder not found in the repository'
 
-    # importlib does not allow using 'test' and issues a misterious error when we
-    # try to use this name. This is a simple workaround to prevent creating ranames 
-    # with this name 
-
+    if os.path.isdir(ranewpath):
+        return False, f'RA name "{ranewpath}" already in use, select a different name'
+    
     shutil.move(rapath, ranewpath)
 
     LOG.debug(f'renamed RA {rapath} to {ranewpath}')
