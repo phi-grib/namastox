@@ -81,8 +81,9 @@ python setup.py develop
 ```
 
 ## Documentation (for the GUI)
+Introductory video [here](https://drive.google.com/file/d/1-jco2e0D2VSzQP-S-4o8bsTRhnczXHon/view?usp=sharing)
 
-We prepared a series of short (1 to 2 minutes) videos explaining how to carry out common tasks:
+Short (1 to 2 minutes) videos explaining how to carry out common tasks:
 - create a new RA [here](https://drive.google.com/file/d/17FPzaVE1tzNcwi3nP1jXF43jvoSx1Xpw/view?usp=sharing)
 - executing a task [here](https://drive.google.com/file/d/1TaPsgqTesrx2kdPxViZ2nO3Bfq6LCNuH/view?usp=sharing)
 - making decisions [here](https://drive.google.com/file/d/1xKlXPA0fk0a--rHdeo1W1GtFjNGrPDlL/view?usp=sharing)
