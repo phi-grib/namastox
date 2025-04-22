@@ -100,7 +100,8 @@ class Node:
         for i,iword in enumerate(words):
             label += iword
             if i == round(len(words)/2.0)-1:
-                label += '\\n'
+                # label += '\\n'
+                label += '<br>'
             else:
                 label += ' '
 
