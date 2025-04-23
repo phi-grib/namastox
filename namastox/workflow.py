@@ -56,6 +56,7 @@ class Workflow:
         self.nodes = {}
         self.firstNodeId = ''
         self.rapath = ra_path(raname)
+        self.catalogue = []
 
         # try to load a pickle created previously
         success = self.load()
@@ -67,6 +68,7 @@ class Workflow:
         if not success:
             LOG.error('CRITICAL: unable to load a correct workflow definition')
             sys.exit(-1)
+
 
     def import_table (self):
         ''' parse a TSV defining the workflow '''
@@ -94,11 +96,22 @@ class Workflow:
                 value = table_dict[key][i] 
                 node_content[key]=value   
 
+            node_id = node_content['id']
             # append the node to the list of nodes
-            self.nodes[node_content['id']] = Node(node_content)
+            self.nodes[node_id] = Node(node_content)
              
             if i==0:
-                self.firstNodeId = node_content['id']
+                self.firstNodeId = node_id
+
+            # create a sort of "result" collection which essentially contains every node in the workflow
+            if node_content['category'] == 'LOGICAL':
+                catalogue_item_yes = {'id': node_id, 'decision': True}
+                catalogue_item_no = {'id': node_id, 'decision': False}
+                self.catalogue.append(catalogue_item_yes)
+                self.catalogue.append(catalogue_item_no)
+            else:
+                catalogue_item = {'id': node_id}
+                self.catalogue.append(catalogue_item)
 
         self.save()
 
@@ -109,7 +122,10 @@ class Workflow:
         '''
         pickl_path = os.path.join (self.rapath,'workflow.pkl')
 
-        if not os.path.isfile(pickl_path):
+        # DEBUG ONLY!!!
+        print ('debug trick in workflow 126')
+        # if not os.path.isfile(pickl_path):
+        if True:
             return self.import_table()
         
         with open(pickl_path,'rb') as f:
