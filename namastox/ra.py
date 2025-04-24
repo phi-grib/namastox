@@ -596,9 +596,10 @@ class Ra:
             if the ra is in step 0 and the workflow is still undefined, return a fallback graph 
         '''
         if self.ra['step']>0 : 
-            print (self.workflow.getWorkflowGraph(self.workflow.catalogue))    
-            # return self.workflow.getWorkflowGraph(self.results, step)    
-            return self.workflow.getWorkflowGraph(self.workflow.catalogue, step)    
+            # print (self.workflow.getWorkflowGraph(self.workflow.catalogue))    
+            return self.workflow.getWorkflowGraph(self.results, step)    
+            # return self.workflow.getWorkflowGraph(self.workflow.catalogue)    
+            # return self.workflow.getWorkflowGraph(self.workflow.catalogue, self.ra['step']+3)    
          
         return """graph TD
                   X[workflow undefined]-->Z[...]
