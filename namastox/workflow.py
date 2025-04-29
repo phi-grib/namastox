@@ -42,7 +42,8 @@ ADME_FILL = '#FFFAEB'
 ADME_STROKE = '#F2E5A5'
 EXPOSURE_FILL = '#EBF5FF'
 EXPOSURE_STROKE = '#C3CDE0'
-WORKFLOW_FILL = 'yellow'
+WORKFLOW_FILL = '#FFFF00'
+WORKFLOW_STROKE = '#FFFF00'
 
 class Workflow:
     ''' Class storing all the risk assessment information
@@ -256,7 +257,8 @@ class Workflow:
         styleMember= {'anode':[],
                       'vnode':[],
                       'fnode':[],
-                      'znode':[]
+                      'znode':[],
+                      'wnode':[]
                      }
         
         ACTIVE_FILL = '#BFC2F0'
@@ -270,6 +272,7 @@ class Workflow:
         styleDef += f'classDef anode fill:{ACTIVE_FILL} ,stroke:{ACTIVE_STROKE}\n'
         styleDef += f'classDef vnode fill:{VISITED_FILL} ,stroke:{VISITED_STROKE}\n'
         styleDef += f'classDef znode fill:{VISITED_FILL} ,stroke:{VISITED_STROKE}\n'
+        styleDef += f'classDef wnode fill:{WORKFLOW_FILL} ,stroke:{WORKFLOW_STROKE}\n'
 
         #TODO subgraphs were hardcoded, think a way to make this more flexible
         subbody = {'H':'subgraph HAZARD\n', 'B':'subgraph ADME\n', 'E':'subgraph EXPOSURE\n'}
