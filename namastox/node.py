@@ -75,7 +75,6 @@ class Node:
         task = self.task
         return task
 
-        
     def styleClass (self, visited=False, future=False):
         # terminal nodes
         if self.category == 'END':
@@ -110,6 +109,6 @@ class Node:
         if self.category == 'LOGICAL':
             return f'{self.id}{{{label}}}'
         if self.category == 'END':
-            return f'{self.id}[/{self.name}/]\n{self.id}[/{self.name}/]-->Z999[end]'
+            return f'{self.id}[/{self.name}/]\n{self.id}[/{self.name}/]-->Z{self.id}[end]'
         return ''
         

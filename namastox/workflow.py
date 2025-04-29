@@ -42,6 +42,7 @@ ADME_FILL = '#FFFAEB'
 ADME_STROKE = '#F2E5A5'
 EXPOSURE_FILL = '#EBF5FF'
 EXPOSURE_STROKE = '#C3CDE0'
+WORKFLOW_FILL = 'yellow'
 
 class Workflow:
     ''' Class storing all the risk assessment information
@@ -122,10 +123,10 @@ class Workflow:
         '''
         pickl_path = os.path.join (self.rapath,'workflow.pkl')
 
+        if not os.path.isfile(pickl_path):
         # DEBUG ONLY!!!
-        print ('debug trick in workflow 126')
-        # if not os.path.isfile(pickl_path):
-        if True:
+        # print ('debug trick in workflow 126')
+        # if True:
             return self.import_table()
         
         with open(pickl_path,'rb') as f:
