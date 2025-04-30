@@ -111,7 +111,12 @@ class Node:
                 label += ' '
 
         if self.category == 'TASK':
-            return f'{self.id}[{label}]'
+            if self.id[0] != 'W':
+                return f'{self.id}[{label}]'
+            else:
+                # return f'{self.id}([{label}])'
+                return f'{self.id}@{{shape: procs, label: "{label}" }}'
+        
         if self.category == 'LOGICAL':
             return f'{self.id}{{{label}}}'
         if self.category == 'END':
