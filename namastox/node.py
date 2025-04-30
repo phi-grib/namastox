@@ -80,12 +80,6 @@ class Node:
         if self.category == 'END':
             return ('znode')
         
-        # workflow node
-        # SOLVE!
-        # if self.id[0] == 'W':
-        #     print ('**********************', self.id)
-        #     return ('wnode')
-        
         # next nodes
         if future:
             return('fnode')       

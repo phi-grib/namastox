@@ -133,6 +133,10 @@ class Workflow:
         with open(pickl_path,'rb') as f:
             self.nodes = pickle.load(f)
             self.firstNodeId = pickle.load(f)
+            try:
+                self.catalogue = pickle.load(f)
+            except:
+                self.catalogue = []
             
         return True
 
@@ -143,6 +147,7 @@ class Workflow:
         with open(pickl_path,'wb') as f:
             pickle.dump(self.nodes, f, protocol=pickle.HIGHEST_PROTOCOL)
             pickle.dump(self.firstNodeId, f, protocol=pickle.HIGHEST_PROTOCOL)
+            pickle.dump(self.catalogue, f, protocol=pickle.HIGHEST_PROTOCOL)
 
     def getNode (self, iid):
         if iid in self.nodes:
@@ -214,7 +219,6 @@ class Workflow:
                 # istyle += ilog.style(True, True)
                 styleMember[inode.styleClass(True, True)].append(jid)
                 ilinks += f'click {ilog.id} onA\n' 
-        
         else:
             subgraph = self.subgraph_assign(inode, inext)
              
