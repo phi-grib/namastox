@@ -136,7 +136,7 @@ class Workflow:
             try:
                 self.catalogue = pickle.load(f)
             except:
-                self.catalogue = []
+                return False
             
         return True
 
@@ -385,7 +385,7 @@ class Workflow:
 
         return (header+body+subgraphs+styleDef+links)
 
-def catalogueNext (self, nodeid, inode, styleMember, decision=None):
+    def graphNextCatalogue (self, nodeid, inode, styleMember, decision=None):
         inext = self.getNode(nodeid)
         arrow = '-->'
         subgraph = None
@@ -394,50 +394,26 @@ def catalogueNext (self, nodeid, inode, styleMember, decision=None):
         elif decision is False:
             arrow = '--N-->'
         ibody = f'{inode.box()}{arrow}{inext.box()}\n'
-        # istyle = inext.style(visited=visited, future=False)
-        styleMember[inode.styleClass(False, False)].append(nodeid)
-
-        ilinks = f'click {inext.id} onA\n'
-
-        #TODO subgraph is recognized using only the first couple of nodes, starting with the True
-        # something more sophisticated could be implemented but looks like it is not needed for now
-        if inext.category == 'LOGICAL':
-            next_nodes_true  =self.logicalNodeList(nodeid, True)
-            for jid in next_nodes_true:
-                ilog = self.getNode(jid)
-                if subgraph is None:
-                    subgraph = self.subgraph_assign(inode, ilog)
-                ibody += f'{inext.box()}--Y-->{ilog.box()}\n'
-                # istyle += ilog.style(True, True)
-                styleMember[inode.styleClass(True, True)].append(jid)
-
-            next_nodes_false  =self.logicalNodeList(nodeid, False)
-            for jid in next_nodes_false:
-                ilog = self.getNode(jid)
-                if subgraph is None:
-                    subgraph = self.subgraph_assign(inode, ilog)
-                ibody += f'{inext.box()}--N-->{ilog.box()}\n'
-                # istyle += ilog.style(True, True)
-                styleMember[inode.styleClass(True, True)].append(jid)
-        else:
-            subgraph = self.subgraph_assign(inode, inext)
-             
+        subgraph = self.subgraph_assign(inode, inext)
         return ibody, subgraph
 
-def getWorkflowCatalogue (self, catalogue):
+    def getCatalogueGraph (self, catalogue, active_nodes_id):
         header = 'graph TD\n'
         body = ''
+        styleDef = ''
         
         styleMember= {'anode':[],
-                      'znode':[],
-                      'wnode':[]
+                      'rnode':[],
+                      'znode':[]
                      }
         
-        ACTIVE_FILL = '#BFC2F0'
-        ACTIVE_STROKE = '#605AA1'
+        REGULAR_FILL = '#BFC2F0'
+        REGULAR_STROKE = '#605AA1'
+        ACTIVE_FILL = '#DE6168'
+        ACTIVE_STROKE = '#DE6168'
 
+        styleDef += f'classDef rnode fill:{REGULAR_FILL} ,stroke:{REGULAR_STROKE}\n'
         styleDef += f'classDef anode fill:{ACTIVE_FILL} ,stroke:{ACTIVE_STROKE}\n'
-        styleDef += f'classDef wnode fill:{WORKFLOW_FILL} ,stroke:{WORKFLOW_STROKE}\n'
 
         #TODO subgraphs were hardcoded, think a way to make this more flexible
         subbody = {'H':'subgraph HAZARD\n', 'B':'subgraph ADME\n', 'E':'subgraph EXPOSURE\n'}
@@ -456,8 +432,8 @@ def getWorkflowCatalogue (self, catalogue):
                 # this is the visited node, show it greyed out
                 iid = iresult['id']
                 inode = self.getNode(iid)
-                styleMember[inode.styleClassCatalogue()].append(iid)
-
+                active = iid in active_nodes_id
+                styleMember[inode.styleClassCatalogue(active)].append(iid)
 
                 # show all nodes linked to visited nodes
                 # for task, show next task (pending task)
@@ -465,7 +441,7 @@ def getWorkflowCatalogue (self, catalogue):
                     next_nodes = self.nextNodeList(iid)
                     subgraph = ''
                     for jid in next_nodes:
-                        ibody, subgraph = self.catalogueNext(jid, inode, styleMember, None)
+                        ibody, subgraph = self.graphNextCatalogue(jid, inode, styleMember, None)
                         if subgraph != '':
                             subbody[subgraph]+=ibody
                         else:
@@ -479,7 +455,7 @@ def getWorkflowCatalogue (self, catalogue):
                         next_nodes_true  = self.logicalNodeList(iid, True)
                         subgraph=''
                         for jid in next_nodes_true:
-                            ibody, subgraph = self.catalogueNext(jid, inode, styleMember, True)
+                            ibody, subgraph = self.graphNextCatalogue(jid, inode, styleMember, True)
                             if subgraph != '':
                                 subbody[subgraph]+=ibody
                             else:
@@ -489,7 +465,7 @@ def getWorkflowCatalogue (self, catalogue):
                         next_nodes_false =self.logicalNodeList(iid, False)
                         subgraph=''
                         for jid in next_nodes_false:
-                            ibody, subgraph = self.catalogueNext(jid, inode, styleMember, False)
+                            ibody, subgraph = self.graphNextCatalogue(jid, inode, styleMember, False)
                             if subgraph != '':
                                 subbody[subgraph]+=ibody
                             else:
@@ -517,7 +493,7 @@ def getWorkflowCatalogue (self, catalogue):
                                     'E':"style EXPOSURE fill:"+EXPOSURE_FILL+",stroke:"+EXPOSURE_STROKE+"\n"}
         
         subgraphs = ''
-        subgraphs_found =0 
+        subgraphs_found = 0 
 
         subgraph_style = ''
         for ikey in subbody:

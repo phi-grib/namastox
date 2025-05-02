@@ -420,6 +420,21 @@ def getWorkflow(raname, step=None):
     workflow_graph = ra.getWorkflowGraph(step)
     return (workflow_graph is not None), workflow_graph
 
+def getCatalogue(raname):
+    '''
+    returns a marmaid string describing the "visible workflow"
+    '''
+
+    # instantiate a ra object
+    ra = Ra(raname)
+    succes, results = ra.load()
+    if not succes:
+        return False, results
+    
+    workflow_graph = ra.getCatalogueGraph()
+    return (workflow_graph is not None), workflow_graph
+
+
 
 def setCustomWorkflow (raname, file):
     '''

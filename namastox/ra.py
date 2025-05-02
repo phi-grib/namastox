@@ -596,10 +596,7 @@ class Ra:
             if the ra is in step 0 and the workflow is still undefined, return a fallback graph 
         '''
         if self.ra['step']>0 : 
-            # print (self.workflow.getWorkflowGraph(self.workflow.catalogue))    
             return self.workflow.getWorkflowGraph(self.results, step)    
-            # return self.workflow.getWorkflowGraph(self.workflow.catalogue)    
-            # return self.workflow.getWorkflowGraph(self.workflow.catalogue, self.ra['step']+3)    
          
         return """graph TD
                   X[workflow undefined]-->Z[...]
@@ -607,6 +604,16 @@ class Ra:
                   style Z fill:#FFFFFF,stroke:#000000
                   """
     
+    def getCatalogueGraph(self, step=None):
+        ''' returns a mermaid graph for the full workflow (catalogue)
+        '''
+        active_nodes = self.getActiveNodes()
+        active_nodes_id = []
+        for iactive in active_nodes:
+            active_nodes_id.append(iactive['id'])
+
+        return self.workflow.getCatalogueGraph(self.workflow.catalogue, active_nodes_id)    
+
     #################################################
     # output section
     #################################################
