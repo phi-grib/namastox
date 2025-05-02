@@ -91,6 +91,15 @@ class Node:
         # active nodes
         else:
             return('anode')
+        
+    def styleClassCatalogue (self):
+        # terminal nodes
+        if self.category == 'END':
+            return ('znode')
+        
+        # active nodes
+        else:
+            return('anode')
 
     def box (self):
         # split labels in half, adding '\\n' betweeen the two middle words

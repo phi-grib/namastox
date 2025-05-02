@@ -385,8 +385,154 @@ class Workflow:
 
         return (header+body+subgraphs+styleDef+links)
 
+def catalogueNext (self, nodeid, inode, styleMember, decision=None):
+        inext = self.getNode(nodeid)
+        arrow = '-->'
+        subgraph = None
+        if decision is True:
+            arrow = '--Y-->'
+        elif decision is False:
+            arrow = '--N-->'
+        ibody = f'{inode.box()}{arrow}{inext.box()}\n'
+        # istyle = inext.style(visited=visited, future=False)
+        styleMember[inode.styleClass(False, False)].append(nodeid)
+
+        ilinks = f'click {inext.id} onA\n'
+
+        #TODO subgraph is recognized using only the first couple of nodes, starting with the True
+        # something more sophisticated could be implemented but looks like it is not needed for now
+        if inext.category == 'LOGICAL':
+            next_nodes_true  =self.logicalNodeList(nodeid, True)
+            for jid in next_nodes_true:
+                ilog = self.getNode(jid)
+                if subgraph is None:
+                    subgraph = self.subgraph_assign(inode, ilog)
+                ibody += f'{inext.box()}--Y-->{ilog.box()}\n'
+                # istyle += ilog.style(True, True)
+                styleMember[inode.styleClass(True, True)].append(jid)
+
+            next_nodes_false  =self.logicalNodeList(nodeid, False)
+            for jid in next_nodes_false:
+                ilog = self.getNode(jid)
+                if subgraph is None:
+                    subgraph = self.subgraph_assign(inode, ilog)
+                ibody += f'{inext.box()}--N-->{ilog.box()}\n'
+                # istyle += ilog.style(True, True)
+                styleMember[inode.styleClass(True, True)].append(jid)
+        else:
+            subgraph = self.subgraph_assign(inode, inext)
+             
+        return ibody, subgraph
+
+def getWorkflowCatalogue (self, catalogue):
+        header = 'graph TD\n'
+        body = ''
+        
+        styleMember= {'anode':[],
+                      'znode':[],
+                      'wnode':[]
+                     }
+        
+        ACTIVE_FILL = '#BFC2F0'
+        ACTIVE_STROKE = '#605AA1'
+
+        styleDef += f'classDef anode fill:{ACTIVE_FILL} ,stroke:{ACTIVE_STROKE}\n'
+        styleDef += f'classDef wnode fill:{WORKFLOW_FILL} ,stroke:{WORKFLOW_STROKE}\n'
+
+        #TODO subgraphs were hardcoded, think a way to make this more flexible
+        subbody = {'H':'subgraph HAZARD\n', 'B':'subgraph ADME\n', 'E':'subgraph EXPOSURE\n'}
+
+        # no node visited so far, present the first node in the workflow 
+        if len(catalogue) == 0:
+            inode = self.firstNode()
+            styleMember[inode.styleClassCatalogue()].append(inode.id)
+
+            body += f'{inode.box()}\n'
+        
+        else:
+            # iterate for all visited nodes
+            for istep, iresult in enumerate(catalogue):
+
+                # this is the visited node, show it greyed out
+                iid = iresult['id']
+                inode = self.getNode(iid)
+                styleMember[inode.styleClassCatalogue()].append(iid)
 
 
+                # show all nodes linked to visited nodes
+                # for task, show next task (pending task)
+                if inode.category == 'TASK':
+                    next_nodes = self.nextNodeList(iid)
+                    subgraph = ''
+                    for jid in next_nodes:
+                        ibody, subgraph = self.catalogueNext(jid, inode, styleMember, None)
+                        if subgraph != '':
+                            subbody[subgraph]+=ibody
+                        else:
+                            body += ibody
+
+                # for decision, show decision taken in the visited node
+                elif inode.category == 'LOGICAL':
+                    idecision = iresult['decision']
+
+                    if idecision == True:
+                        next_nodes_true  = self.logicalNodeList(iid, True)
+                        subgraph=''
+                        for jid in next_nodes_true:
+                            ibody, subgraph = self.catalogueNext(jid, inode, styleMember, True)
+                            if subgraph != '':
+                                subbody[subgraph]+=ibody
+                            else:
+                                body += ibody
+
+                    else:
+                        next_nodes_false =self.logicalNodeList(iid, False)
+                        subgraph=''
+                        for jid in next_nodes_false:
+                            ibody, subgraph = self.catalogueNext(jid, inode, styleMember, False)
+                            if subgraph != '':
+                                subbody[subgraph]+=ibody
+                            else:
+                                body += ibody
+
+        # use the list of nodes assigned to each style        
+        for istyle in styleMember:
+            
+            # do not process empty lists
+            if len(styleMember[istyle])==0:
+                continue
+
+            # trick to remove duplicates
+            styleMember[istyle] = list(dict.fromkeys(styleMember[istyle]))
+
+            styleDef += f'class '
+            for ii in styleMember[istyle]:
+                styleDef += ii+','
+            styleDef = styleDef[:-1]
+            styleDef += f' {istyle}\n'
+
+        # styles of subgraphs
+        subgraph_style_catalogue = {'H':"style HAZARD fill:"+HAZARD_FILL+",stroke:"+HAZARD_STROKE+"\n",
+                                    'B':"style ADME fill:"+ADME_FILL+",stroke:"+ADME_STROKE+"\n",
+                                    'E':"style EXPOSURE fill:"+EXPOSURE_FILL+",stroke:"+EXPOSURE_STROKE+"\n"}
+        
+        subgraphs = ''
+        subgraphs_found =0 
+
+        subgraph_style = ''
+        for ikey in subbody:
+            if len(subbody[ikey])>20:
+                subgraphs_found+=1
+                subbody[ikey]+='end\n'
+                subgraph_style+=subgraph_style_catalogue[ikey]
+            else:
+                subbody[ikey]=''
+
+        if subgraphs_found>0:
+            subgraph_container_style = "style container fill: #ffffff, stroke: #ffffff\n"           
+            subgraphs = 'subgraph container [" "]\n'+subbody['H']+subbody['B']+subbody['E']+'end\n'+subgraph_style+subgraph_container_style
+
+        return (header+body+subgraphs+styleDef)
 
 
    
