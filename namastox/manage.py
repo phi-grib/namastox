@@ -432,9 +432,8 @@ def getCatalogue(raname):
         return False, results
     
     workflow_graph = ra.getCatalogueGraph()
+
     return (workflow_graph is not None), workflow_graph
-
-
 
 def setCustomWorkflow (raname, file):
     '''

@@ -607,6 +607,9 @@ class Ra:
     def getCatalogueGraph(self, step=None):
         ''' returns a mermaid graph for the full workflow (catalogue)
         '''
+        if self.workflow is None:
+            return None
+        
         active_nodes = self.getActiveNodes()
         active_nodes_id = []
         for iactive in active_nodes:
