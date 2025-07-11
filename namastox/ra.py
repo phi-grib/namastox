@@ -533,7 +533,7 @@ class Ra:
                     LOG.info (f'result for node {input_result_id} empty')
                     continue
                 
-            elif input_node_category == 'TASK':
+            elif input_node_category in TASK_TYPES:
                 if not 'values' in input_result:
                     continue
                 
