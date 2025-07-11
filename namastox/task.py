@@ -21,6 +21,7 @@
 # along with NAMASTOX. If not, see <http://www.gnu.org/licenses/>.
 
 from namastox.logger import get_logger
+from namastox.utils import TASK_TYPES
 import yaml
 
 LOG = get_logger(__name__)
@@ -40,7 +41,7 @@ class Task:
             'id': None,
             'label': None,
             'result_type': None,     # text | value | bool
-            'category': 'TASK',      # TASK | LOGICAL | END
+            'category': 'TASK',      # TASK | MODULE | LOGICAL | END
             'description': None,     # cannot be left empty
             'method_type': 'expert', # expert | invitro | insilico, 
             'method_link': None,     # link to method repo
@@ -203,7 +204,7 @@ class Task:
         
         black_keys=[]
         
-        if category == 'TASK':
+        if category in TASK_TYPES :
             black_keys = ['decision', 'justification']
 
             # back-compatibility patch

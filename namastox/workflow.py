@@ -26,7 +26,7 @@ import sys
 import pickle
 import pandas as pd
 import numpy as np
-from namastox.utils import ra_path
+from namastox.utils import ra_path, TASK_TYPES
 from namastox.node import Node
 from namastox.logger import get_logger
 from namastox.node import Node
@@ -306,7 +306,7 @@ class Workflow:
 
                 # show all nodes linked to visited nodes
                 # for task, show next task (pending task)
-                if inode.category == 'TASK':
+                if inode.category in TASK_TYPES:
                     next_nodes = self.nextNodeList(iid)
                     subgraph = ''
                     for jid in next_nodes:
@@ -437,7 +437,7 @@ class Workflow:
 
                 # show all nodes linked to visited nodes
                 # for task, show next task (pending task)
-                if inode.category == 'TASK':
+                if inode.category in TASK_TYPES:
                     next_nodes = self.nextNodeList(iid)
                     subgraph = ''
                     for jid in next_nodes:

@@ -25,6 +25,8 @@ import yaml
 import string
 import random 
 
+TASK_TYPES = ['TASK', 'MODULE']
+
 # def path_expand (path, version):
 #     ''' 
 #     Expands the path as required for the version provided as argument 

@@ -26,7 +26,7 @@ import yaml
 import os
 import time
 import hashlib
-from namastox.utils import ra_path
+from namastox.utils import ra_path, TASK_TYPES
 from namastox.task import Task
 from namastox.workflow import Workflow
 from namastox.logger import get_logger
@@ -455,7 +455,7 @@ class Ra:
         new_nodes_list = []
         if input_node_category == 'LOGICAL':
             new_nodes_list = self.workflow.logicalNodeList(input_result_id, input_result['decision'])
-        elif input_node_category == 'TASK':
+        elif input_node_category in TASK_TYPES:
             new_nodes_list = self.workflow.nextNodeList(input_result_id)
 
         # clean visited nodes
