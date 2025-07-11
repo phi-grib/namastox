@@ -39,11 +39,31 @@ B0005	DP07EF_01	bool	Prediction of PBK model acceptable?	LOGICAL	Continue with I
 B0006	BB006_01	text	Generate NAM data on additional ADME parameters	TASK	Improve PBK model using more accurate in vitro ADME data e.g. to cover active transport/enzyme induction/inhibition/low clearance compounds. Alternatively improve PBK model by integrating other relevant ADME processes into the model structure like enteroh			B0007		
 B0007	BB007_01	text	Run PBK model	LOGICAL				B0008		
 B0008	DP08EF_01	bool	Prediction of PBK model acceptable?	LOGICAL					B0010,B0012	E0012
-B0009	BB008_01	text	Derive estimates of relevant test concentrations	TASK	Derive estimates of relevant test concentrations using available information on ADME properties. Use the result for hazard testing. 			A***		
-B0010	BB009_01	text	Refine estimates of relevant test concentrations	TASK				A***		
+B0009	BB008_01	text	Derive estimates of relevant test concentrations	TASK	Derive estimates of relevant test concentrations using available information on ADME properties. Use the result for hazard testing. 			H0002		
+B0010	BB009_01	text	Refine estimates of relevant test concentrations	TASK				H0010		
 B0012	BB025_01	value	Calculate appropriate hEC	TASK	reminder put it in twice,  after HT-PBK and mechanistic PBK assessment	 		B0013,Z0004		
 B0013	BB043_01	value	Translate hEC into external human dose					X0001		
 Z0004	REPORT_04	text	Report	END	Exit the ASPA workflow. Where applicable, integrate results with other assessments.					
 X0001	BB026_01	text	Compare hazard and exposure reference values	TASK	"Also feedback loop missing if ""no"".  Consider aspects for improvement and reenter into ASPA workflow"	expert		X0002		
 X0002	DP19EF_01	bool	Is margin of exposure sufficient	LOGICAL					Z0004	Z0006
 Z0006	REPORT_06	text	Report	END	Consider aspect for improvement and reenter into ASPA workflow					
+H0001	BB010_01	text	Generate toxicologically-relevant in silico predictions	TASK	(1) Use QSAR models (and other available computational methods) for predictions of relevant bioactivity (e.g. toxicological targets), of toxicological endpoints (e.g. genotoxicity) or of events that may be associated to AOP (MIE, KE, AO). (2) Document the			H0002,H0003		
+H0002	BB011_02	text	Identify bioactivity	TASK	"(1) Use an assembly of assays with a broad biological coverage. Ideally, all potential bioactivities that may lead to adverse reactions should be captured.
+(2) The concentration range of the assays should be chosen and account for the potential exposure s"			H0005,H0003		
+H0003	DP09EF_01	bool	Is there a reason to enter a module for testing of specific toxicological endpoints (outside core ASPA focus)?	LOGICAL	Check whether there is information (relevant and significant) that indicates a potential of the test chemical to trigger certain specific toxicological endpoints that are not at the core of the ASPA workflow (e.g. skin sensitization, genotoxicity, topical				H0004	H0005
+H0004	WF03_01		Module for specific endpoints like acute topical toxicity or genotoxicity	MODULE	Perform relevant Defined Approaches based and/or dedicated tests to confirm or characterize alert(s)			Z0002		
+Z0002	REPORT_02	text	Report	END	Exit the ASPA workflow. Where applicable, integrate results with other assessments.					
+H0005	BB012_01	text	In vitro biokinetics	TASK	Determine distribution of test item within cell culture dishes used e.g. in BB011. The main focus shold be on the method  that is chosen for the most relevant PoD, but data may be generated for several methods. Data generation should be default use the Ce			H0006		
+H0006	BB013_01	text	Integration of initial hazard and bioactivity data	TASK	"Integrate the in silico and in vitro predictions (BB010-012).
+Analyze and integrate the results obtained in previous steps"			H0007		
+H0007	BB014_01	text	Derive Point-of-Departure estimates	TASK	Derive estimates of Point-of-Departure (POD). 			H0008		
+H0008	DP10EF_01	bool	Refinement of POD needed, given problem formulation?	LOGICAL	Consider whether the confidence in the POD estimates is sufficient for the problem formulation at hand. Determine if the data obtained and generated combined provides sufficient scientific justification to support a clear Mode of action and whether this i				H0009	Z0003
+Z0003	REPORT_03	text	Report	END	Exit the ASPA workflow. Where applicable, integrate results with other assessments.					
+H0009	DP11EF_01	bool	Specific toxicological alerts identified? AOPs triggered? 	LOGICAL	Are any specific toxicological alerts identified? Are any alerts for perturbation of AOPs identified? If so, at what dose? Is this dose meaningful?				H0010	H0011
+H0010	BB015_01	text	Generate medium-throughput in vitro toxicity data e.g., for relevant qAOPs or Defined Approaches	TASK	This is a box that stands for a complex subroutine. The choice of NAM and the type of subroutine depends on the problem formulaton and the data generated in more upstream parts. For some narrowly defined problem formulations, more defined subroutines can 			H0012		
+H0011	BB018_01	text	Generate medium-throughput in vitro toxicity data	TASK	Not clear what BB015 and BB018 exactly mean			H0012		
+H0012	BB016_01	text	In vitro biokinetics	TASK	Not clear what is the difference between BB012 and BB016			H0013		
+H0013	BB017_01	text	Integration of results	TASK	Integrate the results from more complex in vitro tests (BB015 and BB016).			H0014		
+H0014	BB041_01	text	Derive refined point of departure	TASK				H0015		
+H0015	DP12EF_01	bool	PoD sufficiently refined? Confidence in PoD increased?	LOGICAL	Did the results obtained from more complex in vitro tests result in sufficient refinement of the POD and its associated level of uncertainty?				B0012	H0016
+H0016	BB019_01	text	Explore other types of NAMs to reduce uncertainty and refine POD	TASK	This needs more specification with time. It is defined e.g. as hit follow-up strategy or as part of the description of high-quality AOP (they also specify the respective NAM (and alternative NAM) to assess KE). Some of the information required needs to be			H0015		
