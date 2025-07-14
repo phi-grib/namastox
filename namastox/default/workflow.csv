@@ -9,7 +9,7 @@ A0006	WF01_01	text	Perform dedicated workflow for NAM-based read-across  	MODULE
 A0007	DP03EF_01	bool	Information sufficient?	LOGICAL	Does the read-across assessment provide sufficient information to address the regulatory question(s) with a sufficient level of certainty?				A0004	A0008
 A0008	BB040_01	text	Identify data gap and testing strategy based on problem formulation	TASK	Consider whether the regulatory question(s) at hand can be addressed using NAMs. If so, outline necessary steps for hazard, ADME and exposure, where appropriate.	expert		A0009		
 A0009	DP04EF_01	bool	Is NAM -based testing feasible for the substance of interest?	LOGICAL	"Evaluate if the substance of interest has physico-chemical properties, which would interfere with its testing in the proposed NAMs methods coming from BB040 
-"				H0001,B0011,E0002	Z0002
+"				H0001,B0011,E0002	Z0007
 B0001	DP03EF_01	bool	Are ADME properties known?	LOGICAL	"Search for existing ADME data and properties (in vitro to in vivo). Which PBK model is appropriate? Is anything alerting for properties not covered by the httk model, then continue to Include information about the uptake (route specific)/fraction unbound in plasma, metabolism (like clearance in liver), blood to plasma ratio. Search of existing information.
 "				B0009,E0004	B0002
 B0002	BB004_01	text	Generate basic set of in silico, in vitro kinetic data	TASK	"The type of data is dependent on the route of administration. A tiered approach is followed using in silico predictions and complementing them with in vitro data as far as needed. For oral route this as follows.
@@ -24,7 +24,7 @@ B0009	BB008_01	text	Derive estimates of relevant test concentrations	TASK	Derive
 B0010	BB009_01	text	Refine estimates of relevant test concentrations	TASK				H0010		
 B0011	DP05EF_01	bool	Compound mainly cleared by metabolism?	LOGICAL	An assessment of the major clearance mechanism of the compound (metabolism vs renal vs biliary excretion unchanged. Document the (1) criteria that have been considered for the decision; (2) data that have been used; (3) effect thresholds considered relevant; (4) thresholds of certainty required for data used; (5) discussion points and possibly consistency checks that have been important for the decision. With evolution of NAMASTOX, increasing levels of guidance on above points will be incorporated in this decision point.				B0014	B0001
 B0012	BB025_01	value	Calculate appropriate hEC	TASK	reminder put it in twice,  after HT-PBK and mechanistic PBK assessment	 		B0013,Z0004		
-B0013	BB043_01	value	Translate hEC into external human dose					X0001		
+B0013	BB043_01	value	Translate hEC into external human dose	TASK				X0001		
 B0014	WF02_01	text	Perform dedicated workflow for metabolites	MODULE	Assess relevance of metabolite formation using the dedicated workflow			B0001,H0001		
 E0002	BB020_01	text	Map the uses of the substance	TASK	Describe the possible uses of the substances across different pathways (consumer, diet, occupational, environmental), including a description of available data.	expert		E0003		
 E0003	BB021_01	text	Screen possible exposure scenarios	TASK	Screening possible exposure scenarios involves systematically identifying and evaluating situations where individuals or the environment might come into contact with a substance on factors sources/pathways, volume distribution, target population (workers,	expert		E0004		
@@ -64,3 +64,4 @@ Z0003	REPORT_03	text	Report	END	Exit the ASPA workflow. Where applicable, integr
 Z0004	REPORT_04	text	Report	END	Exit the ASPA workflow. Where applicable, integrate results with other assessments.					
 Z0005	REPORT_05	text	Report	END	Exit the ASPA workflow. Where applicable, integrate results with other assessments.					
 Z0006	REPORT_06	text	Report	END	Consider aspect for improvement and reenter into ASPA workflow					
+Z0007	REPORT_07	text	Report	END	Exit the ASPA workflow. Where applicable, integrate results with other assessments.					
