@@ -1,0 +1,7 @@
+id	label	result_type	name	category	description	method_type	method_link	next_node	next_yes	next_no
+A0001	AAA0	text	First node	TASK	Description First	expert		A0002		
+A0002	AAA0	text	Second node	TASK	Description Second	expert	https://phi.upf.edu	A0003		
+A0003	DDD0	bool	Question	LOGICAL	Description question	 			A0004	A0005
+A0004	BBB0	value	Third node	TASK	Description Second	expert		Z0001		
+A0005	BBB1	value	Fourth node	TASK	Description Second	expert		Z0001		
+Z0001	EXIT1	text	Exit	END	Final report					
