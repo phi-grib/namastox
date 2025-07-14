@@ -117,10 +117,13 @@ class Node:
         if self.category == 'TASK':
             return f'{self.id}[{label}]'
         if self.category == 'MODULE':
-            return f'{self.id}@{{shape: procs, label: "{label}" }}'
+            return f'{self.id}@{{shape: procs, label: {label} }}'
         if self.category == 'LOGICAL':
             return f'{self.id}{{{label}}}'
         if self.category == 'END':
-            return f'{self.id}[/{self.name}/]\n{self.id}[/{self.name}/]-->Z{self.id}[end]'
+            return f'{self.id}[/{self.name}/]'
+            # return f'{self.id}[/{self.name}/]\n{self.id}[/{self.name}/]-->Z{self.id}[end]'
         return ''
         
+    def terminator (self):
+        return f'{self.id}[/{self.name}/]-->Z{self.id}[end]\n'

@@ -381,7 +381,12 @@ class Workflow:
 
         if subgraphs_found>0:
             subgraph_container_style = "style container fill: #ffffff, stroke: #ffffff\n"           
-            subgraphs = 'subgraph container [" "]\n'+subbody['H']+subbody['B']+subbody['E']+'end\n'+subgraph_style+subgraph_container_style
+            subgraphs = 'subgraph container [ ]\n'+subbody['H']+subbody['B']+subbody['E']+'end\n'+subgraph_style+subgraph_container_style
+
+        # for each znode add an END extra node 
+        for iid in styleMember['znode']:
+            inode = self.getNode (iid) 
+            body += inode.terminator()
 
         return (header+body+subgraphs+styleDef+links)
 
@@ -506,7 +511,12 @@ class Workflow:
 
         if subgraphs_found>0:
             subgraph_container_style = "style container fill: #ffffff, stroke: #ffffff\n"           
-            subgraphs = 'subgraph container [" "]\n'+subbody['H']+subbody['B']+subbody['E']+'end\n'+subgraph_style+subgraph_container_style
+            subgraphs = 'subgraph container [ ]\n'+subbody['H']+subbody['B']+subbody['E']+'end\n'+subgraph_style+subgraph_container_style
+
+        # for each znode add an END extra node 
+        for iid in styleMember['znode']:
+            inode = self.getNode (iid) 
+            body += inode.terminator()
 
         return (header+body+subgraphs+styleDef)
 
