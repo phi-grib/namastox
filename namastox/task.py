@@ -45,6 +45,8 @@ class Task:
             'description': None,     # cannot be left empty
             'method_type': 'expert', # expert | invitro | insilico, 
             'method_link': None,     # link to method repo
+            'proposed_approach': None,
+            'guidance': None,
 
             'decision': 'Select yes or no to the question posed in the description',       
             'report': 'Results obtained for the tasks specified in the description (compulsory field)',            
