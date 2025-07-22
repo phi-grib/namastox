@@ -189,5 +189,8 @@ NAMASTOX has been developed for the project RISKHUNT3R (https://www.risk-hunt3r.
 
 ![Alt text](images/risk-hunt3r-logo.png?raw=true "RISKHUNT3R-logo") 
 
-This project has received funding from the European Union’s Horizon 2020 research and innovation programme under grant agreement No 964537.
+![Alt text](images/eu-flag.png?raw=true "EU-flag") 
+This work was supported by the project RISK-HUNT3R: RISK assessment of chemicals integrating HUman centric Next generation Testing strategies promoting the 3Rs. RISK-HUNT3R has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 964537 and is part of the ASPIS cluster.
+
+This work reflects only the authors’ views, and the European Commission is not responsible for any use that may be made of the information it contains."
 
