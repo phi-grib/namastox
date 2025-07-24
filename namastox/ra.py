@@ -403,24 +403,15 @@ class Ra:
         
         # if we are defining the General Info for the first time...
 
-        # process any custom workflow
+        # in latest versions, General Info allways inform of the workflow name
+        # in the fiedl "workflow_custom"
         self.ra['workflow_name'] = self.general['workflow_custom']
 
-        # if 'workflow_custom' in self.general:
-        #     workflow_custom = self.general['workflow_custom']
-
-        #     if workflow_custom is not None:
-        #         if os.path.isfile(os.path.join(self.rapath,workflow_custom)):
-                    
-        #             self.ra['workflow_name'] = workflow_custom
-        #             workflow_pkl = os.path.join(self.rapath,'workflow.pkl')
-        #             if os.path.isfile(workflow_pkl):
-        #                 os.remove(workflow_pkl)
-                        
-        #             LOG.info (f'workflow name updated to {workflow_custom}')
-
-
         workflow_file = os.path.join(self.rapath,self.ra['workflow_name'] )
+
+        # if we want to use a custom workflow, the API has uploaded it already and should be present
+        # if this is not the case, check if we have choosen standard versions present in the default
+        # folder 
         if not os.path.isfile(workflow_file):
             base_dir = os.path.dirname(os.path.abspath(__file__))
             default_file = os.path.join(base_dir, 'default', self.ra['workflow_name'])

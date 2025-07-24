@@ -53,7 +53,7 @@ class Workflow:
         if workflow is not None:
             self.workflow = workflow
         else:
-            self.workflow = 'workflow.csv'
+            self.workflow = 'workflow.tsv'
 
         self.nodes = {}
         self.firstNodeId = ''

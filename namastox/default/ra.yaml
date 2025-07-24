@@ -1,6 +1,6 @@
 ra:
   ID:     
-  workflow_name: workflow.csv
+  workflow_name: workflow.tsv
   step: 0
   active_nodes_id: []
 general:
