@@ -35,6 +35,10 @@ class Node:
         self.name = node_content['name']
         self.id = node_content['id']
         self.category = node_content['category']
+        
+        self.label = ''
+        if 'label' in node_content:
+            self.label = node_content['label']
 
         self.next_node = []
         if isinstance(node_content['next_node'], str):
@@ -113,6 +117,10 @@ class Node:
                 label += '<br>'
             else:
                 label += ' '
+
+        # this option adds the workflow label on top of the box, in double superscript format
+        # removing one sup makes it slightly bigger
+        # label = f'"<sup><sup>{self.label}<br></sup></sup>{label}"'
 
         if self.category == 'TASK':
             return f'{self.id}[{label}]'
