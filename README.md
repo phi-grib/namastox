@@ -1,4 +1,4 @@
-# namastox
+# Namastox
 
 Software tool for supporting the implementation of New Assessment Methods (NAMs) within a New Generation Risk Assessment (NGRA) framework.
 
@@ -94,6 +94,12 @@ Short (1 to 2 minutes) videos explaining how to carry out common tasks:
 Here is also the link to a quickstarting guide: [here](documentation/quickstarting.pdf)
 
 The workflow used by NAMASTOX is defined in a simple TSV file. It is possible to create customized workflows using the instructions provided [here](documentation/workflows.pdf)
+
+## Citation
+
+Namastox was presented at EuroTox2024. The reference of the abstract books is:
+
+M. Pastor, K. Kopańska, A. Cabrera, NAMASTOX: a computational tool supporting the use of NGRA workflows. Tox Letters (2024) 399S2:S135
 
 ## Configuration
 
