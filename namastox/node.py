@@ -120,7 +120,7 @@ class Node:
 
         # this option adds the workflow label on top of the box, in double superscript format
         # removing one sup makes it slightly bigger
-        if hasattr(self, 'label'):    # required for back-compatibilit
+        if hasattr(self, 'label'):    # required for back-compatibility
             if self.label != '':
                 label = f'"<sup><sup>{self.label}<br></sup></sup>{label}"'
 
