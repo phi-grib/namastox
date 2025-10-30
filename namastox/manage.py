@@ -801,11 +801,11 @@ def importRA (filename):
     if os.path.isdir(base_path):
         return False, f'RA {raname} already exists'
 
-    # create directory
-    try:
-        os.mkdir(base_path)
-    except Exception as e:
-        return False, f'Error creating directory {base_path}: {e}'
+    # # create directory
+    # try:
+    #     os.mkdir(base_path)
+    # except Exception as e:
+    #     return False, f'Error creating directory {base_path}: {e}'
 
     # unpack tar.gz. This is done for any kind of export file
     with tarfile.open(filename, 'r:gz') as tar:
