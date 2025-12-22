@@ -126,6 +126,8 @@ class Node:
 
         if self.category == 'TASK':
             return f'{self.id}[{label}]'
+        if self.category == 'OPERATOR':
+            return f'{self.id}([{label}])'
         if self.category == 'MODULE':
             return f'{self.id}@{{shape: procs, label: {label} }}'
         if self.category == 'LOGICAL':

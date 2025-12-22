@@ -79,7 +79,7 @@ class Workflow:
         
         LOG.info (f'import table {table_path}')
 
-        table_dataframe = pd.read_csv(table_path, sep='\t').replace(np.nan, None)
+        table_dataframe = pd.read_csv(table_path, sep='\t', encoding = 'utf8').replace(np.nan, None)
         table_dict = table_dataframe.to_dict('list')
 
         # minimum elements in the TSV
