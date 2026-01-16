@@ -659,7 +659,11 @@ def getLocalModelPrediction(raname, prediction_label):
             if success:
                 if 'AD_parameters' in documentation:
                     if 'confidence' in documentation['AD_parameters']:
-                        confidence = documentation['AD_parameters']['confidence'] * 100.0
+                        confidence = documentation['AD_parameters']['confidence']
+                        if confidence is not None:
+                            confidence*=100.0
+                        else:
+                            confidence = 0
 
                 if iquantitative:
                     if 'Endpoint_units' in documentation:
