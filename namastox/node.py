@@ -55,6 +55,18 @@ class Node:
             node_list = node_content['next_no'].replace(' ','').split(',')
             self.next_no = node_list
 
+        # compatibility patch: old versions of ASPA2.1 incorrectly set "local_models" in method_type instead of method_link
+        if 'method_type' in node_content:
+            if node_content['method_type'] == 'local_models':
+                node_content['method_link'] = 'local_models'
+                LOG.debug('local_model missplaced error fixed')
+
+        # the result_type of nodes linking to local in silico models MUST be "value". This correct an error in old versions of ASPA2.1
+        if 'method_link' in node_content:
+            if node_content['method_link'] == 'local_models':
+                node_content['result_type'] = 'value'
+                LOG.debug('local_model node detected: result_type forced to value')
+                
         self.setTask(node_content)
     
     def getVal(self, field):

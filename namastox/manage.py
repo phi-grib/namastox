@@ -646,7 +646,7 @@ def getLocalModelPrediction(raname, prediction_label):
             iquantitative = ii.getMeta("quantitative")
 
             # defaults
-            confidence = 0
+            confidence = None
             unit = ''
             parameter = iendpoint
             interpretation = ''
@@ -662,8 +662,6 @@ def getLocalModelPrediction(raname, prediction_label):
                         confidence = documentation['AD_parameters']['confidence']
                         if confidence is not None:
                             confidence*=100.0
-                        else:
-                            confidence = 0
 
                 if iquantitative:
                     if 'Endpoint_units' in documentation:
