@@ -11,4 +11,4 @@ namastox.egg-info/*
 models/*
 profiles/*
 spaces/*
-default/material/*
+namastox/default/material/*
