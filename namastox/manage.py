@@ -38,10 +38,10 @@ from flame.util.utils import profiles_repository_path, model_repository_path
 
 LOG = get_logger(__name__)
 
-def action_privileges(raname, user_name):
-    return Ra(raname).privileges(user_name)
+def action_privileges(raname, username):
+    return Ra(raname).privileges(username)
 
-def action_new(raname, outfile=None):
+def action_new(raname, username, outfile=None):
     '''
     Create a new risk assessment tree, using the given name.
     This creates the development version "dev",
@@ -57,7 +57,7 @@ def action_new(raname, outfile=None):
         return False, 'the name "test" is disallowed, please use any other name'
 
     # raname directory with /dev (default) level
-    ndir = ra_path(raname)
+    ndir = ra_path(raname, username)
 
     if os.path.isdir(ndir):
         return False, f'Risk assessment {raname} already exists'
@@ -83,7 +83,7 @@ def action_new(raname, outfile=None):
     LOG.debug(f'copied risk assessment templates from {src_path} to {ndir}')
 
     # Instantiate Ra
-    ra = Ra(raname)
+    ra = Ra(raname, username)
     
     # Default to universal read/write access
     ra.setUsers(['*'],['*'])
@@ -262,12 +262,13 @@ def action_kill(raname, step=None):
 
     return True, 'OK'
 
-def action_list(user_name,out='text'):
+def action_list(username,out='text'):
     '''
     if no argument is provided lists all ranames present at the repository 
     otherwyse lists all versions for the raname provided as argument
     '''
-    rdir = ra_repository_path()
+    rdir = ra_repository_path(username)
+
     if os.path.isdir(rdir) is False:
         return False, 'The risk assessment name repository path does not exist. Please run "namastox -c config".'
 
@@ -285,8 +286,8 @@ def action_list(user_name,out='text'):
 
         # discard if we don't have privileges
         # TODO
-        ra = Ra(ra_name)
-        if not 'r' in ra.privileges(user_name):
+        ra = Ra(ra_name, username)
+        if not 'r' in ra.privileges(username):
             continue
 
         num_ranames += 1

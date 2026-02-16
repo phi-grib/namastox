@@ -36,25 +36,25 @@ TASK_TYPES = ['TASK', 'MODULE', 'OPERATOR']
 #     else:
 #         return os.path.join(path, 'ver%0.6d' % (version))
 
-def ra_repository_path():
+def ra_repository_path(username):
     '''
     Returns the path to the root of the raname repository,
     containing all ranames and versions
     '''
     success, config = read_config()
     if success: 
-        repository_path = config['ras']
+        repository_path = os.path.join(config['ras'], username)
         if not os.path.isdir(repository_path):
             os.makedirs(repository_path)
         return repository_path
         
     return None
 
-def ra_path(raname):
+def ra_path(raname, username):
     '''
     Returns the path to the raname given as argumen, containg all versions
     '''
-    base_path = ra_repository_path()
+    base_path = ra_repository_path(username)
     if os.path.isdir(base_path):
         return os.path.join(base_path, raname)
     
