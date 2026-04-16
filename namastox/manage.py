@@ -262,20 +262,39 @@ def action_kill(raname, step=None):
 
     return True, 'OK'
 
-def action_list(username,out='text'):
+def action_list(username):
     '''
     if no argument is provided lists all ranames present at the repository 
     otherwyse lists all versions for the raname provided as argument
     '''
+    output_user = []
+    output_shared = []
+    
     rdir = ra_repository_path(username)
-
     if os.path.isdir(rdir) is False:
         return False, 'The risk assessment name repository path does not exist. Please run "namastox -c config".'
 
-    output = []
+    for ra_name in os.listdir(rdir):
+        ra_path = os.path.join(rdir,ra_name) 
+
+        # discard if the item is not a directory
+        if not os.path.isdir(ra_path):
+            continue
+
+        # discard if we don't have privileges
+        ra = Ra(ra_name, username)
+        if not 'r' in ra.privileges(username):
+            continue
+
+        output_user.append(ra_name)
+
+    LOG.debug(f'Retrieved list of risk assessments from {rdir}')
+
+    rdir = ra_repository_path('shared')
+    if os.path.isdir(rdir) is False:
+        return False, 'The risk assessment name repository path does not exist. Please run "namastox -c config".'
+
     num_ranames = 0
-    if out != 'json':
-        LOG.info('Risk assessment(s) found in repository:')
         
     for ra_name in os.listdir(rdir):
         ra_path = os.path.join(rdir,ra_name) 
@@ -285,24 +304,19 @@ def action_list(username,out='text'):
             continue
 
         # discard if we don't have privileges
-        # TODO
         ra = Ra(ra_name, username)
         if not 'r' in ra.privileges(username):
             continue
 
-        num_ranames += 1
-        if out != 'json':
-            LOG.info('\t'+ra_name)
-
-        output.append(ra_name)
+        output_shared.append(ra_name)
 
     LOG.debug(f'Retrieved list of risk assessments from {rdir}')
     
     # web-service
-    if out=='json':
-        return True, output
+    result = {username: output_user,
+              'shared': output_shared}
+    return True, result
 
-    return True, f'{num_ranames} risk assessment(s) found'
 
 def action_setusers(raname, users_read, users_write):
     ra = Ra(raname)
