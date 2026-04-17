@@ -192,7 +192,7 @@ class Ra:
 
         # load workflow
         if self.ra['step']>0 : 
-            self.workflow = Workflow(self.raname, self.ra['workflow_name'])
+            self.workflow = Workflow(self.raname, self.username, self.ra['workflow_name'])
 
         return True, 'OK'
 
@@ -425,7 +425,7 @@ class Ra:
                 return False, 'workflow file not found'
 
         LOG.info (f'workflow name set to {self.ra["workflow_name"]}')
-        self.workflow = Workflow(self.raname, self.ra['workflow_name'])
+        self.workflow = Workflow(self.raname, self.username, self.ra['workflow_name'])
 
         # set firstnode as active node
         active_node = self.workflow.firstNode()
