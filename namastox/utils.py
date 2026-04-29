@@ -54,12 +54,25 @@ def ra_path(raname, username):
     '''
     Returns the path to the raname given as argumen, containg all versions
     '''
-    base_path = ra_repository_path(username)
-    if os.path.isdir(base_path):
-        return os.path.join(base_path, raname)
-    
-    return None
+    # if shared == True:
+    #     username = 'shared'
 
+    # base_path = ra_repository_path(username)
+    # ra_path = os.path.join(base_path, raname)
+
+    # if not os.path.isdir(ra_path):
+    #     if shared != False:
+    #         base_path = ra_repository_path('shared')
+    #         ra_path = os.path.join(base_path, raname)
+    # return ra_path
+
+    if raname[0] == '+':
+        username = 'shared'
+
+    base_path = ra_repository_path(username)
+    ra_path = os.path.join(base_path, raname)
+
+    return ra_path
 
 # def ra_path(raname, version):
 #     '''

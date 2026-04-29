@@ -41,7 +41,7 @@ LOG = get_logger(__name__)
 def action_privileges(raname, username):
     return Ra(raname, username).privileges(username)
 
-def action_new(raname, username, outfile=None):
+def action_new(raname, username, shared):
     '''
     Create a new risk assessment tree, using the given name.
     This creates the development version "dev",
@@ -86,7 +86,10 @@ def action_new(raname, username, outfile=None):
     ra = Ra(raname, username)
     
     # Default to universal read/write access
-    ra.setUsers(['*'],['*'])
+    if shared:
+        ra.setUsers(['*'],['*'])
+    else:
+        ra.setUsers([username], [username])
 
     success, results = ra.load()
     if not success:
@@ -102,10 +105,6 @@ def action_new(raname, username, outfile=None):
     # Show template
     yaml = ra.getTemplate()
     
-    if outfile is not None:
-        with open(outfile,'w') as f:
-            f.write(yaml)
-
     return True, f'New risk assessment {raname} created'
 
 def action_clone(source_raname, username):
@@ -294,8 +293,6 @@ def action_list(username):
     if os.path.isdir(rdir) is False:
         return False, 'The risk assessment name repository path does not exist. Please run "namastox -c config".'
 
-    num_ranames = 0
-        
     for ra_name in os.listdir(rdir):
         ra_path = os.path.join(rdir,ra_name) 
 
@@ -304,7 +301,7 @@ def action_list(username):
             continue
 
         # discard if we don't have privileges
-        ra = Ra(ra_name, username)
+        ra = Ra(ra_name, 'shared')
         if not 'r' in ra.privileges(username):
             continue
 
