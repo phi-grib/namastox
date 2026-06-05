@@ -207,9 +207,9 @@ def getRaHistoric (raname, username, step):
             
     return False, 'file not found'
 
-def action_kill(raname, username, step=None):
+def action_kill(raname, username):
     '''
-    removes the last step from the ra tree or the whole tree if no step is specified
+    removes the ra tree
     '''
     if not raname:
         return False, 'Empty risk assessment name'
@@ -220,20 +220,25 @@ def action_kill(raname, username, step=None):
         return False, f'Risk assessment {raname} not found'
 
     # Remove the whole tree
-    if step is None:
-        try:
-            shutil.rmtree(ndir, ignore_errors=True)
-        except:
-            return False, f'Failed to remove risk assessment {raname}'
+    try:
+        shutil.rmtree(ndir, ignore_errors=True)
+    except:
+        return False, f'Failed to remove risk assessment {raname}'
 
-        return True, f'Risk assessment {raname} removed'
+    return True, f'Risk assessment {raname} removed'
 
-    # Remove last step
-    if step == 1:
-        return False, 'the first step cannot be removed'
 
-    # New value of step
-    new_step = step-1
+def action_backwards(raname, username):
+    '''
+    removes the last step from the ra tree 
+    '''
+    if not raname:
+        return False, 'Empty risk assessment name'
+
+    ndir = ra_path(raname, username)
+
+    if not os.path.isdir(ndir):
+        return False, f'Risk assessment {raname} not found'
 
     # load RA
     ra = Ra(raname, username)
@@ -241,25 +246,29 @@ def action_kill(raname, username, step=None):
     if not success:
         return False, results
 
-    last_step = ra.getVal('step')
-    if step!=last_step:
-        return False, 'only the last step can be removed'
+    # get last step (step)
+    step = ra.getVal('step')
+    if step == 1:
+        return False, 'the last step cannot be removed!'
 
+    new_step = step -1 
+  
     # find the previous step in the repo and copy as ra.yaml overwriting existing file
-    success, ra_new = getRaHistoric(raname, new_step)
+    success, ra_new = getRaHistoric(raname, username, new_step)
     if not success:
-        return False, f'unable to retrieve file {ra_new} from the historic repository'
+        return False, f'no step found!'
 
     shutil.copy(ra_new, os.path.join(ndir,'ra.yaml'))
     
     # remove the ra to delete 
-    success, ra_delete = getRaHistoric(raname, step)
+    success, ra_delete = getRaHistoric(raname, username, step)
     if not success:
         return False, f'unable to remove file {ra_delete}'
 
     os.remove(ra_delete)
 
     return True, 'OK'
+
 
 def action_list(username):
     '''
