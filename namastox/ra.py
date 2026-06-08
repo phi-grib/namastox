@@ -35,12 +35,13 @@ LOG = get_logger(__name__)
 class Ra:
     ''' Class storing all the risk assessment information
     '''
-    def __init__(self, raname):
+    def __init__(self, raname, username):
         ''' constructor '''
 
         # internal data
         self.raname = raname
-        self.rapath = ra_path(raname)
+        self.username = username
+        self.rapath = ra_path(raname, username)
         self.workflow = None  
         
         # default, these are loaded from a YAML file
@@ -191,7 +192,7 @@ class Ra:
 
         # load workflow
         if self.ra['step']>0 : 
-            self.workflow = Workflow(self.raname, self.ra['workflow_name'])
+            self.workflow = Workflow(self.raname, self.username, self.ra['workflow_name'])
 
         return True, 'OK'
 
@@ -424,7 +425,7 @@ class Ra:
                 return False, 'workflow file not found'
 
         LOG.info (f'workflow name set to {self.ra["workflow_name"]}')
-        self.workflow = Workflow(self.raname, self.ra['workflow_name'])
+        self.workflow = Workflow(self.raname, self.username, self.ra['workflow_name'])
 
         # set firstnode as active node
         active_node = self.workflow.firstNode()
