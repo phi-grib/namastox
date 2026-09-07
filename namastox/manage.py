@@ -41,7 +41,33 @@ LOG = get_logger(__name__)
 def action_privileges(raname, username):
     return Ra(raname, username).privileges(username)
 
-def action_new(raname, username, shared):
+def action_newFolder(foldername, username, shared):
+    '''
+    Create a new folder, to organise RAs, using the given name.
+    '''
+    if not foldername:
+        return False, 'empty folder name'
+
+    # importlib does not allow using 'test' and issues a misterious error when we
+    # try to use this name. This is a simple workaround to prevent creating ranames 
+    # with this name 
+    if foldername == 'test':
+        return False, 'the name "test" is disallowed, please use any other name'
+
+    # folder directory with /dev (default) level
+    ndir = ra_path(foldername, username)
+
+    if os.path.isdir(ndir):
+        return False, f'Folder {foldername} already exists'
+    try:
+        os.mkdir(ndir)
+    except:
+        return False, f'Unable to create path for {foldername} endpoint'
+
+    return True, f'New folder {foldername} created'
+
+
+def action_new(raname, username, shared, currentContextItem):
     '''
     Create a new risk assessment tree, using the given name.
     This creates the development version "dev",
@@ -57,7 +83,10 @@ def action_new(raname, username, shared):
         return False, 'the name "test" is disallowed, please use any other name'
 
     # raname directory with /dev (default) level
-    ndir = ra_path(raname, username)
+    if currentContextItem and '_folder_' not in currentContextItem:
+        ndir = ra_path(raname, username)
+    else:
+        ndir = ra_path(raname, username,currentContextItem)
 
     if os.path.isdir(ndir):
         return False, f'Risk assessment {raname} already exists'
@@ -84,12 +113,12 @@ def action_new(raname, username, shared):
 
     # Instantiate Ra
     ra = Ra(raname, username)
-    
+
     # Default to universal read/write access
     if shared:
-        ra.setUsers(['*'],['*'])
+        ra.setUsers(['*'],['*'],ndir)
     else:
-        ra.setUsers([username], [username])
+        ra.setUsers([username], [username],ndir)
 
     success, results = ra.load()
     if not success:
@@ -163,7 +192,7 @@ def action_rename(ra_name, username, ra_newname):
     # importlib does not allow using 'test' and issues a misterious error when we
     # try to use this name. This is a simple workaround to prevent creating ranames 
     # with this name 
-    if ra_name == 'test':
+    if ra_newname == 'test':
         return False, 'the name "test" is disallowed, please use any other name'
     
     rapath = ra_path(ra_name, username)
@@ -181,6 +210,34 @@ def action_rename(ra_name, username, ra_newname):
 
     return True, f'RA {rapath} renamed to {ranewpath}'
 
+def action_renameFolder(oldFolderName, username, newFolderName):
+    '''
+    Rename an existing folder, using the given name.
+    '''
+    if not oldFolderName:
+        return False, 'empty folder name'
+    
+    # importlib does not allow using 'test' and issues a misterious error when we
+    # try to use this name. This is a simple workaround to prevent creating ranames 
+    # with this name 
+    if newFolderName == 'test':
+        return False, 'the name "test" is disallowed, please use any other name'
+
+    #ra_path creates the path for RA and for FOLDERS
+    folderpath = ra_path(oldFolderName, username)
+    folderNewpath = os.path.join(os.path.dirname(folderpath), newFolderName)
+    
+    if not os.path.isdir(folderpath):
+        return False, f'{folderpath} folder not found in the repository'
+
+    if os.path.isdir(folderNewpath):
+        return False, f'RA name "{folderNewpath}" already in use, select a different name'
+    
+    shutil.move(folderpath, folderNewpath)
+
+    LOG.debug(f'renamed RA {folderpath} to {folderNewpath}')
+
+    return True, f'RA {folderpath} renamed to {folderNewpath}'
 
 def getRaHistoric (raname, username, step):
     ''' retrieves from the historical record the item corresponding to the step given as argument
@@ -226,6 +283,27 @@ def action_kill(raname, username):
         return False, f'Failed to remove risk assessment {raname}'
 
     return True, f'Risk assessment {raname} removed'
+
+def action_deleteFolder(folder_name, username):
+    '''
+    removes the folder tree
+    '''
+    if not folder_name:
+        return False, 'Empty folder name'
+
+    ndir = ra_path(folder_name, username)
+
+    if not os.path.isdir(ndir):
+        return False, f'Folder {folder_name} not found'
+
+    # Remove the whole tree
+    try:
+        shutil.rmtree(ndir, ignore_errors=True)
+    except:
+        return False, f'Failed to remove folder {folder_name}'
+
+    return True, f'Folder {folder_name} removed'
+
 
 
 def action_backwards(raname, username):
@@ -282,16 +360,52 @@ def action_list(username):
     if os.path.isdir(rdir) is False:
         return False, 'The risk assessment name repository path does not exist. Please run "namastox -c config".'
 
+    # for ra_name in os.listdir(rdir):
+    #     ra_path = os.path.join(rdir,ra_name) 
+
+    #     # discard if the item is not a directory
+    #     if not os.path.isdir(ra_path):
+    #         continue
+
+    #     # discard if we don't have privileges
+    #     ra = Ra(ra_name, username)
+    #     if not 'r' in ra.privileges(username):
+    #         continue
+
+    #     output_user.append(ra_name)
+
+    #now ra_name = ra name or folder name
     for ra_name in os.listdir(rdir):
-        ra_path = os.path.join(rdir,ra_name) 
+        ra_path = os.path.join(rdir, ra_name)
 
         # discard if the item is not a directory
         if not os.path.isdir(ra_path):
             continue
 
-        # discard if we don't have privileges
+        # is a container folder (_folder_)
+        if '_folder_' in ra_name:
+            folder_RAs = []
+
+            for childFolder_name in os.listdir(ra_path):
+                childFolder_path = os.path.join(ra_path, childFolder_name)
+
+                # discard if the item is not a directory
+                if not os.path.isdir(childFolder_path):
+                    continue
+
+                folder_RAs.append(childFolder_name)
+            #in this case, ra_name is the name of the folder
+            output_user.append({
+                'folder': ra_name, # folder = folder name
+                'items': folder_RAs # items = list of RAs inside the folder
+            })
+
+            continue
+
+        # is a RA 
         ra = Ra(ra_name, username)
-        if not 'r' in ra.privileges(username):
+
+        if 'r' not in ra.privileges(username):
             continue
 
         output_user.append(ra_name)
@@ -302,6 +416,7 @@ def action_list(username):
     if os.path.isdir(rdir) is False:
         return False, 'The risk assessment name repository path does not exist. Please run "namastox -c config".'
 
+    #now ra_name = ra name or folder name
     for ra_name in os.listdir(rdir):
         ra_path = os.path.join(rdir,ra_name) 
 
@@ -309,12 +424,37 @@ def action_list(username):
         if not os.path.isdir(ra_path):
             continue
 
-        # discard if we don't have privileges
-        ra = Ra(ra_name, 'shared')
-        if not 'r' in ra.privileges(username):
-            continue
+        # is a container folder (_folder_)
+        if '_folder_' in ra_name:
+            folder_RAs = []
 
-        output_shared.append(ra_name)
+            for childFolder_name in os.listdir(ra_path):
+                childFolder_path = os.path.join(ra_path, childFolder_name)
+                print(childFolder_path)
+                # discard if the item is not a directory
+                if not os.path.isdir(childFolder_path):
+                    continue
+                
+                # discard if we don't have privileges
+                # ra = Ra(childFolder_name, 'shared')
+                # if not 'r' in ra.privileges(username):
+                #     continue
+                
+                folder_RAs.append(childFolder_name)
+
+            output_shared.append({
+                'folder': ra_name,
+                'items': folder_RAs
+            })
+
+            continue
+        else: 
+            # discard if we don't have privileges
+            ra = Ra(ra_name, 'shared')
+            if not 'r' in ra.privileges(username):
+                continue
+
+            output_shared.append(ra_name)
 
     LOG.debug(f'Retrieved list of risk assessments from {rdir}')
     

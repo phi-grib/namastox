@@ -50,7 +50,7 @@ def ra_repository_path(username):
         
     return None
 
-def ra_path(raname, username):
+def ra_path(raname, username, currentContextItem=None):
     '''
     Returns the path to the raname given as argumen, containg all versions
     '''
@@ -70,6 +70,8 @@ def ra_path(raname, username):
         username = 'shared'
 
     base_path = ra_repository_path(username)
+    if currentContextItem:
+        base_path = os.path.join(base_path, currentContextItem)
     ra_path = os.path.join(base_path, raname)
 
     return ra_path

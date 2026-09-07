@@ -108,7 +108,7 @@ class Ra:
         '''
         return {'read':self.users_read, 'write':self.users_write}
     
-    def setUsers(self, username_read, username_write):
+    def setUsers(self, username_read, username_write, ndir):
         ''' sets the RA list of users and save it to a users.pkl file
         '''
         self.users_read = username_read
@@ -117,6 +117,12 @@ class Ra:
             users_file = os.path.join (self.rapath,'users.pkl')
             with open (users_file,'wb') as handle:
                 pickle.dump(self.getUsers(), handle)
+        else:
+            if os.path.isdir(ndir):
+                self.rapath=ndir
+                users_file = os.path.join (ndir,'users.pkl')
+                with open (users_file,'wb') as handle:
+                    pickle.dump(self.getUsers(), handle)
 
     def loadUsers(self):
         ''' load user information from users.pkl file
