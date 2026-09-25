@@ -375,7 +375,7 @@ def action_list(username):
     #     output_user.append(ra_name)
 
     #now ra_name = ra name or folder name
-    for ra_name in os.listdir(rdir):
+    for ra_name in sorted(os.listdir(rdir)):
         ra_path = os.path.join(rdir, ra_name)
 
         # discard if the item is not a directory
@@ -386,7 +386,7 @@ def action_list(username):
         if '_folder_' in ra_name:
             folder_RAs = []
 
-            for childFolder_name in os.listdir(ra_path):
+            for childFolder_name in sorted(os.listdir(ra_path)):
                 childFolder_path = os.path.join(ra_path, childFolder_name)
 
                 # discard if the item is not a directory
