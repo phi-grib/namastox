@@ -25,6 +25,7 @@ import yaml
 import json
 import shutil
 import urllib3
+import pickle
 import numpy as np
 import pandas as pd
 from urllib3.util.ssl_ import create_urllib3_context
@@ -963,6 +964,35 @@ def importRA (filename, username):
     # unpack tar.gz. This is done for any kind of export file
     with tarfile.open(filename, 'r:gz') as tar:
         tar.extractall(root_path)
+
+    # check that users.pkl file exists and that the current username is asigned 
+    # reading and writting permission
+    users_file = os.path.join (base_path,'users.pkl')
+
+    # if users_file exists make sure it contains username
+    if os.path.isfile (users_file):
+        with open (users_file,'rb') as handle:
+            users_dict = pickle.load(handle)
+
+        read_ok  = '*' in users_dict['read']  or username in users_dict['read']
+        write_ok = '*' in users_dict['write'] or username in users_dict['write']
+
+        # if everything is allright EXIT here!
+        if read_ok and write_ok:
+            return True, 'OK'
+        
+        if not read_ok:
+            users_dict['read'].append(username)
+        if not write_ok:
+            users_dict['write'].append(username)
+
+    # if users_file doesn't exists create a new file with username read and write permissions
+    else:
+        users_dict = {'read':[username], 'write':[username]}
+
+    # update users_file
+    with open (users_file,'wb') as handle:
+        pickle.dump(users_dict, handle)        
 
     return True, 'OK'
 
